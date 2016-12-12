@@ -3,11 +3,28 @@
 #include "../headers/structs.h"
 #include "../headers/functions.h"
 
-void isMemoryOK(void *var)
+void criticalError()
 {
+    printf("A critical error occured and the program had to stop.\n");
+    exit(0);
+}
+
+void * allocate(int size)
+{
+    void * var = malloc(size);
+
     if(var == NULL)
-    {
-        printf("Une erreur critique est survenue.\nLe programme va maintenant se fermer.");
-        exit(0);
-    }
+        criticalError();
+    
+    return var;
+}
+
+void * reAllocate(void * var, int newSize)
+{
+    var = realloc(var, newSize);
+
+    if(var == NULL)
+        criticalError();
+
+    return var;
 }
