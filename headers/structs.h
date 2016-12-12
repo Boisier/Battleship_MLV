@@ -6,21 +6,9 @@
 
 typedef struct Player
 {
-
+    char type;              //Type of player, can be either h (human) or c (computer/ai)
+    char score;             //If multiple game are fdone, keep track of scores.
 } Player;
-
-typedef struct Cell
-{
-    char type;              //Type of the cell (e -> empty, s -> ship);
-    bool hit;               //Has the cell been hit or not? (true or false)
-}Cell;
-
-typedef struct Grid
-{
-    int size;               //Size of the grid
-    Cell *cells;            //Celles of the grid
-    Ship *ships             //Ships on the grid
-} Grid;
 
 typedef struct Ship
 {
@@ -31,3 +19,16 @@ typedef struct Ship
     bool hits[5];           //Details which cell of the ship has been hit;
 
 } Ship;
+
+typedef struct Cell
+{
+    char type;              //Type of the cell (e -> empty, s -> ship);
+    bool hit;               //Has the cell been hit or not? (true or false)
+}Cell;
+
+typedef struct Grid
+{
+    int size;               //Size of the grid
+    Cell *cells;            //Cells of the grid
+    Ship *ships;            //Ships on the grid
+} Grid;
