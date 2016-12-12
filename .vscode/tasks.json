@@ -16,12 +16,6 @@
                     "make"
                 ],
                 "isBuildCommand": true
-            },
-            {
-                "taskName": "Launch",
-                "args": [
-                    "./"
-                ]
             }
         ]
     }
