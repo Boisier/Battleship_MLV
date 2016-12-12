@@ -9,6 +9,7 @@ CC=gcc
 CFLAGS = -g -O2 -Wall -Werror -lMLV `pkg-config --cflags MLV`
 LDLIBS = `pkg-config --libs MLV`
 
+all: $(TARGET) clean
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) 
@@ -18,6 +19,8 @@ LDLIBS = `pkg-config --libs MLV`
 
 $(TARGET): $(OBJ)
 	gcc -o $@ $^ $(CFLAGS)
+
+.PHONY: clean
 
 clean: 
 	$(RM) count *.o *~
