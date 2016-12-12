@@ -5,7 +5,7 @@
 /********************************************************************************/
 
 // Init the game and return the gameObject with default values
-GameObj initGame();
+GameObj * initGame();
 
 // Display Main menu
 void mainMenu();
@@ -36,4 +36,11 @@ int verifyPosition();
 /***** Helper functions definitions *********************************************/
 /********************************************************************************/
 
-void isMemoryOK(void *var);
+//Called when a function encountered a criticalError. Terminate the program.
+void criticalError();
+
+//Allocate encapsulate malloc to better handle failing behavior.
+void * allocate(int size);
+
+//reAllocate encapsulate malloc to better handle failing behavior.
+void * reAllocate(void * var, int newSize);
