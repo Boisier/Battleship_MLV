@@ -4,8 +4,8 @@
 /***** Main functions definitions ***********************************************/
 /********************************************************************************/
 
-// Init the game, set variables to default value
-void initGame();
+// Init the game and return the gameObject with default values
+GameObj initGame();
 
 // Display Main menu
 void mainMenu();
@@ -15,8 +15,11 @@ void mainMenu();
 /***** Game functions definitions ***********************************************/
 /********************************************************************************/
 
+//Begin a new game
+void startGame();
+
 // Show the grid if it's mine or the ennemy's one
-void displayGrid (Grid g, bool self);
+void printGrid (Grid g, bool self);
 
 // The player give the position of his ships and their orientations, 
 // call verifyPosition() to see if it's possible
@@ -33,4 +36,4 @@ int verifyPosition();
 /***** Helper functions definitions *********************************************/
 /********************************************************************************/
 
-
+void isMemoryOK(void *var);

@@ -8,6 +8,13 @@
 
 int main(int argc, char *argv[])
 {
+	//Game has been lauched;
+
+	GameObj gameObj = initGame();
+
+	gameObj.currTurn = 0;
+	printf("%d\n", gameObj.currTurn);
+	printf("success\n");
 
 	return 0;
  }

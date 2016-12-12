@@ -4,12 +4,6 @@
 #define true 1
 #define false 0
 
-typedef struct Player
-{
-    char type;              //Type of player, can be either h (human) or c (computer/ai)
-    char score;             //If multiple game are fdone, keep track of scores.
-} Player;
-
 typedef struct Ship
 {
     int size;               //Size of the ship (1, 2, 3, 4 or 5)
@@ -32,3 +26,17 @@ typedef struct Grid
     Cell *cells;            //Cells of the grid
     Ship *ships;            //Ships on the grid
 } Grid;
+
+typedef struct Player
+{
+    char type;              //Type of player, can be either h (human) or c (computer/ai)
+    char score;  
+    Grid *grid;             //If multiple game are fdone, keep track of scores.
+} Player;
+
+typedef struct GameObj      //The gameObj carry all the variables used by the game
+{
+    Player *player1;        //First player obj
+    Player *player2;        //Second player obj
+    int currTurn;           //Current player. Can be either 1, 2 or 0 if not in game;  
+} GameObj;
