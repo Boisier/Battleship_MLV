@@ -17,6 +17,18 @@ GameObj * initGame()                                 //Generate the gameObj, cre
     return gameObj;                                  //Return the gameObj
 }
 
+Button * createBtn(int x, int y, int width, int height, char type)
+{
+    Button * btn = allocate(sizeof(Button));
+    btn->x = x;
+    btn->y = y;
+    btn->width = width;
+    btn->height = height;
+    btn->type = type;
+
+    return btn;
+}
+
 void mainMenu(struct GameObj * gameObj)              //display the main menu and wait for actions from the user
 {
     cleanScreen(gameObj);                            //CLean screen before printing menu

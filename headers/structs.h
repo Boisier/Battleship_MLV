@@ -62,6 +62,7 @@ typedef struct Button
     MLV_Color hoverTestColor;   //Text color when button is hovered
     MLV_Color activeColor;      //Text color when button is pressed
 
-    //
+    void (*callback)();      //function to be called when the button is pressed
 
+    //var needed for graphical btn to be defined...
 } Button;

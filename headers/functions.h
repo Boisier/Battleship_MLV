@@ -6,6 +6,8 @@
 
 GameObj * initGame();                      // Init the game and return the gameObject with default values
 
+Button * createBtn(int x, int y, int width, int height, char type); //Create a Btn and assign specified values
+
 void mainMenu(struct GameObj * gameObj);            // Display Main menu
 
 
