@@ -6,10 +6,7 @@
 
 GameObj * initGame();                      // Init the game and return the gameObject with default values
 
-void printBtn(struct Button * btn, char state);
-Button * createBtn(int x, int y, int width, int height, char type); //Create a Btn and assign specified values
-
-void mainMenu(struct GameObj * gameObj);            // Display Main menu
+void mainMenu();            // Display Main menu
 
 
 
@@ -47,6 +44,9 @@ void * allocate(int size);
 //reAllocate encapsulate malloc to better handle failing behavior.
 void * reAllocate(void * var, int newSize);
 
+//Throw a critical error and stop the application if the given pointer is null
+void criticalIfNull(void * pointer);
+
 //erase everything on the screen but don't refresh the window
 void cleanScreen(struct GameObj * gameObj);
 
@@ -55,3 +55,28 @@ MLV_Color rgba(int r, int g, int b, int a);
 
 int percent(float percent, char direction);//return a percentage based on the window size
 int percentOffset(float percent, char direction, int offset); //return a percentage based on the window size and add the offset value to the result
+
+
+
+
+
+
+/********************************************************************************/
+/***** Elements creation functions **********************************************/
+/********************************************************************************/
+
+Button * createBtn(int x, int y, int width, int height, char type); //Create a Btn and assign specified values
+
+
+
+
+
+/********************************************************************************/
+/***** Printing functions definitions *******************************************/
+/********************************************************************************/
+
+void printFrame();                                  //print the currentFrame
+
+printElement * addToPrint(void * element, char type);	//Add the given element to the list of Elements to print
+
+void printBtn(struct Button * btn, char state);     //print the given btn at the given state
