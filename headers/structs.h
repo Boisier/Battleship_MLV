@@ -36,8 +36,9 @@ typedef struct Player
 
 typedef struct printElement
 {
-    void * element;
-    
+    void * element;         //A pointer to the element to display
+    char type;              //Type of the element. Can be b (Button), and more to come
+    char state;             //If needed, state of the Element;
 } printElement;
 
 typedef struct GameObj      //The gameObj carry all the variables used by the game
@@ -49,10 +50,11 @@ typedef struct GameObj      //The gameObj carry all the variables used by the ga
     int wWidth;             //Width of the window
     int wHeight;            //Height of the window
 
-    void * toPrint;
+    printElement * toPrint; //Elements to print on the next frame;
+    int nbrToPrint;         //Number of elements to print
 } GameObj;
 
-GameObj * gameObj;
+GameObj * gameObj;          //Define the gameObj accessible from anywhere in the application
 
 typedef struct Button
 {
