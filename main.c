@@ -9,8 +9,10 @@
 int main(int argc, char *argv[])
 {
 	gameObj = initGame();
-	mainMenu(gameObj);
+	mainMenu();
 
 	MLV_wait_seconds(10);
+
+	MLV_free_window();
 	return 0;
 }
