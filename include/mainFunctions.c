@@ -23,5 +23,7 @@ void mainMenu(struct GameObj * gameObj)              //display the main menu and
 
     MLV_draw_text_box (0, 20, gameObj->wWidth, 40, "Battleship", 15, rgba(0, 0, 0, 0), MLV_COLOR_WHITE, rgba(0, 0, 0, 0), MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 
+    
+
     MLV_actualise_window();
 }

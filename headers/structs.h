@@ -43,3 +43,25 @@ typedef struct GameObj      //The gameObj carry all the variables used by the ga
     int wWidth;             //Width of the window
     int wHeight;            //Height of the window
 } GameObj;
+
+typedef struct Button
+{
+    int x;                      //x position of the button
+    int y;                      //y position of the button
+    int width;                  //width of the button
+    int height;                 //height of the button
+    char type;                  //button type. Can be either g(graphic/image) or c(plainColor)
+
+    //Back colors (used when type is )
+    MLV_Color idleBackColor;    //Back color when button is idle
+    MLV_Color hoverBackColor;   //Back color when button is hovered
+    MLV_Color activeBackColor;  //Back color when button is pressed
+ 
+    //Text colors
+    MLV_Color idleTextColor;    //Text color when button is idle
+    MLV_Color hoverTestColor;   //Text color when button is hovered
+    MLV_Color activeColor;      //Text color when button is pressed
+
+    //
+
+} Button;
