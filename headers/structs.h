@@ -34,6 +34,12 @@ typedef struct Player
     Grid *grid;             //If multiple game are fdone, keep track of scores.
 } Player;
 
+typedef struct printElement
+{
+    void * element;
+    
+} printElement;
+
 typedef struct GameObj      //The gameObj carry all the variables used by the game
 {
     Player *player1;        //First player obj
@@ -42,7 +48,11 @@ typedef struct GameObj      //The gameObj carry all the variables used by the ga
 
     int wWidth;             //Width of the window
     int wHeight;            //Height of the window
+
+    void * toPrint;
 } GameObj;
+
+GameObj * gameObj;
 
 typedef struct Button
 {
@@ -51,7 +61,7 @@ typedef struct Button
     int width;                  //width of the button
     int height;                 //height of the button
     char type;                  //button type. Can be either g(graphic/image) or c(plainColor)
-
+    char text[100];             //Text to display on the button
     //Back colors (used when type is )
     MLV_Color idleBackColor;    //Back color when button is idle
     MLV_Color hoverBackColor;   //Back color when button is hovered
@@ -59,8 +69,8 @@ typedef struct Button
  
     //Text colors
     MLV_Color idleTextColor;    //Text color when button is idle
-    MLV_Color hoverTestColor;   //Text color when button is hovered
-    MLV_Color activeColor;      //Text color when button is pressed
+    MLV_Color hoverTextColor;   //Text color when button is hovered
+    MLV_Color activeTextColor;      //Text color when button is pressed
 
     void (*callback)();      //function to be called when the button is pressed
 

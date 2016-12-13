@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h> 
+#include <math.h> 
 #include <MLV/MLV_all.h>
 #include "../headers/structs.h"
 #include "../headers/functions.h"
@@ -40,4 +41,19 @@ void cleanScreen(struct GameObj * gameObj)  //Roll back the screen to it's defau
 MLV_Color rgba(int r, int g, int b, int a)  //Encapsulate MLV_rgba into rgba in order to simplify the command
 {
     return MLV_rgba(r, g, b, a);
+}
+
+int percent(float percent, char direction)              //return a percentage based on the window size
+{
+    if(direction == 'w')
+        return (gameObj->wWidth / 100.0) * percent;
+    else if(direction == 'h')
+        return (gameObj->wHeight / 100.0) * percent;
+    else
+        return 0;
+}
+
+int percentOffset(float p, char direction, int offset) //return a percentage based on the window size and add the offset value to the result
+{
+    return percent(p, direction) + offset;
 }

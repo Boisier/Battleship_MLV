@@ -6,6 +6,7 @@
 
 GameObj * initGame();                      // Init the game and return the gameObject with default values
 
+void printBtn(struct Button * btn, char state);
 Button * createBtn(int x, int y, int width, int height, char type); //Create a Btn and assign specified values
 
 void mainMenu(struct GameObj * gameObj);            // Display Main menu
@@ -51,3 +52,6 @@ void cleanScreen(struct GameObj * gameObj);
 
 //MLV_rgba encapsulation for simpler syntax 
 MLV_Color rgba(int r, int g, int b, int a);
+
+int percent(float percent, char direction);//return a percentage based on the window size
+int percentOffset(float percent, char direction, int offset); //return a percentage based on the window size and add the offset value to the result
