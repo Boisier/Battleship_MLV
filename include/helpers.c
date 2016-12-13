@@ -32,12 +32,12 @@ void * reAllocate(void * var, int newSize)  //realloc encapsulation with failing
     return var;                             //Yes, return the pointer
 }
 
-void cleanScreen(struct GameObj * gameObj)
+void cleanScreen(struct GameObj * gameObj)  //Roll back the screen to it's default state
 {
-     MLV_draw_filled_rectangle(0, 0, gameObj->wWidth, gameObj->wHeight, MLV_COLOR_BLACK);
+     MLV_draw_filled_rectangle(0, 0, gameObj->wWidth, gameObj->wHeight, MLV_COLOR_BLACK);   //Replace the entire image with a black rectangle
 }
 
-MLV_Color rgba(int r, int g, int b, int a)
+MLV_Color rgba(int r, int g, int b, int a)  //Encapsulate MLV_rgba into rgba in order to simplify the command
 {
     return MLV_rgba(r, g, b, a);
 }

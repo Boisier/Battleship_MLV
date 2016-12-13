@@ -47,5 +47,5 @@ void * reAllocate(void * var, int newSize);
 //erase everything on the screen but don't refresh the window
 void cleanScreen(struct GameObj * gameObj);
 
-//MLV_rgba encapsulation for simpler syntax
+//MLV_rgba encapsulation for simpler syntax 
 MLV_Color rgba(int r, int g, int b, int a);
