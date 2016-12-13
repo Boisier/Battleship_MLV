@@ -16,9 +16,7 @@ void throwCriticalError()                   //Clean the program then terminate i
 void * allocate(int size)                   //malloc encapsulation with failing behavior handling
 {
     void * var = malloc(size);              //Allocate asked memory
-
-    if(var == NULL)                         //Did the allocation worked ?
-        throwCriticalError();               //No, critical error
+    criticalIfNull(var);                    //Did the allocation worked ?
     
     return var;                             //Yes, return newly allocated pointer
 }
@@ -26,11 +24,15 @@ void * allocate(int size)                   //malloc encapsulation with failing 
 void * reAllocate(void * var, int newSize)  //realloc encapsulation with failing behavior handling
 {
     var = realloc(var, newSize);            //realloc asked memory to the given pointer
-
-    if(var == NULL)                         //Did the allocation worked ?
-        throwCriticalError();               //No, critical error
+    criticalIfNull(var);                    //Did the allocation worked ?
 
     return var;                             //Yes, return the pointer
+}
+
+void criticalIfNull(void * pointer)         //Throw a critical error and stop the application if the given pointer is null
+{
+    if(pointer == NULL)                     //Is the given pointer NULL?
+        throwCriticalError();               //Yes, then stop all
 }
 
 void cleanScreen(struct GameObj * gameObj)  //Roll back the screen to it's default state
