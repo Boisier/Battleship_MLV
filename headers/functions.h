@@ -4,11 +4,10 @@
 /***** Main functions definitions ***********************************************/
 /********************************************************************************/
 
-// Init the game and return the gameObject with default values
-GameObj * initGame();
+GameObj * initGame();                      // Init the game and return the gameObject with default values
 
-// Display Main menu
-void mainMenu();
+void mainMenu(struct GameObj * gameObj);            // Display Main menu
+
 
 
 /********************************************************************************/
@@ -19,7 +18,7 @@ void mainMenu();
 void startGame();
 
 // Show the grid if it's mine or the ennemy's one
-void printGrid (Grid g, bool self);
+void printGrid (struct Grid g, bool self);
 
 // The player give the position of his ships and their orientations, 
 // call verifyPosition() to see if it's possible
@@ -37,10 +36,16 @@ int verifyPosition();
 /********************************************************************************/
 
 //Called when a function encountered a criticalError. Terminate the program.
-void criticalError();
+void throwCriticalError();
 
 //Allocate encapsulate malloc to better handle failing behavior.
 void * allocate(int size);
 
 //reAllocate encapsulate malloc to better handle failing behavior.
 void * reAllocate(void * var, int newSize);
+
+//erase everything on the screen but don't refresh the window
+void cleanScreen(struct GameObj * gameObj);
+
+//MLV_rgba encapsulation for simpler syntax
+MLV_Color rgba(int r, int g, int b, int a);

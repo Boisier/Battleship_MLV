@@ -39,4 +39,7 @@ typedef struct GameObj      //The gameObj carry all the variables used by the ga
     Player *player1;        //First player obj
     Player *player2;        //Second player obj
     int currTurn;           //Current player. Can be either 1, 2 or 0 if not in game;  
+
+    int wWidth;             //Width of the window
+    int wHeight;            //Height of the window
 } GameObj;

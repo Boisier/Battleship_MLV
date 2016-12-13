@@ -9,6 +9,8 @@
 int main(int argc, char *argv[])
 {
 	GameObj * gameObj = initGame();
+	mainMenu(gameObj);
 
+	MLV_wait_seconds(10);
 	return 0;
 }
