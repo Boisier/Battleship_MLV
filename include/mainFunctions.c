@@ -35,7 +35,7 @@ void mainMenu()              //display the main menu and wait for actions from t
     playBtn->idleImage = MLV_load_image("images/playBtn_idle.png");
     playBtn->hoverImage = MLV_load_image("images/playBtn_hover.png");
     playBtn->activeImage = MLV_load_image("images/playBtn_active.png");
-    playBtn->callback = &clicked;
+    playBtn->callback = &choicePlayers;
 
     printElement * playBtnElement = addToPrint(playBtn, 'b');
     playBtnElement->state = 'i';
@@ -55,7 +55,31 @@ void mainMenu()              //display the main menu and wait for actions from t
 
 
 
+void choicePlayers()
+{
+    cleanScreen(gameObj);                            //Clean screen before printing menu
 
+    Button * onePlayerBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 40, 'g');
+    onePlayerBtn->idleImage = MLV_load_image("images/onePlayerBtn_idle.png");
+    onePlayerBtn->hoverImage = MLV_load_image("images/onePlayerBtn_hover.png");
+    onePlayerBtn->activeImage = MLV_load_image("images/onePlayerBtn_active.png");
+    onePlayerBtn->callback = &clicked;
+
+    printElement * onePlayerBtnElement = addToPrint(onePlayerBtn, 'b');
+    onePlayerBtnElement->state = 'i';
+
+    Button * twoPlayersBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 40, 'g');
+    twoPlayersBtn->idleImage = MLV_load_image("images/twoPlayersBtn_idle.png");
+    twoPlayersBtn->hoverImage = MLV_load_image("images/twoPlayersBtn_hover.png");
+    twoPlayersBtn->activeImage = MLV_load_image("images/twoPlayersBtn_active.png");
+    twoPlayersBtn->callback = &clicked;
+
+    printElement * twoPlayersBtnElement = addToPrint(twoPlayersBtn, 'b');
+    twoPlayersBtnElement->state = 'i';
+
+    printFrame();
+    waitForAction();
+}
 
 void waitForAction() 		//Keep application idle until a button callBack is fired. It handle mouse hovering 
 {

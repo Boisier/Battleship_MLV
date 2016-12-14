@@ -19,6 +19,9 @@ bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
 //Begin a new game
 void startGame();
 
+// Screen with choice one or two players
+void choicePlayers();
+
 // Show the grid if it's mine or the ennemy's one
 void printGrid (struct Grid g, bool self);
 
