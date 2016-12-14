@@ -35,10 +35,10 @@ void criticalIfNull(void * pointer)         //Throw a critical error and stop th
         throwCriticalError();               //Yes, then stop all
 }
 
-void cleanScreen()  //Roll back the screen to it's default state
+void cleanScreen()                          //Roll back the screen to it's default state
 {
     MLV_Image * bckg = MLV_load_image("images/woodenBackground.png");
-    MLV_draw_image(bckg, 0, 0);   //Replace the entire image with the wooden background
+    MLV_draw_image(bckg, 0, 0);             //Replace the entire image with the wooden background
 }
 
 MLV_Color rgba(int r, int g, int b, int a)  //Encapsulate MLV_rgba into rgba in order to simplify the command
@@ -46,7 +46,7 @@ MLV_Color rgba(int r, int g, int b, int a)  //Encapsulate MLV_rgba into rgba in 
     return MLV_rgba(r, g, b, a);
 }
 
-int percent(float percent, char direction)              //return a percentage based on the window size
+int percent(float percent, char direction)  //return a percentage based on the window size
 {
     if(direction == 'w')
         return (gameObj->wWidth / 100.0) * percent;
@@ -59,4 +59,9 @@ int percent(float percent, char direction)              //return a percentage ba
 int percentOffset(float p, char direction, int offset) //return a percentage based on the window size and add the offset value to the result
 {
     return percent(p, direction) + offset;
+}
+
+void clicked()                              //Print a msg in the console. Used as a callBack tester
+{
+    printf("Button clicked\n");
 }
