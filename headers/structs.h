@@ -72,9 +72,14 @@ typedef struct Button
     //Text colors
     MLV_Color idleTextColor;    //Text color when button is idle
     MLV_Color hoverTextColor;   //Text color when button is hovered
-    MLV_Color activeTextColor;      //Text color when button is pressed
+    MLV_Color activeTextColor;  //Text color when button is pressed
 
-    void (*callback)();      //function to be called when the button is pressed
+    //images
+    MLV_Image * idleImage;      //Image used at idle state for graphic button
+    MLV_Image * hoverImage;     //Image used at hover state for graphic button
+    MLV_Image * activeImage;    //Image used at hover state for graphic button 
+
+    void (*callback)();         //function to be called when the button is pressed
 
     //var needed for graphical btn to be defined...
 } Button;
