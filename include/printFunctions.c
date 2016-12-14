@@ -10,17 +10,20 @@ void printFrame()                               //Iterate through the gameObj an
     int i;
     printElement el;
 
-    void cleanScreen();                          //First we clean the screen
+    cleanScreen();                              //First we clean the screen
 
     for(i = 0; i < nbrToPrint; i++)             //We iterate over all the element to print
     {
         el = gameObj->toPrint[i];               //get the element
                                                 //Then print it with the apropriate function
-        if(el.type)
+        if(el.type == 'b')
             printBtn(el.element, el.state);
+        else if(el.type == 'p')
+            printPicture(el.element);
     }
 
     MLV_actualise_window();                     //finaly we actualise the window();
+    //MLV_wait_milliseconds(15);
 }
 
 printElement * addToPrint(void * element, char type)
@@ -40,7 +43,7 @@ printElement * addToPrint(void * element, char type)
     return &gameObj->toPrint[gameObj->nbrToPrint-1];                                                   //And return the newly created element so it can be edited
 }
 
-void cleanToPrint()                                                 //Empty th elist of element to print
+void cleanToPrint()                                                 //Empty the list of element to print
 {
     free(gameObj->toPrint);                                         //Free the memory used by the printElements, but do not free the elements. Other functions might still need them.
     gameObj->nbrToPrint = 0;                                        //Reset the number of elements to print;
@@ -56,36 +59,36 @@ void printBtn(struct Button * btn, char state)  //Print a given button at the cu
     MLV_Color textColor;
     MLV_Image * image;
 
-    if(btn->type == 'g')
-    {
+    if(btn->type == 'g')                        //Is the button a graphical one?
+    {                                           //Yes, let's select the image to show based on the state
         if(state == 'h')
-            image = btn->hoverImage;
+            image = btn->hoverImage;            //Hover state
         else if(state == 'a')
-            image = btn->activeImage;
+            image = btn->activeImage;           //Active state
         else
-            image = btn->idleImage;
+            image = btn->idleImage;             //Idle state
         
-        MLV_draw_image(image, btn->x, btn->y);
+        MLV_draw_image(image, btn->x, btn->y);  //print the button
     }
-    else
+    else                                        //Is the button a plain color one?
     {
-        if(state == 'h')                            //Set hover state properties
+        if(state == 'h')                        //Set hover state properties
         {        
             backColor = btn->hoverBackColor;
             textColor = btn->hoverTextColor;
         }
-        else if(state == 'a')                       //Set active state properties
+        else if(state == 'a')                   //Set active state properties
         {   
             backColor = btn->activeBackColor;
             textColor = btn->activeTextColor;
         }
-        else                                        //Set idle state properties
+        else                                    //Set idle state properties
         {
             backColor = btn->idleBackColor;
             textColor = btn->idleTextColor;
         }
         
-        MLV_draw_text_box(                      	//print button
+        MLV_draw_text_box(                      //print button
             btn->x, btn->y, 
             btn->width, btn->height, 
             btn->text, 
@@ -94,4 +97,10 @@ void printBtn(struct Button * btn, char state)  //Print a given button at the cu
             MLV_TEXT_CENTER,
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     }
+}
+
+
+void printPicture(struct Picture * pict)
+{
+    MLV_draw_image(pict->image, pict->x, pict->y);
 }
