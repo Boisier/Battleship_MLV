@@ -8,9 +8,21 @@ GameObj * initGame();                      // Init the game and return the gameO
 
 void mainMenu();            // Display Main menu
 
+
+
+
+
+/********************************************************************************/
+/***** Core functions definitions ***********************************************/
+/********************************************************************************/
+
 void waitForAction(); 		//Keep application idle until a button callBack is fired. It handle mouse hovering 
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
+
+
+
+
 
 /********************************************************************************/
 /***** Game functions definitions ***********************************************/
@@ -61,7 +73,8 @@ MLV_Color rgba(int r, int g, int b, int a);
 int percent(float percent, char direction);//return a percentage based on the window size
 int percentOffset(float percent, char direction, int offset); //return a percentage based on the window size and add the offset value to the result
 
-
+//Print a msg in the console. Used as a callBack tester
+void clicked();
 
 
 
@@ -72,7 +85,7 @@ int percentOffset(float percent, char direction, int offset); //return a percent
 
 Button * createBtn(int x, int y, int width, int height, char type); //Create a Btn and assign specified values
 
-Image * createImage(int x, int y, int width, int height, char fileURL[]);
+Picture * createPicture(int x, int y, int width, int height, char fileURL[]);
 
 
 
@@ -82,8 +95,12 @@ Image * createImage(int x, int y, int width, int height, char fileURL[]);
 /***** Printing functions definitions *******************************************/
 /********************************************************************************/
 
-void printFrame();                                  //print the currentFrame
+void printFrame();                                  	//print the currentFrame
 
 printElement * addToPrint(void * element, char type);	//Add the given element to the list of Elements to print
 
-void printBtn(struct Button * btn, char state);     //print the given btn at the given state
+void cleanToPrint();									//Empty th elist of element to print
+
+void printBtn(struct Button * btn, char state);    		//print the given btn at the given state
+
+void printPicture(struct Picture * picture);			//Print the given picture to it's set position
