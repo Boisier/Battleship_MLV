@@ -8,7 +8,7 @@ GameObj * initGame();                      // Init the game and return the gameO
 
 void mainMenu();            // Display Main menu
 
-
+void waitForAction(); 		//Keep application idle until a button callBack is fired. It handle mouse hovering 
 
 /********************************************************************************/
 /***** Game functions definitions ***********************************************/
@@ -48,7 +48,7 @@ void * reAllocate(void * var, int newSize);
 void criticalIfNull(void * pointer);
 
 //erase everything on the screen but don't refresh the window
-void cleanScreen(struct GameObj * gameObj);
+void cleanScreen();
 
 //MLV_rgba encapsulation for simpler syntax 
 MLV_Color rgba(int r, int g, int b, int a);
