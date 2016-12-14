@@ -54,29 +54,44 @@ void printBtn(struct Button * btn, char state)  //Print a given button at the cu
 {
     MLV_Color backColor;                        //Variables who change depdning of the state of the button
     MLV_Color textColor;
+    MLV_Image * image;
 
-    if(state == 'h')                            //Set hover state properties
+    if(btn->type == 'g')
     {
-        backColor = btn->hoverBackColor;
-        textColor = btn->hoverTextColor;
+        if(state == 'h')
+            image = btn->hoverImage;
+        else if(state == 'a')
+            image = btn->activeImage;
+        else
+            image = btn->idleImage;
+        
+        MLV_draw_image(image, btn->x, btn->y);
     }
-    else if(state == 'a')                       //Set active state properties
+    else
     {
-        backColor = btn->activeBackColor;
-        textColor = btn->activeTextColor;
+        if(state == 'h')                            //Set hover state properties
+        {        
+            backColor = btn->hoverBackColor;
+            textColor = btn->hoverTextColor;
+        }
+        else if(state == 'a')                       //Set active state properties
+        {   
+            backColor = btn->activeBackColor;
+            textColor = btn->activeTextColor;
+        }
+        else                                        //Set idle state properties
+        {
+            backColor = btn->idleBackColor;
+            textColor = btn->idleTextColor;
+        }
+        
+        MLV_draw_text_box(                      	//print button
+            btn->x, btn->y, 
+            btn->width, btn->height, 
+            btn->text, 
+            12, 
+            rgba(0, 0, 0, 0), textColor, backColor,
+            MLV_TEXT_CENTER,
+            MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     }
-    else                                        //Set idle state properties
-    {
-        backColor = btn->idleBackColor;
-        textColor = btn->idleTextColor;
-    }
-
-    MLV_draw_text_box(                      	//print button
-        btn->x, btn->y, 
-        btn->width, btn->height, 
-        btn->text, 
-        12, 
-        rgba(0, 0, 0, 0), textColor, backColor,
-        MLV_TEXT_CENTER,
-        MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 }
