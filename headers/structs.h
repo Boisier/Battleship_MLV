@@ -38,7 +38,7 @@ typedef struct printElement
 {
     void * element;         //A pointer to the element to display
     char type;              //Type of the element. Can be b (Button), and more to come
-    char state;             //If needed, state of the Element;
+    char state;             //If needed relative to the cursor (idle, hover or active)
 } printElement;
 
 typedef struct GameObj      //The gameObj carry all the variables used by the game
