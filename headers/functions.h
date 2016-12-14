@@ -72,6 +72,8 @@ int percentOffset(float percent, char direction, int offset); //return a percent
 
 Button * createBtn(int x, int y, int width, int height, char type); //Create a Btn and assign specified values
 
+Image * createImage(int x, int y, int width, int height, char fileURL[]);
+
 
 
 

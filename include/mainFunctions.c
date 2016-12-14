@@ -130,10 +130,10 @@ void waitForAction() 		//Keep application idle until a button callBack is fired.
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY)                  //check if cursor is on Button. Return true if it is, false otherwise
 {
-    int x = Btn->x;
-    int y = Btn->y;
-    int width = Btn->width;
-    int height = Btn->height;
+    int x = Btn->x;                     //Get X position of the button
+    int y = Btn->y;                     //Get Y position of of the button
+    int width = Btn->width;             //Get width of the button
+    int height = Btn->height;           //Get height of the button
 
     if(mouseX >= x && mouseX <= (x + width) && mouseY >= y && mouseY <= (y + height))
         return true;
@@ -153,36 +153,43 @@ bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY)                  //chec
 /***** Elements creation functions **********************************************/
 /********************************************************************************/
 
-Button * createBtn(int x, int y, int width, int height, char type)
+Button * createBtn(int x, int y, int width, int height, char type)  //Create a Btn and assign specified values
 {
-    Button * btn = allocate(sizeof(Button));
-    btn->x = x;
-    btn->y = y;
-    btn->width = width;
-    btn->height = height;
-    btn->type = type;
-    btn->callback = NULL;
+    Button * btn = allocate(sizeof(Button));    //Create an empty button
+    btn->x = x;                                 //Set X position of the button
+    btn->y = y;                                 //Set Y position of the button
+    btn->width = width;                         //Set width of the button
+    btn->height = height;                       //Set height of the button
+    btn->type = type;                           //Set type of the button
+    btn->callback = NULL;                       //Set callback as NULL 
 
-    if(type == 'g')
+    if(type == 'g')                             //If the button is a graphic one
     {
-        btn->idleBackColor = rgba(0, 0, 0, 0);
-        btn->hoverBackColor = rgba(0, 0, 0, 0);
-        btn->activeBackColor = rgba(0, 0, 0, 0);
+        btn->idleImage = NULL;                  //Set images as default  
+        btn->hoverImage = NULL;
+        btn->activeImage = NULL;
     }
-    else
+    else                                        //Otherwise, treat as a plain color button
     {
-        btn->idleBackColor = MLV_COLOR_BLACK;
+        btn->idleBackColor = MLV_COLOR_BLACK;   //Set default background color
         btn->hoverBackColor = MLV_COLOR_BLACK;
         btn->activeBackColor = MLV_COLOR_BLACK;
+        
+        btn->idleTextColor = MLV_COLOR_WHITE;   //Set default text color
+        btn->hoverTextColor = MLV_COLOR_WHITE;
+        btn->activeTextColor = MLV_COLOR_WHITE;
     }
 
-    btn->idleTextColor = MLV_COLOR_WHITE;
-    btn->hoverTextColor = MLV_COLOR_WHITE;
-    btn->activeTextColor = MLV_COLOR_WHITE;
-
-    btn->idleImage = NULL;
-    btn->hoverImage = NULL;
-    btn->activeImage = NULL;
-
     return btn;
+}
+
+Image * createImage(int x, int y, int width, int height, char fileURL[])    //Create an Image element and return it
+{
+    Image * img = allocate(sizeof(Image));                      //create the element
+    img->x = x;                                                 //Set X position
+    img->y = y;                                                 //Set Y position
+    img->image = MLV_load_image(fileURL);                       //Load image
+    MLV_get_image_size(img->image, &img->width, &img->height);  //Get image height and width;
+
+    return img;                                                 //Return the newly created element
 }

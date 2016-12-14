@@ -83,3 +83,13 @@ typedef struct Button
 
     //var needed for graphical btn to be defined...
 } Button;
+
+typedef struct Image
+{
+    int x;
+    int y;
+    int width;
+    int height;
+
+    MLV_Image * image;
+} Image;
