@@ -10,6 +10,8 @@ void mainMenu();            // Display Main menu
 
 void waitForAction(); 		//Keep application idle until a button callBack is fired. It handle mouse hovering 
 
+bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
+
 /********************************************************************************/
 /***** Game functions definitions ***********************************************/
 /********************************************************************************/

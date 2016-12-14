@@ -54,9 +54,6 @@ void mainMenu()              //display the main menu and wait for actions from t
 
     printFrame();
     waitForAction(); 		//Keep application idle until a button callBack is fired. It handle mouse hovering 
-
-
-    MLV_actualise_window();
 }
 
 
@@ -66,61 +63,61 @@ void mainMenu()              //display the main menu and wait for actions from t
 void waitForAction() 		//Keep application idle until a button callBack is fired. It handle mouse hovering 
 {
     //bool btnPressed = false;
-    int mouseX, mouseY, i, x, y, width, height;
+    int mouseX, mouseY, i;
     MLV_Event event;
-    void * el;
-    do                      //Loop until user press a btn
+    void (*callbackFunction)() = NULL;
+
+    do                                                          //Loop until the user press a btn
     {
         event = MLV_get_event(NULL, NULL, NULL, NULL, NULL, &mouseX, &mouseY, NULL, NULL);    //Get last event
-        if( event == MLV_MOUSE_MOTION )     //Is this a movement of the mouse?
-        {
-            for(i = 0; i < gameObj->nbrToPrint; i++)
-            {
-                if(gameObj->toPrint[i].type == 'b')
-                {
-                    el = gameObj->toPrint[i].element;
-                    
-                    x = ((Button *)el)->x;
-                    y = ((Button *)el)->y;
-                    width = ((Button *)el)->width;
-                    height = ((Button *)el)->height;
 
-                    if(mouseX >= x && mouseX <= (x + width) && mouseY >= y && mouseY <= (y + height))
-                    {
-                        gameObj->toPrint[i].state = 'h';
-                    }
+        if( event == MLV_MOUSE_MOTION )                         //Is this a movement of the mouse?
+        {
+            for(i = 0; i < gameObj->nbrToPrint; i++)            //iterate through all the element to print
+            {
+                if(gameObj->toPrint[i].type == 'b')             //is this a button ?
+                {
+                    if(isCursorOnBtn(((Button *)gameObj->toPrint[i].element), mouseX, mouseY))  //Is the cursoron this button?
+                        gameObj->toPrint[i].state = 'h';        //yes, set state as hover
                     else
-                    {
-                        gameObj->toPrint[i].state = 'i';
-                    }
+                        gameObj->toPrint[i].state = 'i';        //no, make sure state is idle
                 }
             }
         }
-        else if(event == MLV_MOUSE_BUTTON)
+        else if(event == MLV_MOUSE_BUTTON)                      //Is this a click of the mouse ?
         {
-            for(i = 0; i < gameObj->nbrToPrint; i++)
+            for(i = 0; i < gameObj->nbrToPrint; i++)            //iterate through all the element to print
             {
-                if(gameObj->toPrint[i].type == 'b')
+                if(gameObj->toPrint[i].type == 'b')             //Is this a button ?
                 {
-                    el = gameObj->toPrint[i].element;
-
-                    x = ((Button *)el)->x;
-                    y = ((Button *)el)->y;
-                    width = ((Button *)el)->width;
-                    height = ((Button *)el)->height;
-
-                    if(mouseX >= x && mouseX <= (x + width) && mouseY >= y && mouseY <= (y + height))
-                    {
-                        ((Button *)el)->callback();
-                    }
+                    if(isCursorOnBtn(((Button *)gameObj->toPrint[i].element), mouseX, mouseY)) //is the cursor on the Btn?
+                        if(((Button *)gameObj->toPrint[i].element)->callback != NULL)   //Is the callback function defined ?
+                        {
+                            callbackFunction = ((Button *)gameObj->toPrint[i].element)->callback;    //Yes, set the callback and stop the loop
+                        }
                 }
             }
         }
 
-        printFrame();
+        printFrame();                                           //Update window
 
-    } while( event != 550);
-};
+    } while(callbackFunction == NULL);
+
+    callbackFunction();
+}
+
+bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY)                  //check if cursor is on Button. Return true if it is, false otherwise
+{
+    int x = Btn->x;
+    int y = Btn->y;
+    int width = Btn->width;
+    int height = Btn->height;
+
+    if(mouseX >= x && mouseX <= (x + width) && mouseY >= y && mouseY <= (y + height))
+        return true;
+    else
+        return false;
+}
 
 
 
@@ -142,6 +139,7 @@ Button * createBtn(int x, int y, int width, int height, char type)
     btn->width = width;
     btn->height = height;
     btn->type = type;
+    btn->callback = NULL;
 
     return btn;
 }
