@@ -10,13 +10,17 @@ void printFrame()                               //Iterate through the gameObj an
     int i;
     printElement el;
 
-    for(i = 0; i < nbrToPrint; i++)
-    {
-        el = gameObj->toPrint[i];
+    void cleanScreen();                          //First we clean the screen
 
+    for(i = 0; i < nbrToPrint; i++)             //We iterate over all the element to print
+    {
+        el = gameObj->toPrint[i];               //get the element
+                                                //Then print it with the apropriate function
         if(el.type)
             printBtn(el.element, el.state);
-    }  
+    }
+
+    MLV_actualise_window();                     //finaly we actualise the window();
 }
 
 printElement * addToPrint(void * element, char type)
