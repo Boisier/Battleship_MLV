@@ -35,9 +35,10 @@ void criticalIfNull(void * pointer)         //Throw a critical error and stop th
         throwCriticalError();               //Yes, then stop all
 }
 
-void cleanScreen(struct GameObj * gameObj)  //Roll back the screen to it's default state
+void cleanScreen()  //Roll back the screen to it's default state
 {
      MLV_draw_filled_rectangle(0, 0, gameObj->wWidth, gameObj->wHeight, MLV_COLOR_BLACK);   //Replace the entire image with a black rectangle
+     MLV_actualise_window();
 }
 
 MLV_Color rgba(int r, int g, int b, int a)  //Encapsulate MLV_rgba into rgba in order to simplify the command
