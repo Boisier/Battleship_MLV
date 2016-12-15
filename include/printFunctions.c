@@ -44,6 +44,8 @@ printElement * addToPrint(void * element, char type)
     gameObj->toPrint[gameObj->nbrToPrint] = *newEl;                 /*Insert newly created printElement in the array toPrint*/
     gameObj->nbrToPrint++;                                          /*Increment the nbr of element*/
 
+    free(newEl);
+
     return &gameObj->toPrint[gameObj->nbrToPrint-1];                /*And return the newly created element so it can be edited*/
 }
 
