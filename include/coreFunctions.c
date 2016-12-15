@@ -11,13 +11,16 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
     MLV_Event event;
     MLV_Button_state cursorState;
     void (*callbackFunction)() = NULL;
+    char * inputText;
+    MLV_Input_box * inputBox;
 
     do                                                          /*Loop until the user press a btn*/
     {
-        event = MLV_get_event(NULL, NULL, NULL, NULL, NULL, &mouseX, &mouseY, NULL, &cursorState);    /*Get last event*/
+        event = MLV_get_event(NULL, NULL, NULL, &inputText, &inputBox, &mouseX, &mouseY, NULL, &cursorState);    /*Get last event*/
         MLV_flush_event_queue();
         
-        if(event == MLV_MOUSE_MOTION || event == MLV_MOUSE_BUTTON)  /*Is this a movement of the mouse?*/
+        printf("%d\n", event);
+        if(event == MLV_MOUSE_MOTION || event == MLV_MOUSE_BUTTON || event == MLV_INPUT_BOX)  /*Is this a movement of the mouse?*/
         {
             for(i = 0; i < gameObj->nbrToPrint; i++)            /*iterate through all the element to print*/
             {
@@ -25,10 +28,11 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
                 {
                     if(isCursorOnBtn(((Button *)gameObj->toPrint[i].element), mouseX, mouseY))  /*Is the cursoron this button?*/
                     {
-                        if(event == MLV_MOUSE_BUTTON && cursorState == MLV_RELEASED)/*We do this if the action was a click released*/
+                        if(event == MLV_MOUSE_BUTTON)/*We do this if the action was a click released*/
                         {
                             gameObj->toPrint[i].state = 'a';
-                            callbackFunction = ((Button *)gameObj->toPrint[i].element)->callback;
+                            if(cursorState == MLV_RELEASED)
+                                callbackFunction = ((Button *)gameObj->toPrint[i].element)->callback;
                         }
                         else if(event == MLV_MOUSE_MOTION)      /*We do this if the action is just a hover*/
                         {
@@ -40,6 +44,15 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
                     else
                     {
                         gameObj->toPrint[i].state = 'i';        /*no, make sure state is idle*/
+                    }
+                }
+                else if(gameObj->toPrint[i].type == 'i' && event == MLV_INPUT_BOX)  /*The event is an input box one*/
+                {
+                    if(((TextBox *)gameObj->toPrint[i].element)->inputElement == inputBox)  /*Is this the input box that was just modified?*/
+                    {
+                        printf("%s\n", inputText);
+                        strcpy(((TextBox *)gameObj->toPrint[i].element)->content, inputText);
+                        free(inputText);                        /*Don't forget to free the returned text*/
                     }
                 }
             }
@@ -118,15 +131,15 @@ Picture * createPicture(int x, int y, char * fileURL)    /*Create an Image eleme
     return img;                                                 /*Return the newly created element*/
 }
 
-TextBox * createTextBox(int x, int y, int width, int height, char type)
+TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100])
 {
     TextBox * tB = allocate(sizeof(TextBox));
-  
     tB->x = x;
     tB->y = y;
     tB->width = width;
     tB->height = height;
     tB->type = type;
+    strcpy(tB->placeHolder, placeHolder);
 
     tB->textColor = MLV_COLOR_WHITE;
 
@@ -139,5 +152,11 @@ TextBox * createTextBox(int x, int y, int width, int height, char type)
     tB->imgOffsetX = 0;
     tB->imgOffsetY = 0;
 
+    /*Now that everyhting is set, we create the input Box*/
+    /*if(gameObj->inputFont == NULL)*/
+        tB->inputElement = MLV_create_input_box(tB->x, tB->y, tB->width, tB->height, MLV_ALPHA_TRANSPARENT, tB->textColor, MLV_ALPHA_TRANSPARENT, tB->placeHolder);
+    /*else
+        tB->inputElement = MLV_create_input_box(tB->x, tB->y, tB->width, tB->height, MLV_ALPHA_TRANSPARENT, tB->textColor, MLV_ALPHA_TRANSPARENT, tB->placeHolder, tB->font);
+*/
     return tB;
 }

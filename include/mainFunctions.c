@@ -14,6 +14,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->wHeight = 800;         /*Set window width*/
 
     gameObj->nbrToPrint = 0;        /*Set number of element to print as 0;*/
+    gameObj->inputFont = NULL;      /*Set inputFont as null*/
 
     MLV_create_window("Battleship", "Battleship", gameObj->wWidth, gameObj->wHeight);   /*Create the game window*/
 
@@ -24,7 +25,7 @@ void mainMenu()                     /*display the main menu and wait for actions
 {
     Button * playBtn, * rulesBtn;
     Picture * mainTitlePicture;
-    printElement * playBtnElement, * rulesBtnElement;
+    PrintElement * playBtnElement, * rulesBtnElement;
 
     cleanToPrint();                 /*Empty the list of element to print before doing anything*/
 
@@ -67,7 +68,7 @@ void mainMenu()                     /*display the main menu and wait for actions
 void choicePlayers()                /*Display the number of player screen and wait for user to select a gameMode*/
 {
     Button * onePlayerBtn, * twoPlayersBtn;
-    printElement * onePlayerBtnElement, * twoPlayersBtnElement;
+    PrintElement * onePlayerBtnElement, * twoPlayersBtnElement;
 
     cleanToPrint();                 /*empty current list of elements to print*/
 
@@ -107,12 +108,12 @@ void onePlayerInit()
 
     cleanToPrint();
 
-    userName = createTextBox(percentOffset(50, 'w', -195), percent(60, 'h'), 180, 40, 'c');
-    userName->textColor = MLV_COLOR_RED;
-    strcpy(userName->placeHolder, "Pseudo...");
+    userName = createTextBox(percentOffset(50, 'w', -195), percent(60, 'h'), 180, 40, 'g', "Pseudo...");
+    userName->backImage = MLV_load_image("images/textField.png");
+    userName->imgOffsetX = -10;
 
     userNameElement = addToPrint(userName, 'i');
-
+    userNameElement->state = 'i';
     waitForAction();
 }
 

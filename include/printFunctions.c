@@ -8,7 +8,7 @@ void printFrame()                               /*Iterate through the gameObj an
 {
     int nbrToPrint = gameObj->nbrToPrint;
     int i;
-    printElement el;
+    PrintElement el;
 
     cleanScreen();                              /*First we clean the screen*/
 
@@ -21,23 +21,25 @@ void printFrame()                               /*Iterate through the gameObj an
             printBtn(el.element, el.state);
         else if(el.type == 'p')
             printPicture(el.element);
+        else if(el.type == 'i')
+            printTextBox(el.element);
     }
 
     MLV_actualise_window();                     /*finaly we actualise the window();*/
     /*MLV_wait_milliseconds(15);*/
 }
 
-printElement * addToPrint(void * element, char type)
+PrintElement * addToPrint(void * element, char type)
 {
     int newSize;
-    printElement * newEl;
+    PrintElement * newEl;
 
     criticalIfNull(element);                    /*We make sure no NULL pointer get's in the loop*/
 
-    newSize = (gameObj->nbrToPrint + 1) * sizeof(printElement); /*New size of the toPrint array*/
+    newSize = (gameObj->nbrToPrint + 1) * sizeof(PrintElement); /*New size of the toPrint array*/
     gameObj->toPrint = reAllocate(gameObj->toPrint, newSize);       /*increase size of the toPrint array*/
 
-    newEl = allocate(sizeof(printElement));          /*new printElement to add*/
+    newEl = allocate(sizeof(PrintElement));          /*new printElement to add*/
     newEl->element = element;                                       /*assign given element*/
     newEl->type = type;                                             /*assign given element type*/
 
@@ -110,4 +112,16 @@ void printBtn(struct Button * btn, char state)  /*Print a given button at the cu
 void printPicture(struct Picture * pict)        /*Print a given picture element on the screen */
 {
     MLV_draw_image(pict->image, pict->x, pict->y);
+}
+
+void printTextBox(struct TextBox * tB)          /*Print given textBox on the screen*/
+{
+    if(tB->type == 'g')                        /*It's a graphic text box*/
+        MLV_draw_image(tB->backImage, tB->x+tB->imgOffsetX, tB->y+tB->imgOffsetY);
+    else                                        /*It's a plain color text box*/
+        MLV_draw_filled_rectangle(tB->x, tB->y, tB->width, tB->height, tB->backColor);
+    
+    MLV_draw_input_box(tB->inputElement);
+    
+    MLV_draw_text(tB->x, tB->y, tB->content, tB->textColor); /*Finaly, let's write the content*/
 }
