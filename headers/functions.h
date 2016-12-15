@@ -88,9 +88,9 @@ void clicked();
 
 Button * createBtn(int x, int y, int width, int height, char type); /*Create a Btn and assign specified values*/
 
-Picture * createPicture(int x, int y, char fileURL[]);
+Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
 
-
+TextBox * createTextBox(int x, int y, int width, int height, char type);	/*Creat a text box and assign specified elements*/
 
 
 
