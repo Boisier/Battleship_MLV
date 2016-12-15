@@ -80,6 +80,7 @@ typedef struct Button
     MLV_Image * activeImage;    /*Image used at hover state for graphic button */
 
     void (*callback)();         /*function to be called when the button is pressed*/
+    void (*hoverCallback)();    /*function called when the button is hovered;*/
 
 } Button;
 
@@ -92,3 +93,21 @@ typedef struct Picture
 
     MLV_Image * image;          /*The picture by itself    */
 } Picture;
+
+typedef struct TextBox
+{
+    int x;                      /*X Position of the text box*/
+    int y;                      /*Y position of the text box*/
+    int width;                  /*Width of the text box*/
+    int height;                 /*Height pg the text box*/
+    char type;                   /*Type of the text box. Can be either c (Plain colors) or g (graphic);*/
+
+    char placeHolder[100];         /*Placeholder to be printed on the text box*/
+
+    MLV_Color backColor;        /*Background color, used if type equalc c*/
+    MLV_Color textColor;        /*Color of the text*/
+
+    MLV_Image * backImage;      /*Image to be displayed behind the textBox. Used if type equals g*/
+    int imgOffsetX;             /*Image offset on the X axis*/
+    int imgOffsetY;             /*Image offset on the Y axis*/
+} TextBox;
