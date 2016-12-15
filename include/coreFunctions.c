@@ -71,3 +71,9 @@ bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY)	/*check if cursor is on
     else
         return false;
 }
+
+void quitGame()                         /*This function properly end the game*/
+{
+    MLV_free_window();                  /*Close the window*/
+    MLV_free_all();
+}
