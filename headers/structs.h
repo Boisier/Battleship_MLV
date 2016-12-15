@@ -34,12 +34,12 @@ typedef struct Player
     Grid *grid;             /*If multiple game are fdone, keep track of scores.*/
 } Player;
 
-typedef struct printElement
+typedef struct PrintElement
 {
     void * element;         /*A pointer to the element to display*/
     char type;              /*Type of the element. Can be b (Button), and more to come*/
     char state;             /*If needed relative to the cursor (idle, hover or active)*/
-} printElement;
+} PrintElement;
 
 typedef struct GameObj      /*The gameObj carry all the variables used by the game*/
 {
@@ -50,8 +50,11 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     int wWidth;             /*Width of the window*/
     int wHeight;            /*Height of the window*/
 
-    printElement * toPrint; /*Elements to print on the next frame;*/
+    PrintElement * toPrint; /*Elements to print on the next frame;*/
     int nbrToPrint;         /*Number of elements to print*/
+
+    MLV_Font * inputFont;   /*Font used to render input box*/
+
 } GameObj;
 
 GameObj * gameObj;          /*Define the gameObj accessible from anywhere in the application*/
@@ -100,9 +103,12 @@ typedef struct TextBox
     int y;                      /*Y position of the text box*/
     int width;                  /*Width of the text box*/
     int height;                 /*Height pg the text box*/
-    char type;                   /*Type of the text box. Can be either c (Plain colors) or g (graphic);*/
+    char type;                  /*Type of the text box. Can be either c (Plain colors) or g (graphic);*/
 
-    char placeHolder[100];         /*Placeholder to be printed on the text box*/
+    char placeHolder[100];      /*Placeholder to be printed on the text box*/
+    char content[100];          /*Actuel content of the text box*/
+
+    MLV_Font * font;
 
     MLV_Color backColor;        /*Background color, used if type equalc c*/
     MLV_Color textColor;        /*Color of the text*/
@@ -110,4 +116,6 @@ typedef struct TextBox
     MLV_Image * backImage;      /*Image to be displayed behind the textBox. Used if type equals g*/
     int imgOffsetX;             /*Image offset on the X axis*/
     int imgOffsetY;             /*Image offset on the Y axis*/
+
+    MLV_Input_box * inputElement;/*MLV element */
 } TextBox;
