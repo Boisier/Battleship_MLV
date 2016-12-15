@@ -29,14 +29,17 @@ void mainMenu()                     /*display the main menu and wait for actions
     cleanToPrint();                 /*Empty the list of element to print before doing anything*/
 
     /*Let's create the elements to be displayed*/
+    /*Main Title*/
     mainTitlePicture = createPicture(percentOffset(50, 'w', -353), 70, "images/mainTitle.png");
 
+    /*Play Button*/
     playBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 40, 'g');
     playBtn->idleImage = MLV_load_image("images/playBtn_idle.png");
     playBtn->hoverImage = MLV_load_image("images/playBtn_hover.png");
     playBtn->activeImage = MLV_load_image("images/playBtn_active.png");
     playBtn->callback = &choicePlayers;
 
+    /*Rules Button*/
     rulesBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 40, 'g');
     rulesBtn->idleImage = MLV_load_image("images/rulesBtn_idle.png");
     rulesBtn->hoverImage = MLV_load_image("images/rulesBtn_hover.png");
@@ -52,10 +55,10 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtnElement = addToPrint(rulesBtn, 'b');
     rulesBtnElement->state = 'i';
 
-    
     printFrame();                   /*And now we print the frame*/
-    waitForAction(); 		        /*Keep application idle until a button callBack is fired. It handle mouse hovering */
+    waitForAction(); 		        /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
+    /*Free created elements*/
     free(playBtn);
     free(rulesBtn);
     free(mainTitlePicture);
@@ -66,16 +69,15 @@ void choicePlayers()                /*Display the number of player screen and wa
     Button * onePlayerBtn, * twoPlayersBtn;
     printElement * onePlayerBtnElement, * twoPlayersBtnElement;
 
-    cleanToPrint();             /*empty current list of elements to print*/
+    cleanToPrint();                 /*empty current list of elements to print*/
+
+    /*Let's create the elements to be displayed*/
     /*One player Btn*/
     onePlayerBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 40, 'g');
     onePlayerBtn->idleImage = MLV_load_image("images/onePlayerBtn_idle.png");
     onePlayerBtn->hoverImage = MLV_load_image("images/onePlayerBtn_hover.png");
     onePlayerBtn->activeImage = MLV_load_image("images/onePlayerBtn_active.png");
     onePlayerBtn->callback = &onePlayerInit;
-
-    onePlayerBtnElement = addToPrint(onePlayerBtn, 'b');
-    onePlayerBtnElement->state = 'i';
 
     /*Two player Btn*/
     twoPlayersBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 40, 'g');
@@ -84,12 +86,17 @@ void choicePlayers()                /*Display the number of player screen and wa
     twoPlayersBtn->activeImage = MLV_load_image("images/twoPlayersBtn_active.png");
     twoPlayersBtn->callback = &twoPlayerInit;
 
+    /*Now we add them to the toPrint list*/
+    onePlayerBtnElement = addToPrint(onePlayerBtn, 'b');
+    onePlayerBtnElement->state = 'i';
+
     twoPlayersBtnElement = addToPrint(twoPlayersBtn, 'b');
     twoPlayersBtnElement->state = 'i';
 
-    printFrame();           /*Display frame*/
-    waitForAction();        /*Wait for user to do something*/
+    printFrame();                   /*Display frame*/
+    waitForAction();                /*Wait for user to do something*/
 
+    /*Free created elements*/
     free(onePlayerBtn);
     free(twoPlayersBtn);
 }
