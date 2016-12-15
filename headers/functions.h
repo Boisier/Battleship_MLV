@@ -90,8 +90,7 @@ Button * createBtn(int x, int y, int width, int height, char type); /*Create a B
 
 Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
 
-TextBox * createTextBox(int x, int y, int width, int height, char type);	/*Creat a text box and assign specified elements*/
-
+TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100]);
 
 
 /********************************************************************************/
@@ -100,10 +99,12 @@ TextBox * createTextBox(int x, int y, int width, int height, char type);	/*Creat
 
 void printFrame();                                  	/*print the currentFrame*/
 
-printElement * addToPrint(void * element, char type);	/*Add the given element to the list of Elements to print*/
+PrintElement * addToPrint(void * element, char type);	/*Add the given element to the list of Elements to print*/
 
 void cleanToPrint();									/*Empty th elist of element to print*/
 
 void printBtn(struct Button * btn, char state);    		/*print the given btn at the given state*/
 
 void printPicture(struct Picture * picture);			/*Print the given picture to it's set position*/
+
+void printTextBox(struct TextBox * tB);					/*Print given textBox on the screen*/
