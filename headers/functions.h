@@ -24,6 +24,8 @@ void waitForAction(); 		/*Keep application idle until a button callBack is fired
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
 
+void quitGame();
+
 
 
 
