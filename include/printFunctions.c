@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>  
+#include <time.h> 
 #include <MLV/MLV_all.h>
 #include "../headers/structs.h"
 #include "../headers/functions.h"
@@ -22,7 +23,7 @@ void printFrame()                               /*Iterate through the gameObj an
         else if(el.type == 'p')
             printPicture(el.element);
         else if(el.type == 'i')
-            printTextBox(el.element);
+            printTextBox(el.element, el.state);
     }
 
     MLV_actualise_window();                     /*finaly we actualise the window();*/
@@ -97,10 +98,11 @@ void printBtn(struct Button * btn, char state)  /*Print a given button at the cu
             textColor = btn->idleTextColor;
         }
         
-        MLV_draw_text_box(                      /*print button*/
+        MLV_draw_text_box_with_font(                      /*print button*/
             btn->x, btn->y, 
             btn->width, btn->height, 
             btn->text, 
+            gameObj->inputFont,
             12, 
             rgba(0, 0, 0, 0), textColor, backColor,
             MLV_TEXT_CENTER,
@@ -114,14 +116,39 @@ void printPicture(struct Picture * pict)        /*Print a given picture element 
     MLV_draw_image(pict->image, pict->x, pict->y);
 }
 
-void printTextBox(struct TextBox * tB)          /*Print given textBox on the screen*/
+void printTextBox(struct TextBox * tB, char state)          /*Print given textBox on the screen*/
 {
+    char textToPrint[101];
+    MLV_Color textColor;
+
     if(tB->type == 'g')                        /*It's a graphic text box*/
         MLV_draw_image(tB->backImage, tB->x+tB->imgOffsetX, tB->y+tB->imgOffsetY);
     else                                        /*It's a plain color text box*/
         MLV_draw_filled_rectangle(tB->x, tB->y, tB->width, tB->height, tB->backColor);
-    
-    MLV_draw_input_box(tB->inputElement);
-    
-    MLV_draw_text(tB->x, tB->y, tB->content, tB->textColor); /*Finaly, let's write the content*/
+    if(strlen(tB->content) == 0)
+    {
+        textColor = gameObj->placeHolderColor;  /*Set placeholder color as text color*/
+        strcpy(textToPrint, tB->placeHolder);   /*set place holder as text to show*/
+    }
+    else
+    {
+        textColor = gameObj->inputColor;        /*Set standard color as text color*/
+        strcpy(textToPrint, tB->content);       /*Set text box content as text to show*/
+    }
+
+    if(clock() - tB->lastCursorSwitch > 500000) /*How long since last cursor tick?*/
+    {
+        tB->lastCursorSwitch = clock();         /*long enough*/
+
+        if(tB->cursorShown)
+            tB->cursorShown = false;            /*Hide the cursor*/
+        else
+            tB->cursorShown = true;             /*show the cursor*/
+    }
+
+    if(state == 'f' && tB->cursorShown)         /*Shall we display the cursor?*/
+        strcat(textToPrint, "|");               /*Let's display the cursor*/
+
+    /*Finaly, draw the input box text*/
+    MLV_draw_text_box_with_font(tB->x, tB->y, tB->width, tB->height, textToPrint, gameObj->inputFont, 9, rgba(0, 0, 0, 0), textColor, rgba(0, 0, 0, 0), MLV_TEXT_LEFT, MLV_HORIZONTAL_LEFT, MLV_VERTICAL_CENTER); /*Finaly, let's write the content*/
 }

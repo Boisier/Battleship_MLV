@@ -7,20 +7,21 @@
 
 void waitForAction() 		/*Keep application idle until a button callBack is fired. It handle mouse hovering */
 {
-    int mouseX, mouseY, i;
+    int mouseX, mouseY, i, unicode;
     MLV_Event event;
-    MLV_Button_state cursorState;
+    MLV_Button_state state;
+    MLV_Keyboard_button keyPressed;
     void (*callbackFunction)() = NULL;
-    char * inputText;
-    MLV_Input_box * inputBox;
-
+    
     do                                                          /*Loop until the user press a btn*/
     {
-        event = MLV_get_event(NULL, NULL, NULL, &inputText, &inputBox, &mouseX, &mouseY, NULL, &cursorState);    /*Get last event*/
+        if(gameObj->printLogs)
+            printConsumption();
+
+        event = MLV_get_event(&keyPressed, NULL, &unicode, NULL, NULL, &mouseX, &mouseY, NULL, &state);    /*Get last event*/
         MLV_flush_event_queue();
-        
-        printf("%d\n", event);
-        if(event == MLV_MOUSE_MOTION || event == MLV_MOUSE_BUTTON || event == MLV_INPUT_BOX)  /*Is this a movement of the mouse?*/
+
+        if(event == MLV_MOUSE_MOTION || event == MLV_MOUSE_BUTTON || event == MLV_KEY)  /*Is this a movement of the mouse?*/
         {
             for(i = 0; i < gameObj->nbrToPrint; i++)            /*iterate through all the element to print*/
             {
@@ -31,7 +32,7 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
                         if(event == MLV_MOUSE_BUTTON)/*We do this if the action was a click released*/
                         {
                             gameObj->toPrint[i].state = 'a';
-                            if(cursorState == MLV_RELEASED)
+                            if(state == MLV_RELEASED)
                                 callbackFunction = ((Button *)gameObj->toPrint[i].element)->callback;
                         }
                         else if(event == MLV_MOUSE_MOTION)      /*We do this if the action is just a hover*/
@@ -46,13 +47,22 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
                         gameObj->toPrint[i].state = 'i';        /*no, make sure state is idle*/
                     }
                 }
-                else if(gameObj->toPrint[i].type == 'i' && event == MLV_INPUT_BOX)  /*The event is an input box one*/
+                else if(gameObj->toPrint[i].type == 'i')  /*The event is an input box one*/
                 {
-                    if(((TextBox *)gameObj->toPrint[i].element)->inputElement == inputBox)  /*Is this the input box that was just modified?*/
+                    if(event == MLV_MOUSE_BUTTON && state == MLV_RELEASED)
                     {
-                        printf("%s\n", inputText);
-                        strcpy(((TextBox *)gameObj->toPrint[i].element)->content, inputText);
-                        free(inputText);                        /*Don't forget to free the returned text*/
+                        if(isCursorOnInput(((TextBox *)gameObj->toPrint[i].element), mouseX, mouseY))
+                        {
+                            gameObj->toPrint[i].state = 'f';  /*The user clicked on this inputBox, we give it the focus*/
+                        }
+                        else
+                        {
+                            gameObj->toPrint[i].state = 'b';  /*The user didn't clicked on this input box, we make sure it is blured*/
+                        }
+                    }
+                    else if(gameObj->toPrint[i].state == 'f' && event == MLV_KEY && state == MLV_PRESSED)
+                    {
+                        updateTextBox(i, keyPressed, unicode);  /*The user typed something in the text box, we update it*/
                     }
                 }
             }
@@ -76,6 +86,36 @@ bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY)	/*check if cursor is on
         return true;
     else
         return false;
+}
+
+bool isCursorOnInput(TextBox * input, int mouseX, int mouseY)	/*check if cursor is on textBox. Return true if it is, false otherwise*/
+{
+    int x = input->x + input->imgOffsetX;               /*Get X position of the text box detection area*/
+    int y = input->y + input->imgOffsetY;               /*Get Y position of of the text box detection area*/
+    int width = input->width - input->imgOffsetX;       /*Get width of the text box detection area*/
+    int height = input->height - input->imgOffsetX;     /*Get height of the text box detection area*/
+
+    if(mouseX >= x && mouseX <= (x + width) && mouseY >= y && mouseY <= (y + height))
+        return true;
+    else
+        return false;
+}
+
+void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode)
+{
+    int contentLength;
+    contentLength = strlen(((TextBox *)gameObj->toPrint[inputPos].element)->content);
+    
+    if(unicode == MLV_KEYBOARD_BACKSPACE)
+    {
+        if(contentLength > 0)
+            ((TextBox *)gameObj->toPrint[inputPos].element)->content[contentLength-1] = '\0';
+    }
+    else
+    {
+        if(contentLength < 100)
+           strcat(((TextBox *)gameObj->toPrint[inputPos].element)->content, MLV_convert_unicode_to_string(unicode));
+    }
 }
 
 void quitGame()                         /*This function properly end the game*/
@@ -140,8 +180,12 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
     tB->height = height;
     tB->type = type;
     strcpy(tB->placeHolder, placeHolder);
+    tB->content[0] = '\0';
 
-    tB->textColor = MLV_COLOR_WHITE;
+    tB->cursorShown = false;
+    tB->lastCursorSwitch = 0;
+
+    tB->textColor = MLV_COLOR_BLACK;
 
     if(type == 'g')
         tB->backColor = MLV_ALPHA_TRANSPARENT;
@@ -152,11 +196,5 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
     tB->imgOffsetX = 0;
     tB->imgOffsetY = 0;
 
-    /*Now that everyhting is set, we create the input Box*/
-    /*if(gameObj->inputFont == NULL)*/
-        tB->inputElement = MLV_create_input_box(tB->x, tB->y, tB->width, tB->height, MLV_ALPHA_TRANSPARENT, tB->textColor, MLV_ALPHA_TRANSPARENT, tB->placeHolder);
-    /*else
-        tB->inputElement = MLV_create_input_box(tB->x, tB->y, tB->width, tB->height, MLV_ALPHA_TRANSPARENT, tB->textColor, MLV_ALPHA_TRANSPARENT, tB->placeHolder, tB->font);
-*/
     return tB;
 }

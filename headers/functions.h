@@ -24,6 +24,10 @@ void waitForAction(); 		/*Keep application idle until a button callBack is fired
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
 
+bool isCursorOnInput(TextBox * input, int mouseX, int mouseY);	/*check if cursor is on textBox. Return true if it is, false otherwise*/
+
+void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode);
+
 void quitGame();
 
 
@@ -79,6 +83,7 @@ int percentOffset(float percent, char direction, int offset); /*return a percent
 /*Print a msg in the console. Used as a callBack tester*/
 void clicked();
 
+void printConsumption();	/*This function print the current consumption of RAM and CPU of the application*/
 
 
 
@@ -107,4 +112,4 @@ void printBtn(struct Button * btn, char state);    		/*print the given btn at th
 
 void printPicture(struct Picture * picture);			/*Print the given picture to it's set position*/
 
-void printTextBox(struct TextBox * tB);					/*Print given textBox on the screen*/
+void printTextBox(struct TextBox * tB, char state);					/*Print given textBox on the screen*/

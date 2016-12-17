@@ -54,6 +54,10 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     int nbrToPrint;         /*Number of elements to print*/
 
     MLV_Font * inputFont;   /*Font used to render input box*/
+    MLV_Color inputColor;
+    MLV_Color placeHolderColor;
+
+    bool printLogs;         /*Shall we print the logs or not ?*/
 
 } GameObj;
 
@@ -105,10 +109,11 @@ typedef struct TextBox
     int height;                 /*Height pg the text box*/
     char type;                  /*Type of the text box. Can be either c (Plain colors) or g (graphic);*/
 
+    bool cursorShown;
+    int lastCursorSwitch;    
+
     char placeHolder[100];      /*Placeholder to be printed on the text box*/
     char content[100];          /*Actuel content of the text box*/
-
-    MLV_Font * font;
 
     MLV_Color backColor;        /*Background color, used if type equalc c*/
     MLV_Color textColor;        /*Color of the text*/
@@ -116,6 +121,4 @@ typedef struct TextBox
     MLV_Image * backImage;      /*Image to be displayed behind the textBox. Used if type equals g*/
     int imgOffsetX;             /*Image offset on the X axis*/
     int imgOffsetY;             /*Image offset on the Y axis*/
-
-    MLV_Input_box * inputElement;/*MLV element */
 } TextBox;
