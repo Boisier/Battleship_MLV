@@ -15,13 +15,18 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
     gameObj->nbrToPrint = 0;        /*Set number of element to print as 0;*/
 
-    MLV_create_window("Battleship", "Battleship", gameObj->wWidth, gameObj->wHeight);   /*Create the game window*/
+    MLV_create_window("Battleship", "Battleship", gameObj->wWidth, gameObj->wHeight);   /*Create the game window*/  
     
-    gameObj->inputFont = MLV_load_font("fonts/HelveticaNeue-Bold.otf", 18);      /*Set inputFont*/
-    gameObj->inputColor = rgba(51, 38, 29, 255);
-    gameObj->placeHolderColor = rgba(51, 44, 40, 255);
+    /*Set inputFont*/
+    gameObj->inputFont = MLV_load_font("fonts/HelveticaNeue-Bold.otf", 18);
+    
+    /*Set default values */
+    gameObj->defaultInputColor = rgba(51, 38, 29, 255);
+    gameObj->defaultPlaceHolderColor = rgba(51, 44, 40, 255);
 
-    gameObj->printLogs = true;
+    gameObj->woodBckg =  MLV_load_image("images/woodenBackground.png"); /*Let's preload the main background for later*/
+
+    gameObj->printLogs = false;     /*Should we display the logs?*/
 
     return gameObj;                 /*Return the gameObj*/
 }
