@@ -21,7 +21,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     
     /*Set default values */
     gameObj->defaultInputColor = rgba(51, 38, 29, 255);
-    gameObj->defaultPlaceHolderColor = rgba(51, 44, 40, 100);
+    gameObj->defaultPlaceHolderColor = rgba(70, 60, 60, 255);
 
     gameObj->woodBckg =  MLV_load_image("images/woodenBackground.png"); /*Let's preload the main background for later*/
 
@@ -33,9 +33,9 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 void mainMenu()                     /*display the main menu and wait for actions from the user*/
 {
     char callback;
-    Button * playBtn, * rulesBtn;
+    Button * playBtn, * rulesBtn, * quitBtn;
     Picture * mainTitlePicture;
-    PrintElement * playBtnElement, * rulesBtnElement;
+    PrintElement * playBtnElement, * rulesBtnElement, * quitBtnElement;
 
     cleanToPrint();                 /*Empty the list of element to print before doing anything*/
 
@@ -57,6 +57,12 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtn->activeImage = MLV_load_image("images/rulesBtn_active.png");
     rulesBtn->callback = 'r';
 
+    quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
+    quitBtn->idleImage = MLV_load_image("images/quitBtn_small_idle.png");
+    quitBtn->hoverImage = MLV_load_image("images/quitBtn_small_hover.png");
+    quitBtn->activeImage = MLV_load_image("images/quitBtn_small_active.png");
+    quitBtn->callback = 'q';
+
     /*Now we add them to the toPrint list*/
     addToPrint(mainTitlePicture, 'p');
 
@@ -66,12 +72,16 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtnElement = addToPrint(rulesBtn, 'b');
     rulesBtnElement->state = 'i';
 
+    quitBtnElement = addToPrint(quitBtn, 'b');
+    quitBtnElement->state = 'i';
+
     /*printFrame();*/                   
     callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
     /*Free created elements*/
     freeBtn(playBtn);
     freeBtn(rulesBtn);
+    freeBtn(quitBtn);
     freePicture(mainTitlePicture);
 
     /*And finally call next action*/
@@ -84,8 +94,8 @@ void mainMenu()                     /*display the main menu and wait for actions
 void choicePlayers()                /*Display the number of player screen and wait for user to select a gameMode*/
 {
     char callback;
-    Button * onePlayerBtn, * twoPlayersBtn;
-    PrintElement * onePlayerBtnElement, * twoPlayersBtnElement;
+    Button * onePlayerBtn, * twoPlayersBtn, * backBtn;
+    PrintElement * onePlayerBtnElement, * twoPlayersBtnElement, * backBtnElement;
 
     cleanToPrint();                 /*empty current list of elements to print*/
 
@@ -104,6 +114,12 @@ void choicePlayers()                /*Display the number of player screen and wa
     twoPlayersBtn->activeImage = MLV_load_image("images/twoPlayersBtn_active.png");
     twoPlayersBtn->callback = '2';
 
+    backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
+    backBtn->idleImage = MLV_load_image("images/backBtn_small_idle.png");
+    backBtn->hoverImage = MLV_load_image("images/backBtn_small_hover.png");
+    backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
+    backBtn->callback = 'b';
+
     /*Now we add them to the toPrint list*/
     onePlayerBtnElement = addToPrint(onePlayerBtn, 'b');
     onePlayerBtnElement->state = 'i';
@@ -111,49 +127,83 @@ void choicePlayers()                /*Display the number of player screen and wa
     twoPlayersBtnElement = addToPrint(twoPlayersBtn, 'b');
     twoPlayersBtnElement->state = 'i';
 
+    backBtnElement = addToPrint(backBtn, 'b');
+    backBtnElement->state = 'i';
+
     callback = waitForAction();                /*Wait for the user to do something*/
 
     /*Free created elements*/
     freeBtn(onePlayerBtn);
     freeBtn(twoPlayersBtn);
+    freeBtn(backBtn);
 
     /*And finally call next action*/
     if(callback == '1')
-        onePlayerInit();
+        initNewGame(1);
     else if(callback == '2')
-        twoPlayerInit();
+        initNewGame(2);
+    else if(callback == 'b')
+        mainMenu();
 }
 
-void onePlayerInit()                        /*Ask the player to enter it's name*/
+void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's name*/
 {
     char callback;
-    TextBox * userName;
-    Button * validBtn;
-    PrintElement * userNameElement, * validBtnElement;
+    TextBox * player1, * player2;
+    Button * validBtn, * backBtn;
+    PrintElement * player1Element, * player2Element, * validBtnElement, * backBtnElement;
 
     cleanToPrint();
 
-    userName = createTextBox(percentOffset(50, 'w', -216), percent(60, 'h'), 252, 40, 'g', "Pseudo");
-    userName->backImage = MLV_load_image("images/textField.png");
-    userName->imgOffsetX = -5;
+    if(nbrPlayer == 1)
+    {
+        player1 = createTextBox(percentOffset(50, 'w', -126), percent(60, 'h'), 252, 40, 'g', "Joueur 1");
+    }
+    else
+    {
+        player1 = createTextBox(percentOffset(50, 'w', -262), percent(60, 'h'), 252, 40, 'g', "Joueur 1");
 
-    validBtn = createBtn(percentOffset(50, 'w', 71), percentOffset(60, 'h', 2), 145, 36, 'g');
+        player2 = createTextBox(percentOffset(50, 'w', 10), percent(60, 'h'), 252, 40, 'g', "Joueur 2");
+        player2->backImage = MLV_load_image("images/textField.png");
+        player2->imgOffsetX = -5;
+        player2->imgOffsetY = -2;
+
+        player2Element = addToPrint(player2, 'i');
+        player2Element->state = 'b';
+    }
+
+    player1->backImage = MLV_load_image("images/textField.png");
+    player1->imgOffsetX = -5;
+    player1->imgOffsetY = -2;
+
+    validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(60, 'h', 50), 145, 36, 'g');
     validBtn->idleImage = MLV_load_image("images/confirmBtn_small_idle.png");
     validBtn->hoverImage = MLV_load_image("images/confirmBtn_small_hover.png");
     validBtn->activeImage = MLV_load_image("images/confirmBtn_small_active.png");
 
-    userNameElement = addToPrint(userName, 'i');
-    userNameElement->state = 'b';
+    backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
+    backBtn->idleImage = MLV_load_image("images/backBtn_small_idle.png");
+    backBtn->hoverImage = MLV_load_image("images/backBtn_small_hover.png");
+    backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
+    backBtn->callback = 'b';
+
+    player1Element = addToPrint(player1, 'i');
+    player1Element->state = 'b';
 
     validBtnElement = addToPrint(validBtn, 'b');
     validBtnElement->state = 'i';
 
+    backBtnElement = addToPrint(backBtn, 'b');
+    backBtnElement->state = 'i';
+
     callback = waitForAction();
 
-    printf("%d", callback);
-}
+    freeBtn(validBtn);
+    freeBtn(backBtn);
+    freeTextBox(player1);
+    if(nbrPlayer == 2)
+        freeTextBox(player2);
 
-void twoPlayerInit()
-{
-
+    if(callback == 'b')
+        choicePlayers();
 }

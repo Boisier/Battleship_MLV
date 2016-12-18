@@ -10,9 +10,7 @@ void mainMenu();            /* Display Main menu*/
 
 void choicePlayers();		/* Screen with choice one or two players*/
 
-void onePlayerInit();		/*Init game for a 1 player game*/
-
-void twoPlayerInit();		/*Init game for a 2 player game*/
+void initNewGame(int nbrPlayer); /*Init the game for one or two player*/
 
 
 
