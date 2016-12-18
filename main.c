@@ -11,8 +11,6 @@ int main(int argc, char *argv[])
 	gameObj = initGame();
 	mainMenu();
 
-	MLV_wait_seconds(3);
-
 	quitGame();
 	
 	return 0;
