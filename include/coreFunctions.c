@@ -185,7 +185,8 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
     tB->cursorShown = false;
     tB->lastCursorSwitch = 0;
 
-    tB->textColor = MLV_COLOR_BLACK;
+    tB->textColor = gameObj->defaultInputColor;
+    tB->placeHolderColor = gameObj->defaultPlaceHolderColor;
 
     if(type == 'g')
         tB->backColor = MLV_ALPHA_TRANSPARENT;

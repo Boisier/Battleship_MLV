@@ -119,6 +119,7 @@ typedef struct TextBox
 
     MLV_Color backColor;        /*Background color, used if type equalc c*/
     MLV_Color textColor;        /*Color of the text*/
+    MLV_Color placeHolderColor;        /*Color of the text*/
 
     MLV_Image * backImage;      /*Image to be displayed behind the textBox. Used if type equals g*/
     int imgOffsetX;             /*Image offset on the X axis*/

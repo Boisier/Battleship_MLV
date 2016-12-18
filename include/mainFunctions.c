@@ -16,12 +16,12 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
     MLV_create_window("Battleship", "Battleship", gameObj->wWidth, gameObj->wHeight);   /*Create the game window*/  
     
-    /*Set inputFont*/
-    gameObj->inputFont = MLV_load_font("fonts/HelveticaNeue-Bold.otf", 18);
+    /*Set default fonts*/
+    gameObj->inputFont = MLV_load_font("fonts/LCD_Solid.ttf", 18);
     
     /*Set default values */
     gameObj->defaultInputColor = rgba(51, 38, 29, 255);
-    gameObj->defaultPlaceHolderColor = rgba(51, 44, 40, 255);
+    gameObj->defaultPlaceHolderColor = rgba(51, 44, 40, 100);
 
     gameObj->woodBckg =  MLV_load_image("images/woodenBackground.png"); /*Let's preload the main background for later*/
 
@@ -133,14 +133,14 @@ void onePlayerInit()                        /*Ask the player to enter it's name*
 
     cleanToPrint();
 
-    userName = createTextBox(percentOffset(50, 'w', -272), percentOffset(60, 'h', 5), 252, 40, 'g', "Pseudo");
+    userName = createTextBox(percentOffset(50, 'w', -216), percent(60, 'h'), 252, 40, 'g', "Pseudo");
     userName->backImage = MLV_load_image("images/textField.png");
     userName->imgOffsetX = -5;
 
-    validBtn = createBtn(percentOffset(50, 'w', 15), percent(60, 'h'), 185, 50, 'g');
-    validBtn->idleImage = MLV_load_image("images/playBtn_idle.png");
-    validBtn->hoverImage = MLV_load_image("images/playBtn_hover.png");
-    validBtn->activeImage = MLV_load_image("images/playBtn_active.png");
+    validBtn = createBtn(percentOffset(50, 'w', 71), percentOffset(60, 'h', 2), 145, 36, 'g');
+    validBtn->idleImage = MLV_load_image("images/confirmBtn_small_idle.png");
+    validBtn->hoverImage = MLV_load_image("images/confirmBtn_small_hover.png");
+    validBtn->activeImage = MLV_load_image("images/confirmBtn_small_active.png");
 
     userNameElement = addToPrint(userName, 'i');
     userNameElement->state = 'b';
@@ -149,6 +149,8 @@ void onePlayerInit()                        /*Ask the player to enter it's name*
     validBtnElement->state = 'i';
 
     callback = waitForAction();
+
+    printf("%d", callback);
 }
 
 void twoPlayerInit()
