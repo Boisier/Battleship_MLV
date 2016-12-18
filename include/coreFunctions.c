@@ -5,13 +5,13 @@
 #include "../headers/structs.h"
 #include "../headers/functions.h"
 
-void waitForAction() 		/*Keep application idle until a button callBack is fired. It handle mouse hovering */
+char waitForAction() 		/*Keep application idle until a button callBack is fired. It handle mouse hovering */
 {
     int mouseX, mouseY, i, unicode;
     MLV_Event event;
     MLV_Button_state state;
     MLV_Keyboard_button keyPressed;
-    void (*callbackFunction)() = NULL;
+    char callbackValue = NULL;
     
     do                                                          /*Loop until the user press a btn*/
     {
@@ -33,7 +33,7 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
                         {
                             gameObj->toPrint[i].state = 'a';
                             if(state == MLV_RELEASED)
-                                callbackFunction = ((Button *)gameObj->toPrint[i].element)->callback;
+                                callbackValue = ((Button *)gameObj->toPrint[i].element)->callback;
                         }
                         else if(event == MLV_MOUSE_MOTION)      /*We do this if the action is just a hover*/
                         {
@@ -70,9 +70,9 @@ void waitForAction() 		/*Keep application idle until a button callBack is fired.
 
         printFrame();					/*Update window*/
 
-    } while(callbackFunction == NULL);
+    } while(callbackValue == '\0');
 
-    callbackFunction();
+    return callbackValue;
 }
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY)	/*check if cursor is on Button. Return true if it is, false otherwise*/
@@ -137,7 +137,7 @@ Button * createBtn(int x, int y, int width, int height, char type)  /*Create a B
     btn->width = width;                         /*Set width of the button*/
     btn->height = height;                       /*Set height of the button*/
     btn->type = type;                           /*Set type of the button*/
-    btn->callback = NULL;                       /*Set callback as NULL */
+    btn->callback = '\0';                       /*Set callback as NULL */
     btn->hoverCallback = NULL;                  /*Set hoverCallback as NULL */
 
     if(type == 'g')                             /*If the button is a graphic one*/

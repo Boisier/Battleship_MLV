@@ -20,7 +20,7 @@ void twoPlayerInit();		/*Init game for a 2 player game*/
 /***** Core functions definitions ***********************************************/
 /********************************************************************************/
 
-void waitForAction(); 		/*Keep application idle until a button callBack is fired. It handle mouse hovering */
+char waitForAction(); 		/*Keep application idle until a button is pressed and a callback value returned. It handle mouse hovering */
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
 
@@ -67,6 +67,15 @@ void * allocate(int size);
 
 /*reAllocate encapsulate malloc to better handle failing behavior.*/
 void * reAllocate(void * var, int newSize);
+
+/*Free a button and all linked data*/
+void freeBtn(Button * btn);
+
+/*Free a picture and all linked data*/
+void freePicture(Picture * pic);
+
+/*Free a text box and all linked data*/
+void freeTextBox(TextBox * tB);
 
 /*Throw a critical error and stop the application if the given pointer is null*/
 void criticalIfNull(void * pointer);

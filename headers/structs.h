@@ -88,7 +88,7 @@ typedef struct Button
     MLV_Image * hoverImage;     /*Image used at hover state for graphic button*/
     MLV_Image * activeImage;    /*Image used at hover state for graphic button */
 
-    void (*callback)();         /*function to be called when the button is pressed*/
+    char callback;              /*value to be returned when the button is pressed*/
     void (*hoverCallback)();    /*function called when the button is hovered;*/
 
 } Button;
@@ -124,3 +124,11 @@ typedef struct TextBox
     int imgOffsetX;             /*Image offset on the X axis*/
     int imgOffsetY;             /*Image offset on the Y axis*/
 } TextBox;
+
+typedef struct Text
+{
+    int x;
+    int y;
+    int width;
+    int height;
+} Text;

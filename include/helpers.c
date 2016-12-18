@@ -29,6 +29,30 @@ void * reAllocate(void * var, int newSize)  /*realloc encapsulation with failing
     return var;                             /*Yes, return the pointer*/
 }
 
+void freeBtn(Button * btn)
+{
+    MLV_free_image(btn->idleImage);
+    MLV_free_image(btn->hoverImage);
+    MLV_free_image(btn->activeImage);
+
+    free(btn);
+}
+
+void freePicture(Picture * pic)
+{
+    MLV_free_image(pic->image);
+    free(pic);
+}
+
+void freeTextBox(TextBox * tB)
+{
+    MLV_free_image(tB->backImage);
+    free(tB);
+}
+
+
+
+
 void criticalIfNull(void * pointer)         /*Throw a critical error and stop the application if the given pointer is null*/
 {
     if(pointer == NULL)                     /*Is the given pointer NULL?*/

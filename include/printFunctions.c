@@ -127,12 +127,12 @@ void printTextBox(struct TextBox * tB, char state)          /*Print given textBo
         MLV_draw_filled_rectangle(tB->x, tB->y, tB->width, tB->height, tB->backColor);
     if(strlen(tB->content) == 0)
     {
-        textColor = gameObj->placeHolderColor;  /*Set placeholder color as text color*/
+        textColor = gameObj->defaultPlaceHolderColor;  /*Set placeholder color as text color*/
         strcpy(textToPrint, tB->placeHolder);   /*set place holder as text to show*/
     }
     else
     {
-        textColor = gameObj->inputColor;        /*Set standard color as text color*/
+        textColor = gameObj->defaultInputColor; /*Set standard color as text color*/
         strcpy(textToPrint, tB->content);       /*Set text box content as text to show*/
     }
 

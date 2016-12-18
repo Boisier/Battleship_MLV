@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h> 
-#include <time.h> 
 #include <MLV/MLV_all.h>
 #include "../headers/structs.h"
 #include "../headers/functions.h"
@@ -33,6 +32,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
 void mainMenu()                     /*display the main menu and wait for actions from the user*/
 {
+    char callback;
     Button * playBtn, * rulesBtn;
     Picture * mainTitlePicture;
     PrintElement * playBtnElement, * rulesBtnElement;
@@ -48,14 +48,14 @@ void mainMenu()                     /*display the main menu and wait for actions
     playBtn->idleImage = MLV_load_image("images/playBtn_idle.png");
     playBtn->hoverImage = MLV_load_image("images/playBtn_hover.png");
     playBtn->activeImage = MLV_load_image("images/playBtn_active.png");
-    playBtn->callback = &choicePlayers;
+    playBtn->callback = 'p';
 
     /*Rules Button*/
     rulesBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, 'g');
     rulesBtn->idleImage = MLV_load_image("images/rulesBtn_idle.png");
     rulesBtn->hoverImage = MLV_load_image("images/rulesBtn_hover.png");
     rulesBtn->activeImage = MLV_load_image("images/rulesBtn_active.png");
-    rulesBtn->callback = &clicked;
+    rulesBtn->callback = 'r';
 
     /*Now we add them to the toPrint list*/
     addToPrint(mainTitlePicture, 'p');
@@ -67,16 +67,23 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtnElement->state = 'i';
 
     /*printFrame();*/                   /*And now we print the frame*/
-    waitForAction(); 		        /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
+    callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
     /*Free created elements*/
-    free(playBtn);
-    free(rulesBtn);
-    free(mainTitlePicture);
+    freeBtn(playBtn);
+    freeBtn(rulesBtn);
+    freePicture(mainTitlePicture);
+
+    /*And finally call next action*/
+    if(callback == 'p')
+        choicePlayers();
+    else if(callback == 'r')
+        clicked();
 }
 
 void choicePlayers()                /*Display the number of player screen and wait for user to select a gameMode*/
 {
+    char callback;
     Button * onePlayerBtn, * twoPlayersBtn;
     PrintElement * onePlayerBtnElement, * twoPlayersBtnElement;
 
@@ -88,14 +95,14 @@ void choicePlayers()                /*Display the number of player screen and wa
     onePlayerBtn->idleImage = MLV_load_image("images/onePlayerBtn_idle.png");
     onePlayerBtn->hoverImage = MLV_load_image("images/onePlayerBtn_hover.png");
     onePlayerBtn->activeImage = MLV_load_image("images/onePlayerBtn_active.png");
-    onePlayerBtn->callback = &onePlayerInit;
+    onePlayerBtn->callback = '1';
 
     /*Two player Btn*/
     twoPlayersBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, 'g');
     twoPlayersBtn->idleImage = MLV_load_image("images/twoPlayersBtn_idle.png");
     twoPlayersBtn->hoverImage = MLV_load_image("images/twoPlayersBtn_hover.png");
     twoPlayersBtn->activeImage = MLV_load_image("images/twoPlayersBtn_active.png");
-    twoPlayersBtn->callback = &twoPlayerInit;
+    twoPlayersBtn->callback = '2';
 
     /*Now we add them to the toPrint list*/
     onePlayerBtnElement = addToPrint(onePlayerBtn, 'b');
@@ -104,14 +111,20 @@ void choicePlayers()                /*Display the number of player screen and wa
     twoPlayersBtnElement = addToPrint(twoPlayersBtn, 'b');
     twoPlayersBtnElement->state = 'i';
 
-    waitForAction();                /*Wait for user to do something*/
+    callback = waitForAction();                /*Wait for user to do something*/
 
     /*Free created elements*/
-    free(onePlayerBtn);
-    free(twoPlayersBtn);
+    freeBtn(onePlayerBtn);
+    freeBtn(twoPlayersBtn);
+
+    /*And finally call next action*/
+    if(callback == '1')
+        onePlayerInit();
+    else if(callback == '2')
+        twoPlayerInit();
 }
 
-void onePlayerInit()
+void onePlayerInit()                /*Ask the player to enter it's name*/
 {
     TextBox * userName;
     Button * validBtn;
