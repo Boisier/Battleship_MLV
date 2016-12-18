@@ -66,7 +66,7 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtnElement = addToPrint(rulesBtn, 'b');
     rulesBtnElement->state = 'i';
 
-    /*printFrame();*/                   /*And now we print the frame*/
+    /*printFrame();*/                   
     callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
     /*Free created elements*/
@@ -111,7 +111,7 @@ void choicePlayers()                /*Display the number of player screen and wa
     twoPlayersBtnElement = addToPrint(twoPlayersBtn, 'b');
     twoPlayersBtnElement->state = 'i';
 
-    callback = waitForAction();                /*Wait for user to do something*/
+    callback = waitForAction();                /*Wait for the user to do something*/
 
     /*Free created elements*/
     freeBtn(onePlayerBtn);
@@ -124,8 +124,9 @@ void choicePlayers()                /*Display the number of player screen and wa
         twoPlayerInit();
 }
 
-void onePlayerInit()                /*Ask the player to enter it's name*/
+void onePlayerInit()                        /*Ask the player to enter it's name*/
 {
+    char callback;
     TextBox * userName;
     Button * validBtn;
     PrintElement * userNameElement, * validBtnElement;
@@ -147,7 +148,7 @@ void onePlayerInit()                /*Ask the player to enter it's name*/
     validBtnElement = addToPrint(validBtn, 'b');
     validBtnElement->state = 'i';
 
-    waitForAction();
+    callback = waitForAction();
 }
 
 void twoPlayerInit()
