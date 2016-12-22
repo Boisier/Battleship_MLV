@@ -199,3 +199,81 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
 
     return tB;
 }
+
+
+/********************************************************************************/
+/***** Functions to generate the game board *************************************/
+/********************************************************************************/
+
+void createBoardGame(int w, int h)
+{
+    int topOffset = 272, topStep = 35;
+    int leftOffset = 59, leftStep = 35;
+    MLV_Image * mainBckg = MLV_load_image("images/mainBackground.png");
+    MLV_Image * dirtBloc = MLV_load_image("images/dirtBloc.png");
+    
+
+    /*Left Grid*/
+    createGrid('l', w, h, topOffset, topStep, leftOffset, leftStep, mainBckg, dirtBloc);
+
+    /*Right Grid*/
+    leftOffset = 654;
+
+    createGrid('r', w, h, topOffset, topStep, leftOffset, leftStep, mainBckg, dirtBloc);
+
+    MLV_free_image(dirtBloc);
+
+    gameObj->gameBoard = mainBckg;
+}
+
+void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc)
+{
+    int x, y;
+    int signY = 0, signX;
+    MLV_Image * sign = NULL;
+    char signURL[50];
+
+    if(side == 'l')
+        signX = 0;
+    else
+        signX = w;
+
+    for(y = 0; y <= h; y++)
+    {
+        for(x = 0; x <= w; x++)
+        {
+            if((x == signX && y != signY) || (y == signY && x != signX))
+            { 
+                if(y == signY)
+                {
+                    if(side == 'l')
+                        sprintf(signURL, "images/signs/%c.png", x+64);
+                    else if(side == 'r')
+                        sprintf(signURL, "images/signs/%c.png", x+65);    
+
+                    sign = MLV_load_image(signURL);
+                    MLV_draw_image_on_image	(sign, mainBckg, leftOffset+4+(x*leftStep), topOffset+(y*topStep));     
+                    MLV_free_image(sign);   
+                }
+                else if(x == signX)
+                {
+                    sprintf(signURL, "images/signs/%d.png", y);
+                    
+                    sign = MLV_load_image(signURL);
+                    if(side == 'r')
+                        MLV_draw_image_on_image	(sign, mainBckg, leftOffset+6+(x*leftStep), topOffset+(y*topStep));
+                    else 
+                        MLV_draw_image_on_image	(sign, mainBckg, leftOffset+(x*leftStep), topOffset+(y*topStep));
+
+                    MLV_free_image(sign);
+                }
+
+            }
+            else if(x != signX && y != signY)
+            {
+                if(y%2 == x%2)
+                    MLV_draw_image_on_image	(dirtBloc, mainBckg, leftOffset+(x*leftStep), topOffset+(y*topStep));
+            }
+        }
+    }
+}

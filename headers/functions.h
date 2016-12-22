@@ -12,11 +12,9 @@ void choicePlayers();		/* Screen with choice one or two players*/
 
 void initNewGame(int nbrPlayer); /*Init the game for one or two player*/
 
-void startGame();			/**/
+void startGame(int nbrPlayer);			/**/
 
-void createBoardGame(int w, int h);	/**/
-
-void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc);
+void setUpPlayer(int playerID);
 
 /********************************************************************************/
 /***** Core functions definitions ***********************************************/
@@ -31,6 +29,12 @@ bool isCursorOnInput(TextBox * input, int mouseX, int mouseY);	/*check if cursor
 void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode);
 
 void quitGame();
+
+void createBoardGame(int w, int h);	/**/
+
+void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc);
+
+
 
 
 

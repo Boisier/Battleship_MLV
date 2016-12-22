@@ -9,7 +9,15 @@
 GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
 {
     GameObj * gameObj = allocate(sizeof(GameObj));   /*Define gameObj variable*/
+
     gameObj->currTurn = 0;          /*Set current turn as 0*/
+
+    gameObj->nbrShips[1] = 0;       /*Set nbr of sheep for every size*/
+    gameObj->nbrShips[2] = 1;
+    gameObj->nbrShips[3] = 2;
+    gameObj->nbrShips[4] = 1;
+    gameObj->nbrShips[5] = 1;
+
     gameObj->wWidth = 1100;         /*Set window height*/
     gameObj->wHeight = 800;         /*Set window width*/
 
@@ -213,89 +221,74 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
     else if(callback == 'v')
     {
         /*Save user name blablabla*/
-        startGame();
+        startGame(nbrPlayer);
     }
 }
 
-void startGame()
+void startGame(int nbrPlayer)
 {
-    createBoardGame(7, 7);
-    printf("here\n");
-    gameObj->gameState = 'a';
+    createBoardGame(10, 10);        /*Generate a map with the given dimensions*/
+    gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
+    gameObj->nbrPlayer = nbrPlayer;
 
-    cleanToPrint();
+    setUpPlayer(1);
+    setUpPlayer(2);
     waitForAction();
 }
 
-void createBoardGame(int w, int h)
+void setUpPlayer(int playerID)
 {
-    int topOffset = 272, topStep = 35;
-    int leftOffset = 59, leftStep = 35;
-    MLV_Image * mainBckg = MLV_load_image("images/mainBackground.png");
-    MLV_Image * dirtBloc = MLV_load_image("images/dirtBloc.png");
-    
+    int i, j, marginTop, stepTop = 50;
+    Picture * board;
+    int leftOffset;
 
-    /*Left Grid*/
-    createGrid('l', w, h, topOffset, topStep, leftOffset, leftStep, mainBckg, dirtBloc);
+    cleanToPrint();
 
-    /*Right Grid*/
-    leftOffset = 654;
-
-    createGrid('r', w, h, topOffset, topStep, leftOffset, leftStep, mainBckg, dirtBloc);
-
-    MLV_free_image(dirtBloc);
-
-    gameObj->gameBoard = mainBckg;
-}
-
-void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc)
-{
-    int x, y;
-    int signY = 0, signX;
-    MLV_Image * sign = NULL;
-    char signURL[50];
-
-    if(side == 'l')
-        signX = 0;
-    else
-        signX = w;
-
-    for(y = 0; y <= h; y++)
-    {
-        for(x = 0; x <= w; x++)
+    if(playerID == 1 || (playerID == 2 && gameObj->nbrPlayer == 2))
+    {                               /*Human player*/
+        if(playerID == 1)
         {
-            if((x == signX && y != signY) || (y == signY && x != signX))
-            { 
-                if(y == signY)
-                {
-                    if(side == 'l')
-                        sprintf(signURL, "images/signs/%c.png", x+64);
-                    else if(side == 'r')
-                        sprintf(signURL, "images/signs/%c.png", x+65);    
+            board = createPicture(0, 0, "images/woodPlankRight.png");
+            leftOffset = percentOffset(50, 'w', 50);
+        }
+        else
+        {
+            board = createPicture(0, 0, "images/woodPlankLeft.png");
+            leftOffset = 25;
+        }
 
-                    sign = MLV_load_image(signURL);
-                    MLV_draw_image_on_image	(sign, mainBckg, leftOffset+4+(x*leftStep), topOffset+(y*topStep));     
-                    MLV_free_image(sign);   
-                }
-                else if(x == signX)
-                {
-                    sprintf(signURL, "images/signs/%d.png", y);
-                    
-                    sign = MLV_load_image(signURL);
-                    if(side == 'r')
-                        MLV_draw_image_on_image	(sign, mainBckg, leftOffset+6+(x*leftStep), topOffset+(y*topStep));
-                    else 
-                        MLV_draw_image_on_image	(sign, mainBckg, leftOffset+(x*leftStep), topOffset+(y*topStep));
+        addToPrint(board, 'p');
+        marginTop = 100;
 
-                    MLV_free_image(sign);
-                }
-
-            }
-            else if(x != signX && y != signY)
+        addToPrint(board, 'p');
+        for(i = 5; i > 0; i--)
+        {
+            for(j = 0; j < gameObj->nbrShips[i]; j++)
             {
-                if(y%2 == x%2)
-                    MLV_draw_image_on_image	(dirtBloc, mainBckg, leftOffset+(x*leftStep), topOffset+(y*topStep));
+                /*Add boatBtn*/
+                printf("%d %d\n", i, j);
+                /*Using dirt bloc as a placeholder unitl sheeps are ready*/
+                addToPrint(createPicture(leftOffset, marginTop, "images/dirtBloc.png"), 'p');
+                marginTop += stepTop;
             }
         }
+
+        /*Add a button for every cell on the grid*/
+        /*loop on every boat (same loop as before)*/
+        /*For each boat, wait for a user click on a cell
+            If the boat can be placed here, then go to the next boat
+            Otherwise do not do anything
+            Also allow user to rotate the boat using buttons placed at the bottom of the panel
+            And show on the grid wich cells the boat will be occuping when the cells get hovered    
+        */
+
+        waitForAction();    /*Now just a hold on to be remove*/
+
+        freePicture(board);
     }
+    else
+    {                               /*AI*/
+
+    }
+
 }

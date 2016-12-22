@@ -46,6 +46,8 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     Player *player1;        /*First player obj*/
     Player *player2;        /*Second player obj*/
     int currTurn;           /*Current player. Can be either 1, 2 or 0 if not in game;  */
+    int nbrPlayer;          /*Number of human player in the game*/
+    int nbrShips[6];        /*Nbr of ships per size (1 to 5); */
 
     int wWidth;             /*Width of the window*/
     int wHeight;            /*Height of the window*/
@@ -60,7 +62,7 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     MLV_Image * woodBckg;   /*Background used for menu interface*/
     MLV_Image * gameBoard;  /*The background used in the current Game*/
 
-    char gameState;
+    char gameState;         /*Current state of the game. Can be either 'm' (menu), 'a' (active/inGame) or 'p' (pause);*/
 
     bool printLogs;         /*Shall we print the logs or not ?*/
 
