@@ -61,7 +61,11 @@ void criticalIfNull(void * pointer)         /*Throw a critical error and stop th
 
 void cleanScreen()                          /*Roll back the screen to it's default state*/
 {
-    MLV_draw_image(gameObj->woodBckg, 0, 0);             /*Replace the entire image with the wooden background*/
+    if(gameObj->gameState == 'a')
+        MLV_draw_image(gameObj->gameBoard, 0, 0);             /*Replace the entire image with the wooden background*/
+    else 
+        MLV_draw_image(gameObj->woodBckg, 0, 0);             /*Replace the entire image with the wooden background*/
+
 }
 
 MLV_Color rgba(int r, int g, int b, int a)  /*Encapsulate MLV_rgba into rgba in order to simplify the command*/

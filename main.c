@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
 	gameObj = initGame();
 	mainMenu();
-
+	
 	quitGame();
 	
 	return 0;

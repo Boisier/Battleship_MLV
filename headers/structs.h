@@ -58,6 +58,9 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     MLV_Color defaultPlaceHolderColor;
 
     MLV_Image * woodBckg;   /*Background used for menu interface*/
+    MLV_Image * gameBoard;  /*The background used in the current Game*/
+
+    char gameState;
 
     bool printLogs;         /*Shall we print the logs or not ?*/
 

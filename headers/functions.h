@@ -12,7 +12,11 @@ void choicePlayers();		/* Screen with choice one or two players*/
 
 void initNewGame(int nbrPlayer); /*Init the game for one or two player*/
 
+void startGame();			/**/
 
+void createBoardGame(int w, int h);	/**/
+
+void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc);
 
 /********************************************************************************/
 /***** Core functions definitions ***********************************************/
