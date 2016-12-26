@@ -18,6 +18,9 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->nbrShips[4] = 1;
     gameObj->nbrShips[5] = 1;
 
+    gameObj->gridSizeX = 10;
+    gameObj->gridSizeY = 10;
+
     gameObj->wWidth = 1100;         /*Set window height*/
     gameObj->wHeight = 800;         /*Set window width*/
 
@@ -220,75 +223,234 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
         choicePlayers();
     else if(callback == 'v')
     {
-        /*Save user name blablabla*/
+        /*Create users and save their user name*/
+        createPlayer(1, player1->content, 'h');
+
+        if(nbrPlayer == 2)
+            createPlayer(2, player2->content, 'h');
+        else
+            createPlayer(1, "Ordinateur", 'c');
+
         startGame(nbrPlayer);
     }
 }
 
+void createPlayer(int playerID, char * playerName, char playerType) /*Init the player struct in the gameObj*/
+{
+    Player * player;                    /*creating temporary structs*/
+    Grid * grid;
+    Cell ** cells;
+    int i;
+
+    player = allocate(sizeof(Player));  /*Defining player*/
+
+    player->type = 'h';
+    strcpy(player->name, playerName);
+
+    grid = allocate(sizeof(grid));      /*Defining the grid*/
+    grid->sizeX = gameObj->gridSizeX;
+    grid->sizeY = gameObj->gridSizeY;
+
+    cells = allocate(sizeof(Cell *) * gameObj->gridSizeX);
+    for(i = 0; i < gameObj->gridSizeX; i++)
+    {
+        cells[i] = allocate(sizeof(Cell *) * gameObj->gridSizeY);
+    }
+
+    grid->cells = cells;
+    player->grid = grid;
+
+    if(playerID == 1)                   /*Inserting newly created data inside the gameObj*/
+        gameObj->player1 = player;
+    else
+        gameObj->player2 = player;
+}
+
 void startGame(int nbrPlayer)
 {
-    createBoardGame(10, 10);        /*Generate a map with the given dimensions*/
+    createBoardGame(gameObj->gridSizeX, gameObj->gridSizeY);        /*Generate a map with the given dimensions*/
     gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
     gameObj->nbrPlayer = nbrPlayer;
 
     setUpPlayer(1);
     setUpPlayer(2);
-    waitForAction();
 }
 
 void setUpPlayer(int playerID)
 {
-    int i, j, marginTop, stepTop = 50;
-    Picture * board;
-    int leftOffset;
+    int i, j, k, marginTop, stepTop = 50, callback = 0;
+    int gridOffsetTop = 307, gridOffsetLeft = 94, leftOffset = 0;
+    Picture * board = NULL;
+    Picture * currentBoatIndicator = NULL;
+    Button * tempBtn = NULL, * rotateBtn = NULL;
+    MLV_Image * targetImage = NULL;
+    PrintElement * tempElement;
+    bool added = false;
 
-    cleanToPrint();
-
+    cleanToPrint();  
+    
     if(playerID == 1 || (playerID == 2 && gameObj->nbrPlayer == 2))
     {                               /*Human player*/
+        gameObj->currTurn = playerID;
+
+        /*Create and add to print the wooden board*/
         if(playerID == 1)
         {
             board = createPicture(0, 0, "images/woodPlankRight.png");
-            leftOffset = percentOffset(50, 'w', 50);
+            leftOffset = percentOffset(50, 'w', 25);
         }
         else
         {
             board = createPicture(0, 0, "images/woodPlankLeft.png");
             leftOffset = 25;
+            gridOffsetLeft = 654;
         }
 
         addToPrint(board, 'p');
         marginTop = 100;
 
-        addToPrint(board, 'p');
+        /*Print a list of all the boats to add*/
+        currentBoatIndicator = createPicture(leftOffset, marginTop-stepTop, "images/selector_cursor.png");
+        addToPrint(currentBoatIndicator, 'p');
+
         for(i = 5; i > 0; i--)
         {
             for(j = 0; j < gameObj->nbrShips[i]; j++)
             {
-                /*Add boatBtn*/
-                printf("%d %d\n", i, j);
-                /*Using dirt bloc as a placeholder unitl sheeps are ready*/
-                addToPrint(createPicture(leftOffset, marginTop, "images/dirtBloc.png"), 'p');
+                for(k = 0; k < i; k++)
+                {
+                    addToPrint(createPicture(leftOffset+(35*(k+1)), marginTop, "images/sheep_idle.png"), 'p');
+                }
+
                 marginTop += stepTop;
             }
         }
 
         /*Add a button for every cell on the grid*/
-        /*loop on every boat (same loop as before)*/
-        /*For each boat, wait for a user click on a cell
-            If the boat can be placed here, then go to the next boat
-            Otherwise do not do anything
-            Also allow user to rotate the boat using buttons placed at the bottom of the panel
-            And show on the grid wich cells the boat will be occuping when the cells get hovered    
-        */
+        targetImage = MLV_load_image("images/sheep_fade.png");
 
-        waitForAction();    /*Now just a hold on to be remove*/
+        for(i = 0; i < gameObj->gridSizeX; i++)
+        {
+            for(j = 0; j < gameObj->gridSizeY; j++)
+            {
+                tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, 'g');
+                tempBtn->hoverImage = targetImage;
+                tempBtn->callback = i | (j << 16);
+                tempBtn->hoverCallback = printBoatShadow;
+
+                tempElement = addToPrint(tempBtn, 'b');
+                tempElement->canFade = true;
+            }
+        }
+
+        /*Add a button to rotate the current boat*/
+        rotateBtn = createBtn(leftOffset+10, 725, 185, 50, 'g');
+        rotateBtn->idleImage = MLV_load_image("images/rotateBtn_idle.png");
+        rotateBtn->hoverImage = MLV_load_image("images/rotateBtn_hover.png");
+        rotateBtn->activeImage = MLV_load_image("images/rotateBtn_active.png");
+        rotateBtn->callback = 'r';
+
+        addToPrint(rotateBtn, 'b');
+
+        /*loop on every boat to add them (same loop as before)*/
+        for(i = 5; i > 0; i--)
+        {
+            for(j = 0; j < gameObj->nbrShips[i]; j++)
+            {
+                currentBoatIndicator->y += stepTop;
+                
+                gameObj->boatBeingPlacedSize = i;
+                gameObj->boatBeingPlacedDirection = 'h';
+
+                do
+                {
+                    callback = waitForAction();
+
+                    if(callback == 'r') 
+                    {               /*Rotate the boat*/
+                        if(gameObj->boatBeingPlacedDirection == 'h')
+                            gameObj->boatBeingPlacedDirection = 'v';
+                        else
+                            gameObj->boatBeingPlacedDirection = 'h';
+
+                        added = false;
+                    }
+                    else
+                    {               /*Try to add the boat*/
+                        added = addBoat((callback & 0xFFFF), (callback >> 16) & 0xFFFF, i, gameObj->boatBeingPlacedDirection);
+                    }
+
+                } while(added == false);
+            }
+        }
 
         freePicture(board);
+        freePicture(currentBoatIndicator);
+        MLV_free_image(targetImage);
+
+        cleanToPrint();    
     }
     else
     {                               /*AI*/
 
     }
+}
 
+bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
+{
+    return true;
+}
+
+void printBoatShadow(int posInToPrint)
+{
+    bool canBePrinted = true;
+    int i, boatSize = gameObj->boatBeingPlacedSize;
+    
+    /*Are the targeted buttons in range ?*/
+    if(gameObj->boatBeingPlacedDirection == 'h' && posInToPrint+gameObj->gridSizeY*(boatSize-1) < gameObj->nbrToPrint)
+    {
+        for(i = 0; i < (boatSize-1); i++)
+        {
+            if(gameObj->toPrint[posInToPrint+i*gameObj->gridSizeY].canFade == false)
+            {
+                canBePrinted = false;
+            }
+        }
+    }
+    else if(gameObj->boatBeingPlacedDirection == 'v' && posInToPrint+(boatSize-1) < gameObj->nbrToPrint)
+    {
+        for(i = 0; i < boatSize; i++)
+        {
+            if(gameObj->toPrint[posInToPrint+i].canFade == false || ((Button *)gameObj->toPrint[posInToPrint+i].element)->x != ((Button *)gameObj->toPrint[posInToPrint].element)->x)
+            {
+                canBePrinted = false;
+            }
+        }
+    }
+    else
+    {
+        canBePrinted = false;
+    }
+
+    /*Clean up every forced hover*/
+    for(i = 0; i < gameObj->nbrToPrint; i++)
+    {
+        if(gameObj->toPrint[i].state == 'f')
+            gameObj->toPrint[i].state = 'i';
+    }
+
+    if(canBePrinted)
+    {   /*The boat can be safely printed*/
+        for(i = 0; i < boatSize; i++)
+        {
+            if(gameObj->boatBeingPlacedDirection == 'h')
+            {
+                gameObj->toPrint[posInToPrint+i*gameObj->gridSizeY].state = 'f';
+            }
+            else if(gameObj->boatBeingPlacedDirection == 'v')
+            {
+                gameObj->toPrint[posInToPrint+i].state = 'f';
+            }
+        }
+    }
 }

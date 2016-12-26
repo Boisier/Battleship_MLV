@@ -22,8 +22,9 @@ typedef struct Cell
 
 typedef struct Grid
 {
-    int size;               /*Size of the grid*/
-    Cell *cells;            /*Cells of the grid*/
+    int sizeX;               /*Size of the grid*/
+    int sizeY;               /*Size of the grid*/
+    Cell **cells;            /*Cells of the grid*/
     Ship *ships;            /*Ships on the grid*/
 } Grid;
 
@@ -31,6 +32,7 @@ typedef struct Player
 {
     char type;              /*Type of player, can be either h (human) or c (computer/ai)*/
     char score;  
+    char name[100];
     Grid *grid;             /*If multiple game are fdone, keep track of scores.*/
 } Player;
 
@@ -38,7 +40,9 @@ typedef struct PrintElement
 {
     void * element;         /*A pointer to the element to display*/
     char type;              /*Type of the element. Can be b (Button), and more to come*/
-    char state;             /*If needed relative to the cursor (idle, hover or active)*/
+    char state;             /*If needed relative to the cursor (idle, hover, active, or force hover)*/
+    bool canFade;
+
 } PrintElement;
 
 typedef struct GameObj      /*The gameObj carry all the variables used by the game*/
@@ -49,6 +53,12 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     int nbrPlayer;          /*Number of human player in the game*/
     int nbrShips[6];        /*Nbr of ships per size (1 to 5); */
 
+    int boatBeingPlacedSize;
+    int boatBeingPlacedDirection;
+
+    int gridSizeX;          /*Nbr of cell on the width of the grid*/
+    int gridSizeY;          /*Nbr of cell on the height of the grid*/
+    
     int wWidth;             /*Width of the window*/
     int wHeight;            /*Height of the window*/
 
@@ -78,6 +88,7 @@ typedef struct Button
     int height;                 /*height of the button*/
     char type;                  /*button type. Can be either g(graphic/image) or c(plainColor)*/
     char text[100];             /*Text to display on the button*/
+
     /*Back colors (used when type is )*/
     MLV_Color idleBackColor;    /*Back color when button is idle*/
     MLV_Color hoverBackColor;   /*Back color when button is hovered*/
@@ -93,8 +104,8 @@ typedef struct Button
     MLV_Image * hoverImage;     /*Image used at hover state for graphic button*/
     MLV_Image * activeImage;    /*Image used at hover state for graphic button */
 
-    char callback;              /*value to be returned when the button is pressed*/
-    void (*hoverCallback)();    /*function called when the button is hovered;*/
+    int callback;              /*value to be returned when the button is pressed*/
+    void (*hoverCallback)(int);    /*function called when the button is hovered;*/
 
 } Button;
 

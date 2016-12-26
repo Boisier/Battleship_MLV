@@ -15,9 +15,6 @@ char waitForAction() 		/*Keep application idle until a button callBack is fired.
     
     do                                                          /*Loop until the user press a btn*/
     {
-        if(gameObj->printLogs)
-            printConsumption();
-
         event = MLV_get_event(&keyPressed, NULL, &unicode, NULL, NULL, &mouseX, &mouseY, NULL, &state);    /*Get last event*/
         MLV_flush_event_queue();
 
@@ -39,12 +36,15 @@ char waitForAction() 		/*Keep application idle until a button callBack is fired.
                         {
                             gameObj->toPrint[i].state = 'h';   
                             if(((Button *)gameObj->toPrint[i].element)->hoverCallback != NULL)
-                                ((Button *)gameObj->toPrint[i].element)->hoverCallback();
+                            {
+                                ((Button *)gameObj->toPrint[i].element)->hoverCallback(i);
+                            }
                         }
                     } 
                     else
                     {
-                        gameObj->toPrint[i].state = 'i';        /*no, make sure state is idle*/
+                        if(gameObj->toPrint[i].state != 'f')
+                            gameObj->toPrint[i].state = 'i';        /*no, make sure state is idle*/
                     }
                 }
                 else if(gameObj->toPrint[i].type == 'i')  /*The event is an input box one*/
@@ -69,6 +69,9 @@ char waitForAction() 		/*Keep application idle until a button callBack is fired.
         }
 
         printFrame();					/*Update window*/
+
+        if(gameObj->printLogs)
+            printConsumption();
 
     } while(callbackValue == '\0');
 

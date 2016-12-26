@@ -14,7 +14,16 @@ void initNewGame(int nbrPlayer); /*Init the game for one or two player*/
 
 void startGame(int nbrPlayer);			/**/
 
+void createPlayer(int playerID, char * playerName, char playerType);
+
 void setUpPlayer(int playerID);
+
+bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);
+
+
+
+
+
 
 /********************************************************************************/
 /***** Core functions definitions ***********************************************/
@@ -44,8 +53,6 @@ void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOff
 /***** Game functions definitions ***********************************************/
 /********************************************************************************/
 
-/*Begin a new game*/
-void startGame();
 
 /* Show the grid if it's mine or the ennemy's one*/
 void printGrid (struct Grid g, bool self);
@@ -128,3 +135,5 @@ void printBtn(struct Button * btn, char state);    		/*print the given btn at th
 void printPicture(struct Picture * picture);			/*Print the given picture to it's set position*/
 
 void printTextBox(struct TextBox * tB, char state);					/*Print given textBox on the screen*/
+
+void printBoatShadow(int posInToPrint);

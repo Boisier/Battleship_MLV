@@ -43,6 +43,8 @@ PrintElement * addToPrint(void * element, char type)
     newEl = allocate(sizeof(PrintElement));          /*new printElement to add*/
     newEl->element = element;                                       /*assign given element*/
     newEl->type = type;                                             /*assign given element type*/
+    newEl->state = 'i';
+    newEl->canFade = false;
 
     gameObj->toPrint[gameObj->nbrToPrint] = *newEl;                 /*Insert newly created printElement in the array toPrint*/
     gameObj->nbrToPrint++;                                          /*Increment the nbr of element*/
@@ -71,18 +73,19 @@ void printBtn(struct Button * btn, char state)  /*Print a given button at the cu
 
     if(btn->type == 'g')                        /*Is the button a graphical one?*/
     {                                           /*Yes, let's select the image to show based on the state*/
-        if(state == 'h')
+        if(state == 'h' || state == 'f')
             image = btn->hoverImage;            /*Hover state*/
         else if(state == 'a')
             image = btn->activeImage;           /*Active state*/
         else
             image = btn->idleImage;             /*Idle state*/
         
-        MLV_draw_image(image, btn->x, btn->y);  /*print the button*/
+        if(image != NULL)
+            MLV_draw_image(image, btn->x, btn->y);  /*print the button*/
     }
     else                                        /*Is the button a plain color one?*/
     {
-        if(state == 'h')                        /*Set hover state properties*/
+        if(state == 'h' || state == 'f')                        /*Set hover state properties*/
         {        
             backColor = btn->hoverBackColor;
             textColor = btn->hoverTextColor;
