@@ -38,7 +38,11 @@ PrintElement * addToPrint(void * element, char type)
     criticalIfNull(element);                    /*We make sure no NULL pointer get's in the loop*/
 
     newSize = (gameObj->nbrToPrint + 1) * sizeof(PrintElement); /*New size of the toPrint array*/
-    gameObj->toPrint = reAllocate(gameObj->toPrint, newSize);       /*increase size of the toPrint array*/
+
+    if(gameObj->nbrToPrint == 0)
+        gameObj->toPrint = allocate(newSize);       /*increase size of the toPrint array*/
+    else
+        gameObj->toPrint = reAllocate(gameObj->toPrint, newSize); 
 
     newEl = allocate(sizeof(PrintElement));          /*new printElement to add*/
     newEl->element = element;                                       /*assign given element*/
@@ -56,9 +60,12 @@ PrintElement * addToPrint(void * element, char type)
 
 void cleanToPrint()                                                 /*Empty the list of element to print*/
 {
-    free(gameObj->toPrint);                                         /*Free the memory used by the printElements, but do not free the elements. Other functions might still need them.*/
-    gameObj->toPrint = NULL;
-    gameObj->nbrToPrint = 0;                                        /*Reset the number of elements to print*/
+    if(gameObj->nbrToPrint != 0)
+    {
+       free(gameObj->toPrint);                                         /*Free the memory used by the printElements, but do not free the elements. Other functions might still need them.*/
+      gameObj->toPrint = NULL;
+      gameObj->nbrToPrint = 0;                                        /*Reset the number of elements to print*/
+    }
 }
 
 

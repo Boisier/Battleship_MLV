@@ -29,7 +29,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);
 /***** Core functions definitions ***********************************************/
 /********************************************************************************/
 
-char waitForAction(); 		/*Keep application idle until a button is pressed and a callback value returned. It handle mouse hovering */
+int waitForAction(); 		/*Keep application idle until a button is pressed and a callback value returned. It handle mouse hovering */
 
 bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
 

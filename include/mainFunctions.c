@@ -88,8 +88,7 @@ void mainMenu()                     /*display the main menu and wait for actions
 
     quitBtnElement = addToPrint(quitBtn, 'b');
     quitBtnElement->state = 'i';
-
-    /*printFrame();*/                   
+         
     callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
     /*Free created elements*/
@@ -215,9 +214,6 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
 
     freeBtn(validBtn);
     freeBtn(backBtn);
-    freeTextBox(player1);
-    if(nbrPlayer == 2)
-        freeTextBox(player2);
 
     if(callback == 'b')
         choicePlayers();
@@ -235,30 +231,45 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
     }
 }
 
+void startGame(int nbrPlayer)
+{
+    createBoardGame(gameObj->gridSizeX, gameObj->gridSizeY);        /*Generate a map with the given dimensions*/
+    gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
+    gameObj->nbrPlayer = nbrPlayer;
+
+    gameOBj->currTurn = 1;
+    setUpPlayer(1);
+
+    gameOBj->currTurn = 2;
+    setUpPlayer(2);
+
+    waitForAction();
+}
+
 void createPlayer(int playerID, char * playerName, char playerType) /*Init the player struct in the gameObj*/
 {
-    Player * player;                    /*creating temporary structs*/
-    Grid * grid;
-    Cell ** cells;
-    int i;
+    Player player;                    /*creating temporary structs*/
+    Grid grid;
+    int i, j;
 
-    player = allocate(sizeof(Player));  /*Defining player*/
+    player.type = 'h';
+    strcpy(player.name, playerName);
 
-    player->type = 'h';
-    strcpy(player->name, playerName);
+    grid.sizeX = gameObj->gridSizeX;
+    grid.sizeY = gameObj->gridSizeY;
+    grid.nbrOfShips = 0;
+    grid.ships = allocate(sizeof(Ship) * 5);
 
-    grid = allocate(sizeof(grid));      /*Defining the grid*/
-    grid->sizeX = gameObj->gridSizeX;
-    grid->sizeY = gameObj->gridSizeY;
-
-    cells = allocate(sizeof(Cell *) * gameObj->gridSizeX);
     for(i = 0; i < gameObj->gridSizeX; i++)
     {
-        cells[i] = allocate(sizeof(Cell *) * gameObj->gridSizeY);
+        for(j = 0; j < gameObj->gridSizeY; j++)
+        {
+            grid.cells[i][j].type = 'e';
+            grid.cells[i][j].hit = false;
+        }
     }
 
-    grid->cells = cells;
-    player->grid = grid;
+    player.grid = grid;
 
     if(playerID == 1)                   /*Inserting newly created data inside the gameObj*/
         gameObj->player1 = player;
@@ -266,19 +277,9 @@ void createPlayer(int playerID, char * playerName, char playerType) /*Init the p
         gameObj->player2 = player;
 }
 
-void startGame(int nbrPlayer)
-{
-    createBoardGame(gameObj->gridSizeX, gameObj->gridSizeY);        /*Generate a map with the given dimensions*/
-    gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
-    gameObj->nbrPlayer = nbrPlayer;
-
-    setUpPlayer(1);
-    setUpPlayer(2);
-}
-
 void setUpPlayer(int playerID)
 {
-    int i, j, k, marginTop, stepTop = 50, callback = 0;
+    int i, j, k, marginTop, stepTop = 50, callback = 0, boatX, boatY;
     int gridOffsetTop = 307, gridOffsetLeft = 94, leftOffset = 0;
     Picture * board = NULL;
     Picture * currentBoatIndicator = NULL;
@@ -335,7 +336,7 @@ void setUpPlayer(int playerID)
             {
                 tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, 'g');
                 tempBtn->hoverImage = targetImage;
-                tempBtn->callback = i | (j << 16);
+                tempBtn->callback = ((i+1) << 16) | (j+1);
                 tempBtn->hoverCallback = printBoatShadow;
 
                 tempElement = addToPrint(tempBtn, 'b');
@@ -377,7 +378,28 @@ void setUpPlayer(int playerID)
                     }
                     else
                     {               /*Try to add the boat*/
-                        added = addBoat((callback & 0xFFFF), (callback >> 16) & 0xFFFF, i, gameObj->boatBeingPlacedDirection);
+                        boatX = ((callback >> 16) & 0xFFFF)-1;
+                        boatY = (callback & 0xFFFF)-1;
+
+                        added = addBoat(boatX, boatY, i, gameObj->boatBeingPlacedDirection);
+                        
+                        if(added)
+                        {           /*The ship has been added, so we print it on the screen;*/
+                            if(gameObj->boatBeingPlacedDirection == 'h')
+                            {
+                                for(k = boatX; k < boatX+i; k++)
+                                {
+                                    addToPrint(createPicture(gridOffsetLeft+(k*35), gridOffsetTop+(boatY*35), "images/sheep_idle.png"), 'p');
+                                }
+                            }
+                            else if(gameObj->boatBeingPlacedDirection == 'v')
+                            {
+                                for(k = boatY; k < boatY+i; k++)
+                                {
+                                    addToPrint(createPicture(gridOffsetLeft+(boatX*35), gridOffsetTop+(k*35), "images/sheep_idle.png"), 'p');
+                                }
+                            }
+                        }
                     }
 
                 } while(added == false);
@@ -386,6 +408,7 @@ void setUpPlayer(int playerID)
 
         freePicture(board);
         freePicture(currentBoatIndicator);
+        freeBtn(rotateBtn);
         MLV_free_image(targetImage);
 
         cleanToPrint();    
@@ -398,6 +421,74 @@ void setUpPlayer(int playerID)
 
 bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
 {
+    int i;
+    Grid grid;
+    Ship newShip;
+
+    if(gameObj->currTurn == 1)
+        grid = gameObj->player1.grid;
+    else
+        grid = gameObj->player2.grid;
+
+    if(boatDirection == 'h' && boatX+boatSize-1 < grid.sizeX)
+    {
+        for(i = boatX; i < boatX+boatSize; i++)
+        {
+            if(grid.cells[i][boatY].type != 'e')
+            {
+                return false;
+            }
+        }
+    }
+    else if(boatDirection == 'v' && boatY+boatSize-1 < grid.sizeY)
+    {
+        for(i = boatY; i < boatY+boatSize; i++)
+        {
+            if(grid.cells[boatX][i].type != 'e')
+            {
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+    /*If we are here it means the boat can be added safely*/
+    newShip.size = boatSize;
+    newShip.direction = boatDirection;
+    newShip.posX = boatX;
+    newShip.posY = boatY;
+    newShip.hits[0] = false;
+    newShip.hits[1] = false;
+    newShip.hits[2] = false;
+    newShip.hits[3] = false;
+    newShip.hits[4] = false;
+
+    grid.ships[grid.nbrOfShips] = newShip;
+    grid.nbrOfShips++;
+    /*The ship is on the list, now we mark the cells has taken*/
+    if(boatDirection == 'h')
+    {
+        for(i = boatX; i < boatX+boatSize; i++)
+        {
+            grid.cells[i][boatY].type = 's';
+        }
+    }
+    else if(boatDirection == 'v')
+    {
+        for(i = boatY; i < boatY+boatSize; i++)
+        {
+            grid.cells[i][boatY].type = 's';
+        }
+    }
+
+    if(gameObj->currTurn == 1)
+        gameObj->player1.grid = grid;
+    else
+        gameObj->player2.grid = grid;
+
     return true;
 }
 

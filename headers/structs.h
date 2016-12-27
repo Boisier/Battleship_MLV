@@ -24,8 +24,9 @@ typedef struct Grid
 {
     int sizeX;               /*Size of the grid*/
     int sizeY;               /*Size of the grid*/
-    Cell **cells;            /*Cells of the grid*/
-    Ship *ships;            /*Ships on the grid*/
+    int nbrOfShips;          /*Nbr of ships*/
+    Cell cells[10][10];           /*Cells of the grid*/
+    Ship * ships;            /*Ships on the grid*/
 } Grid;
 
 typedef struct Player
@@ -33,7 +34,7 @@ typedef struct Player
     char type;              /*Type of player, can be either h (human) or c (computer/ai)*/
     char score;  
     char name[100];
-    Grid *grid;             /*If multiple game are fdone, keep track of scores.*/
+    Grid grid;             /*If multiple game are fdone, keep track of scores.*/
 } Player;
 
 typedef struct PrintElement
@@ -47,8 +48,8 @@ typedef struct PrintElement
 
 typedef struct GameObj      /*The gameObj carry all the variables used by the game*/
 {
-    Player *player1;        /*First player obj*/
-    Player *player2;        /*Second player obj*/
+    Player player1;        /*First player obj*/
+    Player player2;        /*Second player obj*/
     int currTurn;           /*Current player. Can be either 1, 2 or 0 if not in game;  */
     int nbrPlayer;          /*Number of human player in the game*/
     int nbrShips[6];        /*Nbr of ships per size (1 to 5); */

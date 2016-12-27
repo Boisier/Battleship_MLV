@@ -5,13 +5,13 @@
 #include "../headers/structs.h"
 #include "../headers/functions.h"
 
-char waitForAction() 		/*Keep application idle until a button callBack is fired. It handle mouse hovering */
+int waitForAction() 		/*Keep application idle until a button callBack is fired. It handle mouse hovering */
 {
     int mouseX, mouseY, i, unicode;
     MLV_Event event;
     MLV_Button_state state;
     MLV_Keyboard_button keyPressed;
-    char callbackValue = NULL;
+    int callbackValue = 0;
     
     do                                                          /*Loop until the user press a btn*/
     {
@@ -73,7 +73,7 @@ char waitForAction() 		/*Keep application idle until a button callBack is fired.
         if(gameObj->printLogs)
             printConsumption();
 
-    } while(callbackValue == '\0');
+    } while(callbackValue == 0);
 
     return callbackValue;
 }
@@ -140,7 +140,7 @@ Button * createBtn(int x, int y, int width, int height, char type)  /*Create a B
     btn->width = width;                         /*Set width of the button*/
     btn->height = height;                       /*Set height of the button*/
     btn->type = type;                           /*Set type of the button*/
-    btn->callback = '\0';                       /*Set callback as NULL */
+    btn->callback = 0;                       /*Set callback as NULL */
     btn->hoverCallback = NULL;                  /*Set hoverCallback as NULL */
 
     if(type == 'g')                             /*If the button is a graphic one*/
