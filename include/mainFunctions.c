@@ -49,7 +49,6 @@ void mainMenu()                     /*display the main menu and wait for actions
     char callback;
     Button * playBtn, * rulesBtn, * quitBtn;
     Picture * mainTitlePicture;
-    PrintElement * playBtnElement, * rulesBtnElement, * quitBtnElement;
 
     cleanToPrint();                 /*Empty the list of element to print before doing anything*/
 
@@ -79,16 +78,10 @@ void mainMenu()                     /*display the main menu and wait for actions
 
     /*Now we add them to the toPrint list*/
     addToPrint(mainTitlePicture, 'p');
+    addToPrint(playBtn, 'b');
+    addToPrint(rulesBtn, 'b');
+    addToPrint(quitBtn, 'b');
 
-    playBtnElement = addToPrint(playBtn, 'b');
-    playBtnElement->state = 'i';
-
-    rulesBtnElement = addToPrint(rulesBtn, 'b');
-    rulesBtnElement->state = 'i';
-
-    quitBtnElement = addToPrint(quitBtn, 'b');
-    quitBtnElement->state = 'i';
-         
     callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
     /*Free created elements*/
@@ -108,7 +101,6 @@ void choicePlayers()                /*Display the number of player screen and wa
 {
     char callback;
     Button * onePlayerBtn, * twoPlayersBtn, * backBtn;
-    PrintElement * onePlayerBtnElement, * twoPlayersBtnElement, * backBtnElement;
 
     cleanToPrint();                 /*empty current list of elements to print*/
 
@@ -134,14 +126,9 @@ void choicePlayers()                /*Display the number of player screen and wa
     backBtn->callback = 'b';
 
     /*Now we add them to the toPrint list*/
-    onePlayerBtnElement = addToPrint(onePlayerBtn, 'b');
-    onePlayerBtnElement->state = 'i';
-
-    twoPlayersBtnElement = addToPrint(twoPlayersBtn, 'b');
-    twoPlayersBtnElement->state = 'i';
-
-    backBtnElement = addToPrint(backBtn, 'b');
-    backBtnElement->state = 'i';
+    addToPrint(onePlayerBtn, 'b');
+    addToPrint(twoPlayersBtn, 'b');
+    addToPrint(backBtn, 'b');
 
     callback = waitForAction();                /*Wait for the user to do something*/
 
@@ -237,10 +224,10 @@ void startGame(int nbrPlayer)
     gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
     gameObj->nbrPlayer = nbrPlayer;
 
-    gameOBj->currTurn = 1;
+    gameObj->currTurn = 1;
     setUpPlayer(1);
 
-    gameOBj->currTurn = 2;
+    gameObj->currTurn = 2;
     setUpPlayer(2);
 
     waitForAction();

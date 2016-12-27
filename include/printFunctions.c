@@ -47,7 +47,12 @@ PrintElement * addToPrint(void * element, char type)
     newEl = allocate(sizeof(PrintElement));          /*new printElement to add*/
     newEl->element = element;                                       /*assign given element*/
     newEl->type = type;                                             /*assign given element type*/
-    newEl->state = 'i';
+
+    if(type == 'i')
+        newEl->state = 'b';
+    else
+        newEl->state = 'i';
+    
     newEl->canFade = false;
 
     gameObj->toPrint[gameObj->nbrToPrint] = *newEl;                 /*Insert newly created printElement in the array toPrint*/
