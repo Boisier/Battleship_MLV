@@ -22,11 +22,11 @@ typedef struct Cell
 
 typedef struct Grid
 {
-    int sizeX;               /*Size of the grid*/
-    int sizeY;               /*Size of the grid*/
-    int nbrOfShips;          /*Nbr of ships*/
-    Cell cells[10][10];           /*Cells of the grid*/
-    Ship * ships;            /*Ships on the grid*/
+    int sizeX;              /*Size of the grid*/
+    int sizeY;              /*Size of the grid*/
+    int nbrOfShips;         /*Nbr of ships*/
+    Cell cells[10][10];     /*Cells of the grid*/
+    Ship * ships;           /*Ships on the grid*/
 } Grid;
 
 typedef struct Player
@@ -34,7 +34,7 @@ typedef struct Player
     char type;              /*Type of player, can be either h (human) or c (computer/ai)*/
     char score;  
     char name[100];
-    Grid grid;             /*If multiple game are fdone, keep track of scores.*/
+    Grid grid;              /*If multiple game are fdone, keep track of scores.*/
 } Player;
 
 typedef struct PrintElement
@@ -48,8 +48,8 @@ typedef struct PrintElement
 
 typedef struct GameObj      /*The gameObj carry all the variables used by the game*/
 {
-    Player player1;        /*First player obj*/
-    Player player2;        /*Second player obj*/
+    Player player1;         /*First player obj*/
+    Player player2;         /*Second player obj*/
     int currTurn;           /*Current player. Can be either 1, 2 or 0 if not in game;  */
     int nbrPlayer;          /*Number of human player in the game*/
     int nbrShips[6];        /*Nbr of ships per size (1 to 5); */
@@ -106,7 +106,7 @@ typedef struct Button
     MLV_Image * activeImage;    /*Image used at hover state for graphic button */
 
     int callback;              /*value to be returned when the button is pressed*/
-    void (*hoverCallback)(int);    /*function called when the button is hovered;*/
+    void (*hoverCallback)(int);/*function called when the button is hovered;*/
 
 } Button;
 
@@ -136,7 +136,7 @@ typedef struct TextBox
 
     MLV_Color backColor;        /*Background color, used if type equalc c*/
     MLV_Color textColor;        /*Color of the text*/
-    MLV_Color placeHolderColor;        /*Color of the text*/
+    MLV_Color placeHolderColor; /*Color of the text*/
 
     MLV_Image * backImage;      /*Image to be displayed behind the textBox. Used if type equals g*/
     int imgOffsetX;             /*Image offset on the X axis*/
