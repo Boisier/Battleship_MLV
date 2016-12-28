@@ -12,7 +12,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
     gameObj->currTurn = 0;          /*Set current turn as 0*/
 
-    gameObj->nbrShips[1] = 0;       /*Set nbr of sheep for every size*/
+    gameObj->nbrShips[1] = 0;       /*Set nbr of boat for every size*/
     gameObj->nbrShips[2] = 1;
     gameObj->nbrShips[3] = 2;
     gameObj->nbrShips[4] = 1;
@@ -40,6 +40,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->gameState = 'm';
 
     gameObj->printLogs = false;     /*Should we display the logs?*/
+    /*Printing the logs when ASAN is active is not relevant because ASAN use a lot of memory*/
 
     return gameObj;                 /*Return the gameObj*/
 }
@@ -151,7 +152,6 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
     char callback;
     TextBox * player1, * player2;
     Button * validBtn, * backBtn;
-    PrintElement * player1Element, * player2Element, * validBtnElement, * backBtnElement;
 
     cleanToPrint();
 
@@ -168,8 +168,7 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
         player2->imgOffsetX = -5;
         player2->imgOffsetY = -2;
 
-        player2Element = addToPrint(player2, 'i');
-        player2Element->state = 'b';
+        addToPrint(player2, 'i');
     }
 
     player1->backImage = MLV_load_image("images/textField.png");
@@ -188,14 +187,9 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
     backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
     backBtn->callback = 'b';
 
-    player1Element = addToPrint(player1, 'i');
-    player1Element->state = 'b';
-
-    validBtnElement = addToPrint(validBtn, 'b');
-    validBtnElement->state = 'i';
-
-    backBtnElement = addToPrint(backBtn, 'b');
-    backBtnElement->state = 'i';
+    addToPrint(player1, 'i');
+    addToPrint(validBtn, 'b');
+    addToPrint(backBtn, 'b');
 
     callback = waitForAction();
 
@@ -285,7 +279,7 @@ void setUpPlayer(int playerID)
         if(playerID == 1)
         {
             board = createPicture(0, 0, "images/woodPlankRight.png");
-            leftOffset = percentOffset(50, 'w', 25);
+            leftOffset = percentOffset(50, 'w', 35);
         }
         else
         {
@@ -295,19 +289,32 @@ void setUpPlayer(int playerID)
         }
 
         addToPrint(board, 'p');
-        marginTop = 100;
+        marginTop = 85;
 
-        /*Print a list of all the boats to add*/
-        currentBoatIndicator = createPicture(leftOffset, marginTop-stepTop, "images/selector_cursor.png");
+        /*Add a BEAUTIFUL title*/
+        addToPrint(createPicture(leftOffset+115, marginTop, "images/placeYourBoats.png"), 'p');
+        marginTop += 150;
+
+        /*Add a cursor to tell wich boat we are placing*/
+        currentBoatIndicator = createPicture(leftOffset+150, marginTop, "images/selector_cursor.png");
         addToPrint(currentBoatIndicator, 'p');
 
+        /*Add a button to rotate the current boat*/
+        rotateBtn = createBtn(leftOffset, marginTop, 145, 36, 'g');
+        rotateBtn->idleImage = MLV_load_image("images/rotateBtn_small_idle.png");
+        rotateBtn->hoverImage = MLV_load_image("images/rotateBtn_small_hover.png");
+        rotateBtn->activeImage = MLV_load_image("images/rotateBtn_small_active.png");
+        rotateBtn->callback = 'r';
+        addToPrint(rotateBtn, 'b');
+
+        /*Print a list of all the boats to add*/
         for(i = 5; i > 0; i--)
         {
             for(j = 0; j < gameObj->nbrShips[i]; j++)
             {
                 for(k = 0; k < i; k++)
                 {
-                    addToPrint(createPicture(leftOffset+(35*(k+1)), marginTop, "images/sheep_idle.png"), 'p');
+                    addToPrint(createPicture(leftOffset+160+(35*(k+1)), marginTop, "images/sheep_idle.png"), 'p');
                 }
 
                 marginTop += stepTop;
@@ -331,22 +338,11 @@ void setUpPlayer(int playerID)
             }
         }
 
-        /*Add a button to rotate the current boat*/
-        rotateBtn = createBtn(leftOffset+10, 725, 185, 50, 'g');
-        rotateBtn->idleImage = MLV_load_image("images/rotateBtn_idle.png");
-        rotateBtn->hoverImage = MLV_load_image("images/rotateBtn_hover.png");
-        rotateBtn->activeImage = MLV_load_image("images/rotateBtn_active.png");
-        rotateBtn->callback = 'r';
-
-        addToPrint(rotateBtn, 'b');
-
         /*loop on every boat to add them (same loop as before)*/
         for(i = 5; i > 0; i--)
         {
             for(j = 0; j < gameObj->nbrShips[i]; j++)
-            {
-                currentBoatIndicator->y += stepTop;
-                
+            {                
                 gameObj->boatBeingPlacedSize = i;
                 gameObj->boatBeingPlacedDirection = 'h';
 
@@ -371,7 +367,12 @@ void setUpPlayer(int playerID)
                         added = addBoat(boatX, boatY, i, gameObj->boatBeingPlacedDirection);
                         
                         if(added)
-                        {           /*The ship has been added, so we print it on the screen;*/
+                        {   /*The ship has been added, so we print it on the screen;*/
+
+                            addToPrint(createPicture(leftOffset+150, currentBoatIndicator->y, "images/tick.png"), 'p');
+                            currentBoatIndicator->y += stepTop;
+                            rotateBtn->y += stepTop;
+
                             if(gameObj->boatBeingPlacedDirection == 'h')
                             {
                                 for(k = boatX; k < boatX+i; k++)
