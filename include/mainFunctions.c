@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h> 
+#include <time.h>
 #include <MLV/MLV_all.h>
 #include "../headers/structs.h"
 #include "../headers/functions.h"
@@ -18,8 +19,8 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->nbrShips[4] = 1;
     gameObj->nbrShips[5] = 1;
 
-    gameObj->gridSizeX = 10;
-    gameObj->gridSizeY = 10;
+    gameObj->gridSizeX = 5;
+    gameObj->gridSizeY = 5;
 
     gameObj->wWidth = 1100;         /*Set window height*/
     gameObj->wHeight = 800;         /*Set window width*/
@@ -206,7 +207,7 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's 
         if(nbrPlayer == 2)
             createPlayer(2, player2->content, 'h');
         else
-            createPlayer(1, "Ordinateur", 'c');
+            createPlayer(2, "Ordinateur", 'c');
 
         startGame(nbrPlayer);
     }
@@ -261,7 +262,8 @@ void createPlayer(int playerID, char * playerName, char playerType) /*Init the p
 void setUpPlayer(int playerID)
 {
     int i, j, k, marginTop, stepTop = 50, callback = 0, boatX, boatY;
-    int gridOffsetTop = 307, gridOffsetLeft = 94, leftOffset = 0;
+    int gridOffsetTop = gameObj->gridOffsetTop, gridOffsetLeft = gameObj->gridOffsetLeft, leftOffset = 0;
+    char direction;
     Picture * board = NULL;
     Picture * currentBoatIndicator = NULL;
     Button * tempBtn = NULL, * rotateBtn = NULL;
@@ -285,7 +287,7 @@ void setUpPlayer(int playerID)
         {
             board = createPicture(0, 0, "images/woodPlankLeft.png");
             leftOffset = 25;
-            gridOffsetLeft = 654;
+            gridOffsetLeft += 560;
         }
 
         addToPrint(board, 'p');
@@ -330,7 +332,7 @@ void setUpPlayer(int playerID)
             {
                 tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, 'g');
                 tempBtn->hoverImage = targetImage;
-                tempBtn->callback = ((i+1) << 16) | (j+1);
+                tempBtn->callback = mergeInts(i, j);
                 tempBtn->hoverCallback = printBoatShadow;
 
                 tempElement = addToPrint(tempBtn, 'b');
@@ -361,8 +363,7 @@ void setUpPlayer(int playerID)
                     }
                     else
                     {               /*Try to add the boat*/
-                        boatX = ((callback >> 16) & 0xFFFF)-1;
-                        boatY = (callback & 0xFFFF)-1;
+                        splitInts(callback, &boatX, &boatY);
 
                         added = addBoat(boatX, boatY, i, gameObj->boatBeingPlacedDirection);
                         
@@ -403,7 +404,35 @@ void setUpPlayer(int playerID)
     }
     else
     {                               /*AI*/
+        srand(time(NULL));
+        for(i = 5; i > 0; i--)
+        {
+            for(j = 0; j < gameObj->nbrShips[i]; j++)
+            {                
+                gameObj->boatBeingPlacedSize = i;
+                do
+                {
 
+                    if(rand() % 2 == 0)
+                    {
+                        direction = 'h';
+                        boatX = rand() % (gameObj->gridSizeX - i);
+                        boatY = rand() % gameObj->gridSizeY;
+                    }
+                    else
+                    {
+                        direction = 'v';
+                        boatX = rand() % gameObj->gridSizeX;
+                        boatY = rand() % (gameObj->gridSizeY - i);
+                    }
+                    
+                    /*printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);*/
+
+                    added = addBoat(boatX, boatY, i, direction);
+
+                } while(added == false);
+            }
+        }
     }
 }
 
@@ -413,11 +442,17 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     Grid grid;
     Ship newShip;
 
+    /*Make sure given data are between the grid boudaries*/
+    if(boatX < 0 || boatX > gameObj->gridSizeX || boatY < 0 || boatY > gameObj->gridSizeY)
+    return false;
+
+    /*get the current player grid*/
     if(gameObj->currTurn == 1)
         grid = gameObj->player1.grid;
     else
         grid = gameObj->player2.grid;
-
+    
+    /*check if every concerned cells are availables*/
     if(boatDirection == 'h' && boatX+boatSize-1 < grid.sizeX)
     {
         for(i = boatX; i < boatX+boatSize; i++)

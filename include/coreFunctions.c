@@ -210,17 +210,19 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
 
 void createBoardGame(int w, int h)
 {
-    int topOffset = 272, topStep = 35;
-    int leftOffset = 59, leftStep = 35;
+    int topOffset = 272 + ((10 - h) * 35) / 2, topStep = 35;
+    int leftOffset = 59 + ((10 - w) * 35) / 2, leftStep = 35;
     MLV_Image * mainBckg = MLV_load_image("images/mainBackground.png");
     MLV_Image * dirtBloc = MLV_load_image("images/dirtBloc.png");
     
+    gameObj->gridOffsetLeft = leftOffset+35;
+    gameObj->gridOffsetTop = topOffset+35;
 
     /*Left Grid*/
     createGrid('l', w, h, topOffset, topStep, leftOffset, leftStep, mainBckg, dirtBloc);
 
     /*Right Grid*/
-    leftOffset = 654;
+    leftOffset += 595;
 
     createGrid('r', w, h, topOffset, topStep, leftOffset, leftStep, mainBckg, dirtBloc);
 
