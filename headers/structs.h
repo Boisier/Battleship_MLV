@@ -59,7 +59,9 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
 
     int gridSizeX;          /*Nbr of cell on the width of the grid*/
     int gridSizeY;          /*Nbr of cell on the height of the grid*/
-    
+    int gridOffsetTop;      /*Top margin of the grid*/
+    int gridOffsetLeft;     /*Left margin of the grid*/
+
     int wWidth;             /*Width of the window*/
     int wHeight;            /*Height of the window*/
 
