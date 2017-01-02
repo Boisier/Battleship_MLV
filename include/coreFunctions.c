@@ -114,7 +114,7 @@ void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode)
         if(contentLength > 0)
             ((TextBox *)gameObj->toPrint[inputPos].element)->content[contentLength-1] = '\0';
     }
-    else
+    else if(unicode != MLV_KEYBOARD_RETURN)
     {
         if(contentLength < 100)
            strcat(((TextBox *)gameObj->toPrint[inputPos].element)->content, MLV_convert_unicode_to_string(unicode));
