@@ -4,21 +4,21 @@
 /***** Main functions definitions ***********************************************/
 /********************************************************************************/
 
-GameObj * initGame();       /* Init the game and return the gameObject with default values*/
+GameObj * initGame();       		/* Init the game and return the gameObject with default values*/
 
-void mainMenu();            /* Display Main menu*/
+void mainMenu();            		/* Display Main menu*/
 
-void choicePlayers();		/* Screen with choice one or two players*/
+void choicePlayers();				/* Screen with choice one or two players*/
 
-void initNewGame(int nbrPlayer); /*Init the game for one or two player*/
+void initNewGame(int nbrPlayer); 	/*Init the game for one or two player*/
 
-void startGame(int nbrPlayer);			/**/
+void startGame(int nbrPlayer);		/*Set up a new game and start it*/
 
-void createPlayer(int playerID, char * playerName, char playerType);
+void createPlayer(int playerID, char * playerName, char playerType);	/*Generate the data needed for the player*/
 
-void setUpPlayer(int playerID);
+void setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
-bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);
+bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a boat on the map for the current player and return true if the action was successfull*/
 
 
 
@@ -102,8 +102,11 @@ MLV_Color rgba(int r, int g, int b, int a);
 int percent(float percent, char direction);/*return a percentage based on the window size*/
 int percentOffset(float percent, char direction, int offset); /*return a percentage based on the window size and add the offset value to the result*/
 
-/*Print a msg in the console. Used as a callBack tester*/
-void clicked();
+void clicked();				/*Print a msg in the console. Used as a callBack tester*/
+
+int mergeInts(int first, int second);	/*Merge two int into one int. Ints passed as parameters cannot exceed 65535*/
+
+void splitInts(int merged, int *first, int*second);	/*Split two int merged with the mergedInts function*/
 
 void printConsumption();	/*This function print the current consumption of RAM and CPU of the application*/
 

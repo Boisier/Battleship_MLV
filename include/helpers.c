@@ -88,6 +88,17 @@ int percentOffset(float p, char direction, int offset) /*return a percentage bas
     return percent(p, direction) + offset;
 }
 
+int mergeInts(int first, int second)
+{
+    return ((first+1) << 16) | (second+1);
+}
+
+void splitInts(int merged, int *first, int*second)
+{
+    *first = ((merged >> 16) & 0xFFFF)-1;
+    *second = (merged & 0xFFFF)-1;
+}
+
 void clicked()                              /*Print a msg in the console. Used as a callBack tester*/
 {
     printf("Button clicked\n");
