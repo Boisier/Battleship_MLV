@@ -7,7 +7,7 @@
 #include "../headers/functions.h"
 
 
-GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
+GameObj * initGame()                /*DON'T Generate the gameObj, create the window, ...*/
 {
     GameObj * gameObj = allocate(sizeof(GameObj));   /*Define gameObj variable*/
 
