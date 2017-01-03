@@ -19,8 +19,8 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->nbrShips[4] = 1;
     gameObj->nbrShips[5] = 1;
 
-    gameObj->gridSizeX = 5;
-    gameObj->gridSizeY = 5;
+    gameObj->gridSizeX = 10;
+    gameObj->gridSizeY = 10;
 
     gameObj->wWidth = 1100;         /*Set window height*/
     gameObj->wHeight = 800;         /*Set window width*/
