@@ -15,25 +15,28 @@ void printFrame()                               /*Iterate through the gameObj an
 
     for(i = 0; i < nbrToPrint; i++)             /*We iterate over all the element to print*/
     {
-        el = gameObj->toPrint[i];               /*get the element*/
+        if(gameObj->toPrint[i].display)
+        {
+            el = gameObj->toPrint[i];               /*get the element*/
 
 
-        if(el.type == 'b')                      /*Then print it with the apropriate function*/
-            printBtn(el.element, el.state);
-        else if(el.type == 'p')
-            printPicture(el.element);
-        else if(el.type == 'i')
-            printTextBox(el.element, el.state);
+            if(el.type == BUTTON)                      /*Then print it with the apropriate function*/
+                printBtn(el.element, el.state);
+            else if(el.type == PICTURE)
+                printPicture(el.element);
+            else if(el.type == TEXTBOX)
+                printTextBox(el.element, el.state);
+        }
     }
 
     MLV_actualise_window();                     /*finaly we actualise the window();*/
     /*MLV_wait_milliseconds(15);*/
 }
 
-PrintElement * addToPrint(void * element, char type)
+PrintElement * addToPrint(void * element, enum elType type)
 {
     int newSize;
-    PrintElement * newEl;
+    PrintElement newEl;
 
     criticalIfNull(element);                    /*We make sure no NULL pointer get's in the loop*/
 
@@ -44,21 +47,20 @@ PrintElement * addToPrint(void * element, char type)
     else
         gameObj->toPrint = reAllocate(gameObj->toPrint, newSize); 
 
-    newEl = allocate(sizeof(PrintElement));          /*new printElement to add*/
-    newEl->element = element;                                       /*assign given element*/
-    newEl->type = type;                                             /*assign given element type*/
+    /*newEl = allocate(sizeof(PrintElement));    */     /*new printElement to add*/
+    newEl.element = element;                       /*assign given element*/
+    newEl.type = type;                             /*assign given element type*/
+    newEl.display = true;                          /*Set the element as being displayed*/                   
 
     if(type == 'i')
-        newEl->state = 'b';
+        newEl.state = BLUR;
     else
-        newEl->state = 'i';
+        newEl.state = IDLE;
     
-    newEl->canFade = false;
+    newEl.canFade = false;
 
-    gameObj->toPrint[gameObj->nbrToPrint] = *newEl;                 /*Insert newly created printElement in the array toPrint*/
+    gameObj->toPrint[gameObj->nbrToPrint] = newEl;                 /*Insert newly created printElement in the array toPrint*/
     gameObj->nbrToPrint++;                                          /*Increment the nbr of element*/
-
-    free(newEl);
 
     return &gameObj->toPrint[gameObj->nbrToPrint-1];                /*And return the newly created element so it can be edited*/
 }
@@ -83,26 +85,38 @@ void printBtn(struct Button * btn, char state)  /*Print a given button at the cu
     MLV_Color textColor;
     MLV_Image * image;
 
-    if(btn->type == 'g')                        /*Is the button a graphical one?*/
+    if(btn->type == BTN_GRAPHIC)                        /*Is the button a graphical one?*/
     {                                           /*Yes, let's select the image to show based on the state*/
-        if(state == 'h' || state == 'f')
-            image = btn->hoverImage;            /*Hover state*/
-        else if(state == 'a')
-            image = btn->activeImage;           /*Active state*/
+        if(btn->canToggle)
+        {
+            if(state == HOVER && !btn->checked)
+                image = btn->hoverImage;            /*Hover state*/
+            else if(state == ACTIVE || btn->checked)
+                image = btn->activeImage;           /*Active state*/
+            else if(!btn->checked)
+                image = btn->idleImage;             /*Idle state*/
+        }
         else
-            image = btn->idleImage;             /*Idle state*/
+        {
+            if(state == HOVER || state == FORCEHOVER)
+                image = btn->hoverImage;            /*Hover state*/
+            else if(state == ACTIVE)
+                image = btn->activeImage;           /*Active state*/
+            else
+                image = btn->idleImage;             /*Idle state*/
+        }
         
         if(image != NULL)
             MLV_draw_image(image, btn->x, btn->y);  /*print the button*/
     }
     else                                        /*Is the button a plain color one?*/
     {
-        if(state == 'h' || state == 'f')                        /*Set hover state properties*/
+        if(state == HOVER || state == FORCEHOVER)                        /*Set hover state properties*/
         {        
             backColor = btn->hoverBackColor;
             textColor = btn->hoverTextColor;
         }
-        else if(state == 'a')                   /*Set active state properties*/
+        else if(state == ACTIVE)                   /*Set active state properties*/
         {   
             backColor = btn->activeBackColor;
             textColor = btn->activeTextColor;
@@ -133,7 +147,7 @@ void printPicture(struct Picture * pict)        /*Print a given picture element 
 
 void printTextBox(struct TextBox * tB, char state)          /*Print given textBox on the screen*/
 {
-    char textToPrint[101];
+    char textToPrint[102];
     MLV_Color textColor;
 
     if(tB->type == 'g')                        /*Pint the image or the color depending if it's a graphical or plain color text Box*/
@@ -162,7 +176,7 @@ void printTextBox(struct TextBox * tB, char state)          /*Print given textBo
             tB->cursorShown = true;             /*show the cursor*/
     }
 
-    if(state == 'f' && tB->cursorShown)         /*Shall we display the cursor?*/
+    if(state == FOCUS && tB->cursorShown)         /*Shall we display the cursor?*/
         strcat(textToPrint, "|");               /*Let's display the cursor*/
 
     /*Finaly, draw the input box text*/

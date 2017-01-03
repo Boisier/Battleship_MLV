@@ -10,11 +10,11 @@ void mainMenu();            		/* Display Main menu*/
 
 void choicePlayers();				/* Screen with choice one or two players*/
 
-void initNewGame(int nbrPlayer); 	/*Init the game for one or two player*/
+void initNewGame(); 				/*Init the game for one or two player*/
 
 void startGame(int nbrPlayer);		/*Set up a new game and start it*/
 
-void createPlayer(int playerID, char * playerName, char playerType);	/*Generate the data needed for the player*/
+void createPlayer(int playerID, char * playerName, enum playerType type);	/*Generate the data needed for the player*/
 
 void setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
@@ -116,7 +116,7 @@ void printConsumption();	/*This function print the current consumption of RAM an
 /***** Elements creation functions **********************************************/
 /********************************************************************************/
 
-Button * createBtn(int x, int y, int width, int height, char type); /*Create a Btn and assign specified values*/
+Button * createBtn(int x, int y, int width, int height, enum btnType type); /*Create a Btn and assign specified values*/
 
 Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
 
@@ -129,7 +129,7 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
 
 void printFrame();                                  	/*print the currentFrame*/
 
-PrintElement * addToPrint(void * element, char type);	/*Add the given element to the list of Elements to print*/
+PrintElement * addToPrint(void * element, enum elType type);	/*Add the given element to the list of Elements to print*/
 
 void cleanToPrint();									/*Empty th elist of element to print*/
 

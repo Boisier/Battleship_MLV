@@ -22,19 +22,19 @@ int waitForAction() 		/*Keep application idle until a button callBack is fired. 
         {
             for(i = 0; i < gameObj->nbrToPrint; i++)            /*iterate through all the element to print*/
             {
-                if(gameObj->toPrint[i].type == 'b')             /*is this a button ?*/
+                if(gameObj->toPrint[i].type == BUTTON && gameObj->toPrint[i].display)             /*is this a button ?*/
                 {
                     if(isCursorOnBtn(((Button *)gameObj->toPrint[i].element), mouseX, mouseY))  /*Is the cursoron this button?*/
                     {
                         if(event == MLV_MOUSE_BUTTON)/*We do this if the action was a click released*/
                         {
-                            gameObj->toPrint[i].state = 'a';
+                            gameObj->toPrint[i].state = ACTIVE;
                             if(state == MLV_RELEASED)
                                 callbackValue = ((Button *)gameObj->toPrint[i].element)->callback;
                         }
                         else if(event == MLV_MOUSE_MOTION)      /*We do this if the action is just a hover*/
                         {
-                            gameObj->toPrint[i].state = 'h';   
+                            gameObj->toPrint[i].state = HOVER;   
                             if(((Button *)gameObj->toPrint[i].element)->hoverCallback != NULL)
                             {
                                 ((Button *)gameObj->toPrint[i].element)->hoverCallback(i);
@@ -43,24 +43,24 @@ int waitForAction() 		/*Keep application idle until a button callBack is fired. 
                     } 
                     else
                     {
-                        if(gameObj->toPrint[i].state != 'f')
-                            gameObj->toPrint[i].state = 'i';        /*now, make sure state is idle*/
+                        if(gameObj->toPrint[i].state != FORCEHOVER)
+                            gameObj->toPrint[i].state = IDLE;        /*now, make sure state is idle*/
                     }
                 }
-                else if(gameObj->toPrint[i].type == 'i')  /*The event is an input box one*/
+                else if(gameObj->toPrint[i].type == TEXTBOX && gameObj->toPrint[i].display)  /*The event is an input box one*/
                 {
                     if(event == MLV_MOUSE_BUTTON && state == MLV_RELEASED)
                     {
                         if(isCursorOnInput(((TextBox *)gameObj->toPrint[i].element), mouseX, mouseY))
                         {
-                            gameObj->toPrint[i].state = 'f';  /*The user clicked on this inputBox, we give it the focus*/
+                            gameObj->toPrint[i].state = FOCUS;  /*The user clicked on this inputBox, we give it the focus*/
                         }
                         else
                         {
-                            gameObj->toPrint[i].state = 'b';  /*The user didn't clicked on this input box, we make sure it is blured*/
+                            gameObj->toPrint[i].state = BLUR;  /*The user didn't clicked on this input box, we make sure it is blured*/
                         }
                     }
-                    else if(gameObj->toPrint[i].state == 'f' && event == MLV_KEY && state == MLV_PRESSED)
+                    else if(gameObj->toPrint[i].state == FOCUS && event == MLV_KEY && state == MLV_PRESSED)
                     {
                         updateTextBox(i, keyPressed, unicode);  /*The user typed something in the text box, we update it*/
                     }
@@ -132,7 +132,7 @@ void quitGame()                         /*This function properly end the game*/
 /***** Elements creation functions **********************************************/
 /********************************************************************************/
 
-Button * createBtn(int x, int y, int width, int height, char type)  /*Create a Btn and assign specified values*/
+Button * createBtn(int x, int y, int width, int height, enum btnType type)  /*Create a Btn and assign specified values*/
 {
     Button * btn = allocate(sizeof(Button));    /*Create an empty button*/
     btn->x = x;                                 /*Set X position of the button*/
@@ -140,10 +140,12 @@ Button * createBtn(int x, int y, int width, int height, char type)  /*Create a B
     btn->width = width;                         /*Set width of the button*/
     btn->height = height;                       /*Set height of the button*/
     btn->type = type;                           /*Set type of the button*/
-    btn->callback = 0;                       /*Set callback as NULL */
+    btn->callback = 0;                          /*Set callback as NULL */
     btn->hoverCallback = NULL;                  /*Set hoverCallback as NULL */
+    btn->canToggle = false;
+    btn->checked = false;
 
-    if(type == 'g')                             /*If the button is a graphic one*/
+    if(type == BTN_GRAPHIC)                             /*If the button is a graphic one*/
     {
         btn->idleImage = NULL;                  /*Set images as default  */
         btn->hoverImage = NULL;

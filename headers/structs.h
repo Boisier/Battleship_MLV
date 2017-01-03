@@ -14,9 +14,15 @@ typedef struct Ship
 
 } Ship;
 
+enum cellType
+{
+    CELL_EMPTY,
+    CELL_BOAT
+};
+
 typedef struct Cell
 {
-    char type;              /*Type of the cell (e -> empty, s -> ship);*/
+    enum cellType type;              /*Type of the cell (e -> empty, s -> ship);*/
     bool hit;               /*Has the cell been hit or not? (true or false)*/
 }Cell;
 
@@ -29,20 +35,44 @@ typedef struct Grid
     Ship * ships;           /*Ships on the grid*/
 } Grid;
 
+enum playerType
+{
+    PLAYER_HUMAN,
+    PLAYER_AI
+};
+
 typedef struct Player
 {
-    char type;              /*Type of player, can be either h (human) or c (computer/ai)*/
+    enum playerType type;              /*Type of player, can be either h (human) or c (computer/ai)*/
     char score;  
     char name[100];
     Grid grid;              /*If multiple game are fdone, keep track of scores.*/
 } Player;
 
+enum elState
+{
+    IDLE,
+    HOVER,
+    FORCEHOVER,
+    ACTIVE,
+    FOCUS,
+    BLUR
+};
+
+enum elType
+{
+    BUTTON,
+    PICTURE,
+    TEXTBOX
+};
+
 typedef struct PrintElement
 {
     void * element;         /*A pointer to the element to display*/
-    char type;              /*Type of the element. Can be b (Button), and more to come*/
-    char state;             /*If needed relative to the cursor (idle, hover, active, or force hover)*/
+    enum elType type;              /*Type of the element. Can be b (Button), and more to come*/
+    enum elState state;             /*If needed relative to the cursor (idle, hover, active, or force hover)*/
     bool canFade;
+    bool display;
 
 } PrintElement;
 
@@ -83,14 +113,22 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
 
 GameObj * gameObj;          /*Define the gameObj accessible from anywhere in the application*/
 
+enum btnType
+{
+    BTN_GRAPHIC,
+    BTN_PLAINCOLOR
+};
+
 typedef struct Button
 {
     int x;                      /*x position of the button*/
     int y;                      /*y position of the button*/
     int width;                  /*width of the button*/
     int height;                 /*height of the button*/
-    char type;                  /*button type. Can be either g(graphic/image) or c(plainColor)*/
+    enum btnType type;                  /*button type. Can be either g(graphic/image) or c(plainColor)*/
     char text[100];             /*Text to display on the button*/
+    bool canToggle;
+    bool checked;
 
     /*Back colors (used when type is )*/
     MLV_Color idleBackColor;    /*Back color when button is idle*/
