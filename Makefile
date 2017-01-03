@@ -1,7 +1,7 @@
 TARGET = main
 
 DEPS = headers/structs.h headers/functions.h
-OBJ = main.o include/helpers.o include/mainFunctions.o include/printFunctions.o include/coreFunctions.c include/monitoring.o
+OBJ = main.o include/helpers.o include/mainFunctions.o include/printFunctions.o include/coreFunctions.o include/monitoring.o
 
 ##########################################################"
 CC=gcc

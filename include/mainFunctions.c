@@ -148,7 +148,7 @@ void choicePlayers()                /*Display the number of player screen and wa
         mainMenu();
 }
 
-void initNewGame(int nbrPlayer)                /*Ask the player.s to enter it's name*/
+void initNewGame(int nbrPlayer)                /*Ask the player.s to enter his.their name.s*/
 {
     char callback;
     TextBox * player1, * player2;
@@ -444,7 +444,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
 
     /*Make sure given data are between the grid boudaries*/
     if(boatX < 0 || boatX > gameObj->gridSizeX || boatY < 0 || boatY > gameObj->gridSizeY)
-    return false;
+        return false;
 
     /*get the current player grid*/
     if(gameObj->currTurn == 1)
@@ -503,7 +503,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     {
         for(i = boatY; i < boatY+boatSize; i++)
         {
-            grid.cells[i][boatY].type = 's';
+            grid.cells[boatX][i].type = 's';
         }
     }
 

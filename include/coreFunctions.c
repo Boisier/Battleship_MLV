@@ -44,7 +44,7 @@ int waitForAction() 		/*Keep application idle until a button callBack is fired. 
                     else
                     {
                         if(gameObj->toPrint[i].state != 'f')
-                            gameObj->toPrint[i].state = 'i';        /*no, make sure state is idle*/
+                            gameObj->toPrint[i].state = 'i';        /*now, make sure state is idle*/
                     }
                 }
                 else if(gameObj->toPrint[i].type == 'i')  /*The event is an input box one*/
