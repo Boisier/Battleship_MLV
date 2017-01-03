@@ -37,6 +37,10 @@ bool isCursorOnInput(TextBox * input, int mouseX, int mouseY);	/*check if cursor
 
 void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode);
 
+void incrementNumberBox(void * nB);
+
+void decrementNumberBox(void * nB);
+
 void quitGame();
 
 void createBoardGame(int w, int h);	/**/
@@ -90,6 +94,8 @@ void freePicture(Picture * pic);
 /*Free a text box and all linked data*/
 void freeTextBox(TextBox * tB);
 
+void freeNumberBox(NumberBox * nB);
+
 /*Throw a critical error and stop the application if the given pointer is null*/
 void criticalIfNull(void * pointer);
 
@@ -122,6 +128,10 @@ Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and
 
 TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100]);
 
+NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal);
+
+
+
 
 /********************************************************************************/
 /***** Printing functions definitions *******************************************/
@@ -138,5 +148,7 @@ void printBtn(struct Button * btn, char state);    		/*print the given btn at th
 void printPicture(struct Picture * picture);			/*Print the given picture to it's set position*/
 
 void printTextBox(struct TextBox * tB, char state);					/*Print given textBox on the screen*/
+
+void printNumberBox(struct NumberBox * nB, char state);
 
 void printBoatShadow(int posInToPrint);

@@ -48,7 +48,12 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
 void mainMenu()                     /*display the main menu and wait for actions from the user*/
 {
-    char callback;
+    enum returnValues
+    {
+        PLAY = 1,
+        RULES = 2,
+        QUIT = 3
+    } callback;
     Button * playBtn, * rulesBtn, * quitBtn;
     Picture * mainTitlePicture;
 
@@ -63,20 +68,20 @@ void mainMenu()                     /*display the main menu and wait for actions
     playBtn->idleImage = MLV_load_image("images/buttons/playBtn_idle.png");
     playBtn->hoverImage = MLV_load_image("images/buttons/playBtn_hover.png");
     playBtn->activeImage = MLV_load_image("images/buttons/playBtn_active.png");
-    playBtn->callback = 'p';
+    playBtn->callback = PLAY;
 
     /*Rules Button*/
     rulesBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, BTN_GRAPHIC);
     rulesBtn->idleImage = MLV_load_image("images/buttons/rulesBtn_idle.png");
     rulesBtn->hoverImage = MLV_load_image("images/buttons/rulesBtn_hover.png");
     rulesBtn->activeImage = MLV_load_image("images/buttons/rulesBtn_active.png");
-    rulesBtn->callback = 'r';
+    rulesBtn->callback = RULES;
 
     quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
     quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
     quitBtn->hoverImage = MLV_load_image("images/buttons/quitBtn_small_hover.png");
     quitBtn->activeImage = MLV_load_image("images/buttons/quitBtn_small_active.png");
-    quitBtn->callback = 'q';
+    quitBtn->callback = QUIT;
 
     /*Now we add them to the toPrint list*/
     addToPrint(mainTitlePicture, PICTURE);
@@ -86,25 +91,28 @@ void mainMenu()                     /*display the main menu and wait for actions
 
     callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
-    /*Free created elements*/
-    freeBtn(playBtn);
-    freeBtn(rulesBtn);
-    freeBtn(quitBtn);
-    freePicture(mainTitlePicture);
-
     /*And finally call next action*/
-    if(callback == 'p')
+    if(callback == PLAY)
         initNewGame(0);
-    else if(callback == 'r')
+    else if(callback == RULES)
         clicked();
+    else if(callback == QUIT)
+        quitGame();
 }
 
 void initNewGame()                /*Ask the player.s to enter his.their name.s*/
 {
     int nbrPlayer = 2;
-    char callback = NULL;
+    enum returnValues
+    {
+        SETONEPLAYER = 1,
+        SETTWOPLAYERS = 2,
+        CONFIRM = 3,
+        BACK = 4
+    } callback;
     TextBox * player1, * player2;
     Button * validBtn, * backBtn, * onePlayerBtn, * twoPlayerBtn;
+    NumberBox * gridSizeX, * gridSizeY;
     PrintElement * player2Element;
 
     cleanToPrint();
@@ -114,7 +122,7 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     onePlayerBtn->hoverImage = MLV_load_image("images/buttons/onePlayerTab_hover.png");
     onePlayerBtn->activeImage = MLV_load_image("images/buttons/onePlayerTab_active.png");
     onePlayerBtn->canToggle = true;
-    onePlayerBtn->callback = 1;
+    onePlayerBtn->callback = SETONEPLAYER;
 
     twoPlayerBtn = createBtn(percent(50, 'w'), percent(10, 'h'), 118, 40, BTN_GRAPHIC);
     twoPlayerBtn->idleImage = MLV_load_image("images/buttons/twoPlayerTab_idle.png");
@@ -122,7 +130,7 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     twoPlayerBtn->activeImage = MLV_load_image("images/buttons/twoPlayerTab_active.png");
     twoPlayerBtn->canToggle = true;
     twoPlayerBtn->checked = true;
-    twoPlayerBtn->callback = 2;
+    twoPlayerBtn->callback = SETTWOPLAYERS;
     
     player1 = createTextBox(percentOffset(50, 'w', -262), percentOffset(10, 'h', 50), 252, 40, 'g', "Joueur 1");
     player1->backImage = MLV_load_image("images/textField.png");
@@ -134,30 +142,35 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     player2->imgOffsetX = -5;
     player2->imgOffsetY = -2;
 
-    validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(60, 'h', 50), 145, 36, BTN_GRAPHIC);
+    gridSizeX = createNumberBox(percentOffset(50, 'w', -200), percent(30, 'h'), 10, 5, 10);
+    gridSizeY = createNumberBox(percentOffset(50, 'w', 10), percent(30, 'h'), 10, 5, 10);
+
+    validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(80, 'h', 20), 145, 36, BTN_GRAPHIC);
     validBtn->idleImage = MLV_load_image("images/buttons/confirmBtn_small_idle.png");
     validBtn->hoverImage = MLV_load_image("images/buttons/confirmBtn_small_hover.png");
     validBtn->activeImage = MLV_load_image("images/buttons/confirmBtn_small_active.png");
-    validBtn->callback = 'v';
+    validBtn->callback = CONFIRM;
 
     backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
     backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
     backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
     backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
-    backBtn->callback = 'b';
+    backBtn->callback = BACK;
 
     addToPrint(onePlayerBtn, BUTTON);
     addToPrint(twoPlayerBtn, BUTTON);
     addToPrint(player1, TEXTBOX);
     addToPrint(validBtn, BUTTON);
     addToPrint(backBtn, BUTTON);
+    addToPrint(gridSizeX, NUMBERBOX);
+    addToPrint(gridSizeY, NUMBERBOX);
     player2Element = addToPrint(player2, TEXTBOX);
 
     do
     {
         callback = waitForAction();
 
-        if(callback == 1)
+        if(callback == SETONEPLAYER)
         {
             onePlayerBtn->checked = true;
             twoPlayerBtn->checked = false;
@@ -166,7 +179,7 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
             player1->x = percentOffset(50, 'w', -126);  
             nbrPlayer = 1;
         }
-        else if(callback == 2)
+        else if(callback == SETTWOPLAYERS)
         {
             onePlayerBtn->checked = false;
             twoPlayerBtn->checked = true;
@@ -176,16 +189,11 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
             nbrPlayer = 2;
         }
 
-    } while(callback != 'v' && callback != 'b');
+    } while(callback != CONFIRM && callback != BACK);
 
-    freeBtn(validBtn);
-    freeBtn(backBtn);
-    freeBtn(onePlayerBtn);
-    freeBtn(twoPlayerBtn);
-
-    if(callback == 'b')
+    if(callback == BACK)
         mainMenu();
-    else if(callback == 'v')
+    else if(callback == CONFIRM)
     {
         /*Create users and save their user name*/
         createPlayer(1, player1->content, PLAYER_HUMAN);
@@ -247,13 +255,16 @@ void createPlayer(int playerID, char * playerName, enum playerType type) /*Init 
 
 void setUpPlayer(int playerID)
 {
-    int i, j, k, marginTop, stepTop = 50, callback = 0, boatX, boatY;
+    enum returnValues
+    {
+        ROTATE = 1
+    } callback;
+    int i, j, k, marginTop, stepTop = 50, boatX, boatY;
     int gridOffsetTop = gameObj->gridOffsetTop, gridOffsetLeft = gameObj->gridOffsetLeft, leftOffset = 0;
     char direction;
     Picture * board = NULL;
     Picture * currentBoatIndicator = NULL;
     Button * tempBtn = NULL, * rotateBtn = NULL;
-    MLV_Image * targetImage = NULL;
     PrintElement * tempElement;
     bool added = false;
 
@@ -292,7 +303,7 @@ void setUpPlayer(int playerID)
         rotateBtn->idleImage = MLV_load_image("images/buttons/rotateBtn_small_idle.png");
         rotateBtn->hoverImage = MLV_load_image("images/buttons/rotateBtn_small_hover.png");
         rotateBtn->activeImage = MLV_load_image("images/buttons/rotateBtn_small_active.png");
-        rotateBtn->callback = 'r';
+        rotateBtn->callback = ROTATE;
         addToPrint(rotateBtn, BUTTON);
 
         /*Print a list of all the boats to add*/
@@ -310,14 +321,13 @@ void setUpPlayer(int playerID)
         }
 
         /*Add a button for every cell on the grid*/
-        targetImage = MLV_load_image("images/sheep_fade.png");
 
         for(i = 0; i < gameObj->gridSizeX; i++)
         {
             for(j = 0; j < gameObj->gridSizeY; j++)
             {
                 tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, BTN_GRAPHIC);
-                tempBtn->hoverImage = targetImage;
+                tempBtn->hoverImage = MLV_load_image("images/sheep_fade.png");;
                 tempBtn->callback = mergeInts(i, j);
                 tempBtn->hoverCallback = printBoatShadow;
 
@@ -333,7 +343,7 @@ void setUpPlayer(int playerID)
             {                
                 gameObj->boatBeingPlacedSize = i;
                 gameObj->boatBeingPlacedDirection = 'h';
-
+                
                 do
                 {
                     callback = waitForAction();
@@ -380,13 +390,6 @@ void setUpPlayer(int playerID)
                 } while(added == false);
             }
         }
-
-        freePicture(board);
-        freePicture(currentBoatIndicator);
-        freeBtn(rotateBtn);
-        MLV_free_image(targetImage);
-
-        cleanToPrint();    
     }
     else
     {                               /*AI*/
@@ -521,7 +524,7 @@ void printBoatShadow(int posInToPrint)
     {
         for(i = 0; i < boatSize; i++)
         {
-            if(gameObj->toPrint[posInToPrint+i].canFade == false || ((Button *)gameObj->toPrint[posInToPrint+i].element)->x != ((Button *)gameObj->toPrint[posInToPrint].element)->x)
+            if(gameObj->toPrint[posInToPrint+i].canFade == false || gameObj->toPrint[posInToPrint+i].element.btn->x != gameObj->toPrint[posInToPrint].element.btn->x)
             {
                 canBePrinted = false;
             }

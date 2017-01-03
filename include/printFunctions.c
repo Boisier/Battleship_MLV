@@ -17,15 +17,16 @@ void printFrame()                               /*Iterate through the gameObj an
     {
         if(gameObj->toPrint[i].display)
         {
-            el = gameObj->toPrint[i];               /*get the element*/
+            el = gameObj->toPrint[i];           /*get the element*/
 
 
-            if(el.type == BUTTON)                      /*Then print it with the apropriate function*/
-                printBtn(el.element, el.state);
-            else if(el.type == PICTURE)
-                printPicture(el.element);
-            else if(el.type == TEXTBOX)
-                printTextBox(el.element, el.state);
+            switch(el.type)
+            {          /*Then print it with the apropriate function*/
+                 case BUTTON: printBtn(el.element.btn, el.state); break;
+                case PICTURE: printPicture(el.element.pict); break;
+                case TEXTBOX: printTextBox(el.element.tB, el.state); break;
+                case NUMBERBOX: printNumberBox(el.element.nB, el.state); break;
+            }
         }
     }
 
@@ -40,24 +41,38 @@ PrintElement * addToPrint(void * element, enum elType type)
 
     criticalIfNull(element);                    /*We make sure no NULL pointer get's in the loop*/
 
+
+    /*newEl = allocate(sizeof(PrintElement));    */     /*new printElement to add*/
+    
+    newEl.type = type;                             /*assign given element type*/
+    
+    switch(type)          
+    {
+         case BUTTON: newEl.element.btn = element; break;
+        case PICTURE: newEl.element.pict = element; break;
+        case TEXTBOX: newEl.element.tB = element; break;
+        case NUMBERBOX: 
+            newEl.element.nB = element; 
+            addToPrint(newEl.element.nB->plusBtn, BUTTON);
+            addToPrint(newEl.element.nB->lessBtn, BUTTON);
+        break;
+    }
+
+    newEl.display = true;                          /*Set the element as being displayed*/                   
+
+    if(type == TEXTBOX)
+        newEl.state = BLUR;
+    else
+        newEl.state = IDLE;
+    
+    newEl.canFade = false;
+
     newSize = (gameObj->nbrToPrint + 1) * sizeof(PrintElement); /*New size of the toPrint array*/
 
     if(gameObj->nbrToPrint == 0)
         gameObj->toPrint = allocate(newSize);       /*increase size of the toPrint array*/
     else
         gameObj->toPrint = reAllocate(gameObj->toPrint, newSize); 
-
-    /*newEl = allocate(sizeof(PrintElement));    */     /*new printElement to add*/
-    newEl.element = element;                       /*assign given element*/
-    newEl.type = type;                             /*assign given element type*/
-    newEl.display = true;                          /*Set the element as being displayed*/                   
-
-    if(type == 'i')
-        newEl.state = BLUR;
-    else
-        newEl.state = IDLE;
-    
-    newEl.canFade = false;
 
     gameObj->toPrint[gameObj->nbrToPrint] = newEl;                 /*Insert newly created printElement in the array toPrint*/
     gameObj->nbrToPrint++;                                          /*Increment the nbr of element*/
@@ -67,11 +82,24 @@ PrintElement * addToPrint(void * element, enum elType type)
 
 void cleanToPrint()                                                 /*Empty the list of element to print*/
 {
+    int i;
+
     if(gameObj->nbrToPrint != 0)
     {
-       free(gameObj->toPrint);                                         /*Free the memory used by the printElements, but do not free the elements. Other functions might still need them.*/
-      gameObj->toPrint = NULL;
-      gameObj->nbrToPrint = 0;                                        /*Reset the number of elements to print*/
+        for(i = 0; i < gameObj->nbrToPrint; i++)
+        {
+            switch(gameObj->toPrint[i].type)          /*Then print it with the apropriate function*/
+            {
+                case BUTTON: freeBtn(gameObj->toPrint[i].element.btn); break;
+                case PICTURE: freePicture(gameObj->toPrint[i].element.pict); break;
+                case TEXTBOX: freeTextBox(gameObj->toPrint[i].element.tB); break;
+                case NUMBERBOX: freeNumberBox(gameObj->toPrint[i].element.nB); break;
+            }
+        }
+
+        free(gameObj->toPrint);                                         /*Free the memory used by the printElements, but do not free the elements. Other functions might still need them.*/
+        gameObj->toPrint = NULL;
+        gameObj->nbrToPrint = 0;                                        /*Reset the number of elements to print*/
     }
 }
 
@@ -181,4 +209,15 @@ void printTextBox(struct TextBox * tB, char state)          /*Print given textBo
 
     /*Finaly, draw the input box text*/
     MLV_draw_text_box_with_font(tB->x, tB->y, tB->width, tB->height, textToPrint, gameObj->inputFont, 9, rgba(0, 0, 0, 0), textColor, rgba(0, 0, 0, 0), MLV_TEXT_LEFT, MLV_HORIZONTAL_LEFT, MLV_VERTICAL_CENTER); /*Finaly, let's write the content*/
+}
+
+void printNumberBox(struct NumberBox * nB, char state)
+{
+    char str[10];
+
+    sprintf(str, "%d", nB->value);
+
+    MLV_draw_image(nB->backImage, nB->x+45, nB->y);
+    MLV_draw_text_box_with_font(nB->x+44, nB->y+1, 79, 39, str, gameObj->inputFont, 9, rgba(0, 0, 0, 0), MLV_COLOR_WHITE, rgba(0, 0, 0, 0), MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER); /*Finaly, let's write the content*/
+
 }
