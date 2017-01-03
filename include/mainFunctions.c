@@ -60,22 +60,22 @@ void mainMenu()                     /*display the main menu and wait for actions
 
     /*Play Button*/
     playBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 50, 'g');
-    playBtn->idleImage = MLV_load_image("images/playBtn_idle.png");
-    playBtn->hoverImage = MLV_load_image("images/playBtn_hover.png");
-    playBtn->activeImage = MLV_load_image("images/playBtn_active.png");
+    playBtn->idleImage = MLV_load_image("images/buttons/playBtn_idle.png");
+    playBtn->hoverImage = MLV_load_image("images/buttons/playBtn_hover.png");
+    playBtn->activeImage = MLV_load_image("images/buttons/playBtn_active.png");
     playBtn->callback = 'p';
 
     /*Rules Button*/
     rulesBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, 'g');
-    rulesBtn->idleImage = MLV_load_image("images/rulesBtn_idle.png");
-    rulesBtn->hoverImage = MLV_load_image("images/rulesBtn_hover.png");
-    rulesBtn->activeImage = MLV_load_image("images/rulesBtn_active.png");
+    rulesBtn->idleImage = MLV_load_image("images/buttons/rulesBtn_idle.png");
+    rulesBtn->hoverImage = MLV_load_image("images/buttons/rulesBtn_hover.png");
+    rulesBtn->activeImage = MLV_load_image("images/buttons/rulesBtn_active.png");
     rulesBtn->callback = 'r';
 
     quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
-    quitBtn->idleImage = MLV_load_image("images/quitBtn_small_idle.png");
-    quitBtn->hoverImage = MLV_load_image("images/quitBtn_small_hover.png");
-    quitBtn->activeImage = MLV_load_image("images/quitBtn_small_active.png");
+    quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
+    quitBtn->hoverImage = MLV_load_image("images/buttons/quitBtn_small_hover.png");
+    quitBtn->activeImage = MLV_load_image("images/buttons/quitBtn_small_active.png");
     quitBtn->callback = 'q';
 
     /*Now we add them to the toPrint list*/
@@ -109,22 +109,22 @@ void choicePlayers()                /*Display the number of player screen and wa
     /*Let's create the elements to be displayed*/
     /*One player Btn*/
     onePlayerBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 50, 'g');
-    onePlayerBtn->idleImage = MLV_load_image("images/onePlayerBtn_idle.png");
-    onePlayerBtn->hoverImage = MLV_load_image("images/onePlayerBtn_hover.png");
-    onePlayerBtn->activeImage = MLV_load_image("images/onePlayerBtn_active.png");
+    onePlayerBtn->idleImage = MLV_load_image("images/buttons/onePlayerBtn_idle.png");
+    onePlayerBtn->hoverImage = MLV_load_image("images/buttons/onePlayerBtn_hover.png");
+    onePlayerBtn->activeImage = MLV_load_image("images/buttons/onePlayerBtn_active.png");
     onePlayerBtn->callback = '1';
 
     /*Two player Btn*/
     twoPlayersBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, 'g');
-    twoPlayersBtn->idleImage = MLV_load_image("images/twoPlayersBtn_idle.png");
-    twoPlayersBtn->hoverImage = MLV_load_image("images/twoPlayersBtn_hover.png");
-    twoPlayersBtn->activeImage = MLV_load_image("images/twoPlayersBtn_active.png");
+    twoPlayersBtn->idleImage = MLV_load_image("images/buttons/twoPlayersBtn_idle.png");
+    twoPlayersBtn->hoverImage = MLV_load_image("images/buttons/twoPlayersBtn_hover.png");
+    twoPlayersBtn->activeImage = MLV_load_image("images/buttons/twoPlayersBtn_active.png");
     twoPlayersBtn->callback = '2';
 
     backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
-    backBtn->idleImage = MLV_load_image("images/backBtn_small_idle.png");
-    backBtn->hoverImage = MLV_load_image("images/backBtn_small_hover.png");
-    backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
+    backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
+    backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
+    backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
     backBtn->callback = 'b';
 
     /*Now we add them to the toPrint list*/
@@ -177,15 +177,15 @@ void initNewGame(int nbrPlayer)                /*Ask the player.s to enter his.t
     player1->imgOffsetY = -2;
 
     validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(60, 'h', 50), 145, 36, 'g');
-    validBtn->idleImage = MLV_load_image("images/confirmBtn_small_idle.png");
-    validBtn->hoverImage = MLV_load_image("images/confirmBtn_small_hover.png");
-    validBtn->activeImage = MLV_load_image("images/confirmBtn_small_active.png");
+    validBtn->idleImage = MLV_load_image("images/buttons/confirmBtn_small_idle.png");
+    validBtn->hoverImage = MLV_load_image("images/buttons/confirmBtn_small_hover.png");
+    validBtn->activeImage = MLV_load_image("images/buttons/confirmBtn_small_active.png");
     validBtn->callback = 'v';
 
     backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
-    backBtn->idleImage = MLV_load_image("images/backBtn_small_idle.png");
-    backBtn->hoverImage = MLV_load_image("images/backBtn_small_hover.png");
-    backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
+    backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
+    backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
+    backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
     backBtn->callback = 'b';
 
     addToPrint(player1, 'i');
@@ -303,9 +303,9 @@ void setUpPlayer(int playerID)
 
         /*Add a button to rotate the current boat*/
         rotateBtn = createBtn(leftOffset, marginTop, 145, 36, 'g');
-        rotateBtn->idleImage = MLV_load_image("images/rotateBtn_small_idle.png");
-        rotateBtn->hoverImage = MLV_load_image("images/rotateBtn_small_hover.png");
-        rotateBtn->activeImage = MLV_load_image("images/rotateBtn_small_active.png");
+        rotateBtn->idleImage = MLV_load_image("images/buttons/rotateBtn_small_idle.png");
+        rotateBtn->hoverImage = MLV_load_image("images/buttons/rotateBtn_small_hover.png");
+        rotateBtn->activeImage = MLV_load_image("images/buttons/rotateBtn_small_active.png");
         rotateBtn->callback = 'r';
         addToPrint(rotateBtn, 'b');
 
@@ -426,7 +426,7 @@ void setUpPlayer(int playerID)
                         boatY = rand() % (gameObj->gridSizeY - i);
                     }
                     
-                    /*printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);*/
+                    printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);
 
                     added = addBoat(boatX, boatY, i, direction);
 
