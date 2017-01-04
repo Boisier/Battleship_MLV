@@ -238,6 +238,8 @@ void startGame(int nbrPlayer)
     gameObj->currTurn = 2;
     setUpPlayer(2);
 
+    printf("hello\n");
+
     inGame();
 }
 
@@ -614,20 +616,20 @@ void inGame()
             for(j = 0; j < gameObj->gridSizeY; j++)
             { 
                 if(self.grid.cells[i][j].type == 's')
-                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), 'p');
+                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
 
                  if(opponent.grid.cells[i][j].hit == false)
                  {
-                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, 'g');
+                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, BTN_GRAPHIC);
                     tempBtn->idleImage = MLV_load_image("images/fog.png");
                     tempBtn->hoverImage = MLV_load_image("images/target_green.png");
                     tempBtn->activeImage = MLV_load_image("images/target_green.png");
                     tempBtn->callback = mergeInts(i, j);
 
-                    addToPrint(tempBtn, 'b');
+                    addToPrint(tempBtn, BUTTON);
                  }else if(opponent.grid.cells[i][j].type == 's')
                  {
-                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), 'p');
+                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
                  }
             }
         }
