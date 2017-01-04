@@ -7,7 +7,7 @@
 #include "../headers/functions.h"
 
 
-GameObj * initGame()                /*DON'T Generate the gameObj, create the window, ...*/
+GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
 {
     GameObj * gameObj = allocate(sizeof(GameObj));   /*Define gameObj variable*/
 
@@ -112,19 +112,22 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     } callback;
     TextBox * player1, * player2;
     Button * validBtn, * backBtn, * onePlayerBtn, * twoPlayerBtn;
-    NumberBox * gridSizeX, * gridSizeY;
+    NumberBox * gridSizeX, * gridSizeY, * fiveBlocksBoats, * fourBlocksBoats, * threeBlocksBoats, * twoBlocksBoats, *oneBlockBoats;
     PrintElement * player2Element;
 
     cleanToPrint();
 
-    onePlayerBtn = createBtn(percentOffset(50, 'w', -118), percent(10, 'h'), 118, 40, BTN_GRAPHIC);
+
+    addToPrint(createPicture(percentOffset(50, 'w', -212), 70, "images/newGameTitle.png"), PICTURE);
+
+    onePlayerBtn = createBtn(percentOffset(50, 'w', -118), 150, 118, 40, BTN_GRAPHIC);
     onePlayerBtn->idleImage = MLV_load_image("images/buttons/onePlayerTab_idle.png");
     onePlayerBtn->hoverImage = MLV_load_image("images/buttons/onePlayerTab_hover.png");
     onePlayerBtn->activeImage = MLV_load_image("images/buttons/onePlayerTab_active.png");
     onePlayerBtn->canToggle = true;
     onePlayerBtn->callback = SETONEPLAYER;
 
-    twoPlayerBtn = createBtn(percent(50, 'w'), percent(10, 'h'), 118, 40, BTN_GRAPHIC);
+    twoPlayerBtn = createBtn(percent(50, 'w'), 150, 118, 40, BTN_GRAPHIC);
     twoPlayerBtn->idleImage = MLV_load_image("images/buttons/twoPlayerTab_idle.png");
     twoPlayerBtn->hoverImage = MLV_load_image("images/buttons/twoPlayerTab_hover.png");
     twoPlayerBtn->activeImage = MLV_load_image("images/buttons/twoPlayerTab_active.png");
@@ -132,18 +135,24 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     twoPlayerBtn->checked = true;
     twoPlayerBtn->callback = SETTWOPLAYERS;
     
-    player1 = createTextBox(percentOffset(50, 'w', -262), percentOffset(10, 'h', 50), 252, 40, 'g', "Joueur 1");
+    player1 = createTextBox(percentOffset(50, 'w', -264), 200, 252, 40, 'g', "Joueur 1");
     player1->backImage = MLV_load_image("images/textField.png");
     player1->imgOffsetX = -5;
     player1->imgOffsetY = -2;
 
-    player2 = createTextBox(percentOffset(50, 'w', 10), percentOffset(10, 'h', 50), 252, 40, 'g', "Joueur 2");
+    player2 = createTextBox(percentOffset(50, 'w', 8), 200, 252, 40, 'g', "Joueur 2");
     player2->backImage = MLV_load_image("images/textField.png");
     player2->imgOffsetX = -5;
     player2->imgOffsetY = -2;
 
-    gridSizeX = createNumberBox(percentOffset(50, 'w', -200), percent(30, 'h'), 10, 5, 10);
-    gridSizeY = createNumberBox(percentOffset(50, 'w', 10), percent(30, 'h'), 10, 5, 10);
+    gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 350, 10, 5, 10);
+    gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 350, 10, 5, 10);
+
+    fiveBlocksBoats = createNumberBox(65, 500, 1, 0, 2);
+    fourBlocksBoats = createNumberBox(265, 500, 1, 0, 2);
+    threeBlocksBoats = createNumberBox(465, 500, 2, 0, 3);
+    twoBlocksBoats = createNumberBox(665, 500, 1, 0, 4);
+    oneBlockBoats = createNumberBox(865, 500, 0, 0, 4);
 
     validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(80, 'h', 20), 145, 36, BTN_GRAPHIC);
     validBtn->idleImage = MLV_load_image("images/buttons/confirmBtn_small_idle.png");
@@ -164,6 +173,11 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     addToPrint(backBtn, BUTTON);
     addToPrint(gridSizeX, NUMBERBOX);
     addToPrint(gridSizeY, NUMBERBOX);
+    addToPrint(fiveBlocksBoats, NUMBERBOX);
+    addToPrint(fourBlocksBoats, NUMBERBOX);
+    addToPrint(threeBlocksBoats, NUMBERBOX);
+    addToPrint(twoBlocksBoats, NUMBERBOX);
+    addToPrint(oneBlockBoats, NUMBERBOX);
     player2Element = addToPrint(player2, TEXTBOX);
 
     do
@@ -195,6 +209,11 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         mainMenu();
     else if(callback == CONFIRM)
     {
+        /*Save users parameters*/
+
+        gameObj->gridSizeX = gridSizeX->value;
+        gameObj->gridSizeY = gridSizeY->value;
+
         /*Create users and save their user name*/
         createPlayer(1, player1->content, PLAYER_HUMAN);
 
@@ -218,6 +237,8 @@ void startGame(int nbrPlayer)
 
     gameObj->currTurn = 2;
     setUpPlayer(2);
+
+    printf("hello\n");
 
     inGame();
 }
@@ -327,7 +348,8 @@ void setUpPlayer(int playerID)
             for(j = 0; j < gameObj->gridSizeY; j++)
             {
                 tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, BTN_GRAPHIC);
-                tempBtn->hoverImage = MLV_load_image("images/sheep_fade.png");;
+                tempBtn->hoverImage = MLV_load_image("images/sheep_fade.png");
+                tempBtn->activeImage = MLV_load_image("images/sheep_fade.png");
                 tempBtn->callback = mergeInts(i, j);
                 tempBtn->hoverCallback = printBoatShadow;
 
@@ -594,20 +616,20 @@ void inGame()
             for(j = 0; j < gameObj->gridSizeY; j++)
             { 
                 if(self.grid.cells[i][j].type == 's')
-                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), 'p');
+                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
 
                  if(opponent.grid.cells[i][j].hit == false)
                  {
-                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, 'g');
+                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, BTN_GRAPHIC);
                     tempBtn->idleImage = MLV_load_image("images/fog.png");
                     tempBtn->hoverImage = MLV_load_image("images/target_green.png");
                     tempBtn->activeImage = MLV_load_image("images/target_green.png");
                     tempBtn->callback = mergeInts(i, j);
 
-                    addToPrint(tempBtn, 'b');
+                    addToPrint(tempBtn, BUTTON);
                  }else if(opponent.grid.cells[i][j].type == 's')
                  {
-                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), 'p');
+                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
                  }
             }
         }
