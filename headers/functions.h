@@ -20,6 +20,7 @@ void setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
 bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a boat on the map for the current player and return true if the action was successfull*/
 
+void inGame();                      /* Player give a position, */
 
 
 
@@ -60,9 +61,6 @@ void printGrid (struct Grid g, bool self);
 /* The player give the position of his ships and their orientations,*/ 
 /* call verifyPosition() to see if it's possible*/
 void placeShip();
-
-/* Player give a position, */
-void play();
 
 /* Verify the position if it's already used for the placment of the ship*/
 int verifyPosition();
