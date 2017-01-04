@@ -57,8 +57,6 @@ void freeTextBox(TextBox * tB)
 
 void freeNumberBox(NumberBox * nB)
 {
-    freeBtn(nB->plusBtn);
-    freeBtn(nB->lessBtn);
     MLV_free_image(nB->backImage);
     free(nB);
 }
