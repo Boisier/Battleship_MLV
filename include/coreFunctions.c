@@ -268,7 +268,7 @@ NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal
 
 void createBoardGame(int w, int h)
 {
-    int topOffset = 272 + ((10 - h) * 35) / 2, topStep = 35;
+    int topOffset = 250 + ((10 - h) * 35) / 2, topStep = 35;
     int leftOffset = 59 + ((10 - w) * 35) / 2, leftStep = 35;
     MLV_Image * mainBckg = MLV_load_image("images/mainBackground.png");
     MLV_Image * dirtBloc = MLV_load_image("images/dirtBloc.png");
