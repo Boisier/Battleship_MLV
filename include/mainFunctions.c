@@ -7,7 +7,7 @@
 #include "../headers/functions.h"
 
 
-GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
+GameObj * initGame()                /*DON'T Generate the gameObj, create the window, ...*/
 {
     GameObj * gameObj = allocate(sizeof(GameObj));   /*Define gameObj variable*/
 
@@ -219,7 +219,7 @@ void startGame(int nbrPlayer)
     gameObj->currTurn = 2;
     setUpPlayer(2);
 
-    waitForAction();
+    inGame();
 }
 
 void createPlayer(int playerID, char * playerName, enum playerType type) /*Init the player struct in the gameObj*/
@@ -556,4 +556,75 @@ void printBoatShadow(int posInToPrint)
             }
         }
     }
+}
+
+void inGame()
+{
+    bool keepPlaying = true;
+    Player self, opponent;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, callback, targetX, targetY;
+    Button * tempBtn;
+
+    gameObj->currTurn = 1;
+
+    do
+    {
+        cleanToPrint();
+
+        /*Initialize data of self and opponent*/
+        if(gameObj->currTurn == 1)
+        {
+            self = gameObj->player1;
+            opponent = gameObj->player2;
+            leftOffsetSelf = gameObj->gridOffsetLeft;
+            leftOffsetOpponent = gameObj->gridOffsetLeft + 558;
+        }else 
+        {
+            self = gameObj->player2;
+            opponent = gameObj->player1;
+            leftOffsetOpponent = gameObj->gridOffsetLeft;
+            leftOffsetSelf = gameObj->gridOffsetLeft + 558;
+        }
+
+        printf("%d", opponent.score);
+
+        /*Show the two maps*/
+        for(i = 0; i < gameObj->gridSizeX; i++)
+        {
+            for(j = 0; j < gameObj->gridSizeY; j++)
+            { 
+                if(self.grid.cells[i][j].type == 's')
+                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), 'p');
+
+                 if(opponent.grid.cells[i][j].hit == false)
+                 {
+                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, 'g');
+                    tempBtn->idleImage = MLV_load_image("images/fog.png");
+                    tempBtn->hoverImage = MLV_load_image("images/target_green.png");
+                    tempBtn->activeImage = MLV_load_image("images/target_green.png");
+                    tempBtn->callback = mergeInts(i, j);
+
+                    addToPrint(tempBtn, 'b');
+                 }else if(opponent.grid.cells[i][j].type == 's')
+                 {
+                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), 'p');
+                 }
+            }
+        }
+
+        /*Play*/
+        callback = waitForAction();
+        splitInts(callback, &targetX, &targetY);
+        printf("%d %d\n", targetX, targetY);
+        
+        opponent.grid.cells[targetX][targetY].hit = true;
+
+
+
+        if(gameObj->currTurn == 1)
+            gameObj->currTurn = 2;
+        else
+            gameObj->currTurn = 1;
+
+    }while(keepPlaying);
 }
