@@ -214,6 +214,12 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         gameObj->gridSizeX = gridSizeX->value;
         gameObj->gridSizeY = gridSizeY->value;
 
+        gameObj->nbrShips[1] = oneBlockBoats->value;
+        gameObj->nbrShips[2] = twoBlocksBoats->value;
+        gameObj->nbrShips[3] = threeBlocksBoats->value;
+        gameObj->nbrShips[4] = fourBlocksBoats->value;
+        gameObj->nbrShips[5] = fiveBlocksBoats->value;
+
         /*Create users and save their user name*/
         createPlayer(1, player1->content, PLAYER_HUMAN);
 
@@ -247,7 +253,7 @@ void createPlayer(int playerID, char * playerName, enum playerType type) /*Init 
 {
     Player player;                    /*creating temporary structs*/
     Grid grid;
-    int i, j;
+    int i, j, boatsNbr = 0;
 
     player.type = type;
     strcpy(player.name, playerName);
@@ -255,7 +261,11 @@ void createPlayer(int playerID, char * playerName, enum playerType type) /*Init 
     grid.sizeX = gameObj->gridSizeX;
     grid.sizeY = gameObj->gridSizeY;
     grid.nbrOfShips = 0;
-    grid.ships = allocate(sizeof(Ship) * 5);
+
+    for(i = 1; i < 6; i++)
+        boatsNbr += gameObj->nbrShips[i];
+
+    grid.ships = allocate(sizeof(Ship) * boatsNbr);
 
     for(i = 0; i < gameObj->gridSizeX; i++)
     {
