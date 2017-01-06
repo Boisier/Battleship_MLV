@@ -64,7 +64,8 @@ enum elType
     BUTTON,
     PICTURE,
     TEXTBOX,
-    NUMBERBOX
+    NUMBERBOX,
+    TEXT
 };
 
 enum btnType
@@ -155,6 +156,16 @@ typedef struct NumberBox
     Button * lessBtn;
 } NumberBox;
 
+typedef struct Text
+{
+    int x;                      /*X Position of the text box*/
+    int y;                      /*Y position of the text box*/
+    int width;
+    int height;
+
+    char content[256];
+} Text;
+
 typedef struct PrintElement
 {
     union 
@@ -163,6 +174,7 @@ typedef struct PrintElement
         Picture * pict;
         TextBox * tB;
         NumberBox * nB;
+        Text * txt;
     } element;                           /*A pointer to the element to display*/
     enum elType type;               /*Type of the element. Can be b (Button), and more to come*/
     enum elState state;             /*If needed relative to the cursor (idle, hover, active, or force hover)*/

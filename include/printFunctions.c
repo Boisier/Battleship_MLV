@@ -26,6 +26,7 @@ void printFrame()                               /*Iterate through the gameObj an
                 case PICTURE: printPicture(el.element.pict); break;
                 case TEXTBOX: printTextBox(el.element.tB, el.state); break;
                 case NUMBERBOX: printNumberBox(el.element.nB, el.state); break;
+                case TEXT: printText(el.element.txt, el.state); break;
             }
         }
     }
@@ -56,6 +57,7 @@ PrintElement * addToPrint(void * element, enum elType type)
             addToPrint(newEl.element.nB->plusBtn, BUTTON);
             addToPrint(newEl.element.nB->lessBtn, BUTTON);
         break;
+        case TEXT: newEl.element.txt = element; break;
     }
 
     newEl.display = true;                          /*Set the element as being displayed*/                   
@@ -94,6 +96,7 @@ void cleanToPrint()                                                 /*Empty the 
                 case PICTURE: freePicture(gameObj->toPrint[i].element.pict); break;
                 case TEXTBOX: freeTextBox(gameObj->toPrint[i].element.tB); break;
                 case NUMBERBOX: freeNumberBox(gameObj->toPrint[i].element.nB); break;
+                case TEXT: freeText(gameObj->toPrint[i].element.txt); break;
             }
         }
 
@@ -220,4 +223,10 @@ void printNumberBox(struct NumberBox * nB, char state)
     MLV_draw_image(nB->backImage, nB->x+45, nB->y);
     MLV_draw_text_box_with_font(nB->x+44, nB->y+1, 79, 39, str, gameObj->inputFont, 9, rgba(0, 0, 0, 0), MLV_COLOR_WHITE, rgba(0, 0, 0, 0), MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER); /*Finaly, let's write the content*/
 
+}
+
+
+void printText(struct Text * txt, char state)          /*Print given Text elemnt on the screen*/
+{
+    MLV_draw_text_box_with_font(txt->x, txt->y, txt->width, txt->height, txt->content, gameObj->inputFont, 9, rgba(0, 0, 0, 0), gameObj->defaultInputColor, rgba(0, 0, 0, 0), MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 }

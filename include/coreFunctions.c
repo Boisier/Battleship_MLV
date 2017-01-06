@@ -144,6 +144,43 @@ void quitGame()                         /*This function properly end the game*/
     exit(0);
 }
 
+void waitForPlayer()
+{
+    int i, j;
+    char playerName[100];
+    Button * goBtn;
+
+    cleanToPrint();
+
+    /*Add some fog on the map*/
+    for(i = 0; i < gameObj->gridSizeX; i++)
+    {
+        for(j = 0; j < gameObj->gridSizeY; j++)
+        { 
+            addToPrint(createPicture(gameObj->gridOffsetLeft+(35*i)+1, gameObj->gridOffsetTop+(35*j), "images/fog.png"), PICTURE);
+            addToPrint(createPicture(gameObj->gridOffsetLeft+(35*i)+559, gameObj->gridOffsetTop+(35*j), "images/fog.png"), PICTURE);
+        }
+    }
+
+    addToPrint(createPicture(0, 0, "images/waitScreen.png"), PICTURE);
+
+    if(gameObj->currTurn == 1)
+        strcpy(playerName, gameObj->player1.name);
+    else
+        strcpy(playerName, gameObj->player2.name);
+
+    addToPrint(createText(0, 275, 1100, 50, playerName), TEXT);
+
+    goBtn = createBtn(percentOffset(50, 'w', -92), 370, 183, 50, BTN_GRAPHIC);
+    goBtn->idleImage = MLV_load_image("images/buttons/goBtn_idle.png");
+    goBtn->hoverImage = MLV_load_image("images/buttons/goBtn_hover.png");
+    goBtn->activeImage = MLV_load_image("images/buttons/goBtn_active.png");
+    goBtn->callback = 1;
+
+    addToPrint(goBtn, BUTTON);
+
+    waitForAction();
+}
 
 /********************************************************************************/
 /***** Elements creation functions **********************************************/
@@ -194,6 +231,18 @@ Picture * createPicture(int x, int y, char * fileURL)    /*Create an Image eleme
     MLV_get_image_size(img->image, &img->width, &img->height);  /*Get image height and width*/
 
     return img;                                                 /*Return the newly created element*/
+}
+
+Text * createText(int x, int y, int width, int height, char * content)    /*Create an Image element and return it*/
+{
+    Text * txt = allocate(sizeof(Text));                  /*create the element*/
+    txt->x = x;                                                 /*Set X position*/
+    txt->y = y;                                                 /*Set Y position*/
+    txt->width = width;
+    txt->height = height;
+    strcpy(txt->content, content);
+
+    return txt;                                                 /*Return the newly created element*/
 }
 
 TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100])

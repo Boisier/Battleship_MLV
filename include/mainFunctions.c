@@ -103,6 +103,7 @@ void mainMenu()                     /*display the main menu and wait for actions
 void initNewGame()                /*Ask the player.s to enter his.their name.s*/
 {
     int nbrPlayer = 2;
+    char player1Name[100], player2Name[100];
     enum returnValues
     {
         SETONEPLAYER = 1,
@@ -117,17 +118,16 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
 
     cleanToPrint();
 
+    addToPrint(createPicture(percentOffset(50, 'w', -212), 40, "images/newGameTitle.png"), PICTURE);
 
-    addToPrint(createPicture(percentOffset(50, 'w', -212), 70, "images/newGameTitle.png"), PICTURE);
-
-    onePlayerBtn = createBtn(percentOffset(50, 'w', -118), 150, 118, 40, BTN_GRAPHIC);
+    onePlayerBtn = createBtn(percentOffset(50, 'w', -118), 140, 118, 40, BTN_GRAPHIC);
     onePlayerBtn->idleImage = MLV_load_image("images/buttons/onePlayerTab_idle.png");
     onePlayerBtn->hoverImage = MLV_load_image("images/buttons/onePlayerTab_hover.png");
     onePlayerBtn->activeImage = MLV_load_image("images/buttons/onePlayerTab_active.png");
     onePlayerBtn->canToggle = true;
     onePlayerBtn->callback = SETONEPLAYER;
 
-    twoPlayerBtn = createBtn(percent(50, 'w'), 150, 118, 40, BTN_GRAPHIC);
+    twoPlayerBtn = createBtn(percent(50, 'w'), 140, 118, 40, BTN_GRAPHIC);
     twoPlayerBtn->idleImage = MLV_load_image("images/buttons/twoPlayerTab_idle.png");
     twoPlayerBtn->hoverImage = MLV_load_image("images/buttons/twoPlayerTab_hover.png");
     twoPlayerBtn->activeImage = MLV_load_image("images/buttons/twoPlayerTab_active.png");
@@ -135,32 +135,48 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     twoPlayerBtn->checked = true;
     twoPlayerBtn->callback = SETTWOPLAYERS;
     
-    player1 = createTextBox(percentOffset(50, 'w', -264), 200, 252, 40, 'g', "Joueur 1");
+    player1 = createTextBox(percentOffset(50, 'w', -264), 190, 252, 40, 'g', "Joueur 1");
     player1->backImage = MLV_load_image("images/textField.png");
     player1->imgOffsetX = -5;
     player1->imgOffsetY = -2;
 
-    player2 = createTextBox(percentOffset(50, 'w', 8), 200, 252, 40, 'g', "Joueur 2");
+    player2 = createTextBox(percentOffset(50, 'w', 8), 190, 252, 40, 'g', "Joueur 2");
     player2->backImage = MLV_load_image("images/textField.png");
     player2->imgOffsetX = -5;
     player2->imgOffsetY = -2;
 
-    gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 350, 10, 5, 10);
-    gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 350, 10, 5, 10);
+    addToPrint(createPicture(percentOffset(50, 'w', -325), 250, "images/hDivider.png"), PICTURE);
+    addToPrint(createPicture(percentOffset(50, 'w', -142), 280, "images/gridSize.png"), PICTURE);
+    addToPrint(createPicture(percentOffset(50, 'w', -16), 337, "images/times.png"), PICTURE);
 
-    fiveBlocksBoats = createNumberBox(65, 500, 1, 0, 2);
-    fourBlocksBoats = createNumberBox(265, 500, 1, 0, 2);
-    threeBlocksBoats = createNumberBox(465, 500, 2, 0, 3);
-    twoBlocksBoats = createNumberBox(665, 500, 1, 0, 4);
-    oneBlockBoats = createNumberBox(865, 500, 0, 0, 4);
+    gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 330, 10, 5, 10);
+    gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 330, 10, 5, 10);
 
-    validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(80, 'h', 20), 145, 36, BTN_GRAPHIC);
-    validBtn->idleImage = MLV_load_image("images/buttons/confirmBtn_small_idle.png");
-    validBtn->hoverImage = MLV_load_image("images/buttons/confirmBtn_small_hover.png");
-    validBtn->activeImage = MLV_load_image("images/buttons/confirmBtn_small_active.png");
+    addToPrint(createPicture(percentOffset(50, 'w', -325), 400, "images/hDivider.png"), PICTURE);
+    addToPrint(createPicture(percentOffset(50, 'w', -174), 430, "images/sheepNbr.png"), PICTURE);
+
+    addToPrint(createPicture(86, 490, "images/sheepGroup5.png"), PICTURE);
+    addToPrint(createPicture(286, 490, "images/sheepGroup4.png"), PICTURE);
+    addToPrint(createPicture(486, 490, "images/sheepGroup3.png"), PICTURE);
+    addToPrint(createPicture(686, 490, "images/sheepGroup2.png"), PICTURE);
+    addToPrint(createPicture(886, 490, "images/sheepGroup1.png"), PICTURE);
+
+
+    fiveBlocksBoats = createNumberBox(65, 520, 1, 0, 2);
+    fourBlocksBoats = createNumberBox(265, 520, 1, 0, 2);
+    threeBlocksBoats = createNumberBox(465, 520, 2, 0, 3);
+    twoBlocksBoats = createNumberBox(665, 520, 1, 0, 4);
+    oneBlockBoats = createNumberBox(865, 520, 0, 0, 4);
+
+    addToPrint(createPicture(percentOffset(50, 'w', -325), 590, "images/hDivider.png"), PICTURE);
+    
+    validBtn = createBtn(percentOffset(50, 'w', -92), 620, 183, 50, BTN_GRAPHIC);
+    validBtn->idleImage = MLV_load_image("images/buttons/goBtn_idle.png");
+    validBtn->hoverImage = MLV_load_image("images/buttons/goBtn_hover.png");
+    validBtn->activeImage = MLV_load_image("images/buttons/goBtn_active.png");
     validBtn->callback = CONFIRM;
 
-    backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
+    backBtn = createBtn(percentOffset(50, 'w', -72), 720, 145, 36, BTN_GRAPHIC);
     backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
     backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
     backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
@@ -221,10 +237,18 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         gameObj->nbrShips[5] = fiveBlocksBoats->value;
 
         /*Create users and save their user name*/
-        createPlayer(1, player1->content, PLAYER_HUMAN);
+        strcpy(player1Name, player1->content);
+        if(strlen(player1Name) == 0)
+            strcpy(player1Name, player1->placeHolder);
+        createPlayer(1, player1Name, PLAYER_HUMAN);
 
         if(nbrPlayer == 2)
-            createPlayer(2, player2->content, PLAYER_HUMAN);
+        {
+            strcpy(player2Name, player2->content);
+            if(strlen(player2Name) == 0)
+                strcpy(player2Name, player2->placeHolder);
+            createPlayer(2, player2Name, PLAYER_HUMAN);
+        }
         else
             createPlayer(2, "Ordinateur", PLAYER_AI);
 
@@ -298,12 +322,14 @@ void setUpPlayer(int playerID)
     Button * tempBtn = NULL, * rotateBtn = NULL;
     PrintElement * tempElement;
     bool added = false;
-
-    cleanToPrint();  
     
     if(playerID == 1 || (playerID == 2 && gameObj->nbrPlayer == 2))
     {                               /*Human player*/
         gameObj->currTurn = playerID;
+
+        waitForPlayer();
+
+        cleanToPrint();  
 
         /*Create and add to print the wooden board*/
         if(playerID == 1)
@@ -425,6 +451,8 @@ void setUpPlayer(int playerID)
     }
     else
     {                               /*AI*/
+        cleanToPrint();  
+        
         srand(time(NULL));
         for(i = 5; i > 0; i--)
         {
@@ -601,6 +629,7 @@ void inGame()
 
     do
     {
+        waitForPlayer();
         cleanToPrint();
 
         /*Initialize data of self and opponent*/
