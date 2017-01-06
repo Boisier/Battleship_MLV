@@ -641,6 +641,13 @@ void inGame()
         
         opponent.grid.cells[targetX][targetY].hit = true;
 
+        /*Vérifier si un bateau est coulé: boucle sur tous les bateaux*/
+            /*Si coulé : 
+                Var sinkBoat qui s'incrémente, 
+                quand elle est égale aux nombres de bateaux: le joueur gagne : le jeu s'arrête */
+            /*Sinon : 
+                à l'autre joueur de jouer'
+            */
 
 
         if(gameObj->currTurn == 1)
