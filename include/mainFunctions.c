@@ -584,7 +584,7 @@ void inGame()
 {
     bool keepPlaying = true;
     Player self, opponent;
-    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, callback, targetX, targetY;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, k, l, m, callback, targetX, targetY, sinkedShips = 0;
     Button * tempBtn;
 
     gameObj->currTurn = 1;
@@ -608,7 +608,7 @@ void inGame()
             leftOffsetSelf = gameObj->gridOffsetLeft + 558;
         }
 
-        printf("%d", opponent.score);
+        printf("Score de l'opposant: %d", opponent.score);
 
         /*Show the two maps*/
         for(i = 0; i < gameObj->gridSizeX; i++)
@@ -634,12 +634,30 @@ void inGame()
             }
         }
 
-        /*Play*/
+        /*Save the position where the player has play*/
         callback = waitForAction();
         splitInts(callback, &targetX, &targetY);
         printf("%d %d\n", targetX, targetY);
         
         opponent.grid.cells[targetX][targetY].hit = true;
+
+        /*Verify if the partie is over*/
+        for(k = 0; k < opponent.grid.nbrOfShips; k++)
+        {
+            for(l = 0; l < opponent.grid.ships[k]; l++)
+            {
+                for(m = 0; m < opponent.grid.ships[k].size; m++)
+                {
+                    if(opponent.grid.ships[k] == "hit")
+                    {
+                        sinkedShips += 1;
+                    }
+                }
+            }
+        }
+
+        if(sinkedShips == opponent.grid.nbrOfShips)
+            keepPlaying = false; 
 
         /*Vérifier si un bateau est coulé: boucle sur tous les bateaux*/
             /*Si coulé : 
