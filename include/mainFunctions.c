@@ -641,11 +641,17 @@ void inGame()
         
         opponent.grid.cells[targetX][targetY].hit = true;
 
-        /*Verify if the partie is over*/
+        /*Verify if the game is over*/
         for(k = 0; k < opponent.grid.nbrOfShips; k++)
         {
             for(l = 0; l < opponent.grid.ships[k].size; l++)
             {
+
+                if(opponent.gris.ships[k].direction = 'h')
+                {
+
+                }
+
                 /*Change where the ship has been hit*/
                 if(opponent.grid.ships[k].posX == targetX && opponent.grid.ships[k].posY == targetY)
                 {
@@ -663,6 +669,7 @@ void inGame()
                 {
                     sinkedShips += 1;
                 }
+
             }
         }
 
