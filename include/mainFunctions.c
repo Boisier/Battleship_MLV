@@ -584,7 +584,7 @@ void inGame()
 {
     bool keepPlaying = true;
     Player self, opponent;
-    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, k, l, m, callback, targetX, targetY, sinkedShips = 0;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, k, l, callback, targetX, targetY, sinkedShips = 0, almostSinked = 0;
     Button * tempBtn;
 
     gameObj->currTurn = 1;
@@ -644,34 +644,40 @@ void inGame()
         /*Verify if the partie is over*/
         for(k = 0; k < opponent.grid.nbrOfShips; k++)
         {
-            for(l = 0; l < opponent.grid.ships[k]; l++)
+            for(l = 0; l < opponent.grid.ships[k].size; l++)
             {
-                for(m = 0; m < opponent.grid.ships[k].size; m++)
+                /*Change where the ship has been hit*/
+                if(opponent.grid.ships[k].posX == targetX && opponent.grid.ships[k].posY == targetY)
                 {
-                    if(opponent.grid.ships[k] == "hit")
-                    {
-                        sinkedShips += 1;
-                    }
+                    opponent.grid.ships[k].hits[l] == 1;
+                }
+
+                /*Counter to know when the ship will be sinked*/
+                if(opponent.grid.ships[k].hits[l] == 1)
+                {
+                    almostSinked += 1;
+                }
+
+                /*Ship has sinked*/
+                if(almostSinked == opponent.grid.ships[k].size)
+                {
+                    sinkedShips += 1;
                 }
             }
         }
 
+        /*End of the loop*/
         if(sinkedShips == opponent.grid.nbrOfShips)
             keepPlaying = false; 
 
-        /*Vérifier si un bateau est coulé: boucle sur tous les bateaux*/
-            /*Si coulé : 
-                Var sinkBoat qui s'incrémente, 
-                quand elle est égale aux nombres de bateaux: le joueur gagne : le jeu s'arrête */
-            /*Sinon : 
-                à l'autre joueur de jouer'
-            */
-
-
+        /*Who's next ?*/
         if(gameObj->currTurn == 1)
             gameObj->currTurn = 2;
         else
             gameObj->currTurn = 1;
 
     }while(keepPlaying);
+
+    printf("you win!\n");
+
 }
