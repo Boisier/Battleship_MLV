@@ -494,6 +494,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     newShip.direction = boatDirection;
     newShip.posX = boatX;
     newShip.posY = boatY;
+    newShip.sinked = false;
     newShip.hits[0] = false;
     newShip.hits[1] = false;
     newShip.hits[2] = false;
@@ -582,6 +583,12 @@ void printBoatShadow(int posInToPrint)
 
 void inGame()
 {
+    enum
+    {
+        MISS,
+        HIT,
+        DROWN
+    } turnResult;
     bool keepPlaying = true;
     Player self, opponent;
     int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, k, l, callback, targetX, targetY, sinkedShips = 0, almostSinked = 0;
@@ -592,6 +599,8 @@ void inGame()
     do
     {
         cleanToPrint();
+
+        turnResult = MISS;
 
         /*Initialize data of self and opponent*/
         if(gameObj->currTurn == 1)
@@ -641,35 +650,40 @@ void inGame()
         
         opponent.grid.cells[targetX][targetY].hit = true;
 
-        /*Verify if the game is over*/
+        /*Test to see ifa boat has been hit*/
         for(k = 0; k < opponent.grid.nbrOfShips; k++)
         {
-            for(l = 0; l < opponent.grid.ships[k].size; l++)
+            if(!opponent.grid.ships[k].sinked)
             {
-
-                if(opponent.gris.ships[k].direction = 'h')
+                for(l = 0; l < opponent.grid.ships[k].size; l++)
                 {
+                    if(opponent.grid.ships[k].direction == 'h')
+                    {
+                        if(opponent.grid.ships[k].posX + l == targetX && opponent.grid.ships[k].posY == targetY)
+                        {
+                            opponent.grid.ships[k].hits[l] = true;
 
+                            turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
+
+                            /*see if boat has been sinked*/
+
+                            k = opponent.grid.nbrOfShips;
+                            break;          /*we found the researched boat, so we get out of the loop*/
+                        }
+                    }
+
+                    /*Counter to know when the ship will be sinked*/
+                    if(opponent.grid.ships[k].hits[l] == 1)
+                    {
+                        almostSinked += 1;
+                    }
+
+                    /*Ship has sinked*/
+                    if(almostSinked == opponent.grid.ships[k].size)
+                    {
+                        sinkedShips += 1;
+                    }
                 }
-
-                /*Change where the ship has been hit*/
-                if(opponent.grid.ships[k].posX == targetX && opponent.grid.ships[k].posY == targetY)
-                {
-                    opponent.grid.ships[k].hits[l] == 1;
-                }
-
-                /*Counter to know when the ship will be sinked*/
-                if(opponent.grid.ships[k].hits[l] == 1)
-                {
-                    almostSinked += 1;
-                }
-
-                /*Ship has sinked*/
-                if(almostSinked == opponent.grid.ships[k].size)
-                {
-                    sinkedShips += 1;
-                }
-
             }
         }
 
@@ -686,5 +700,7 @@ void inGame()
     }while(keepPlaying);
 
     printf("you win!\n");
+
+    printf("%d\n", turnResult);     /*Just so turnResult is not marked as "not used"*/
 
 }

@@ -10,6 +10,7 @@ typedef struct Ship
     char direction;         /*vertical or horizontal (v or h)*/
     int posX;               /*X position of the ship on the grid*/
     int posY;               /*Y position of the ship on the grid*/
+    bool sinked;
     bool hits[5];           /*Details which cell of the ship has been hit;*/
 
 } Ship;
