@@ -228,5 +228,5 @@ void printNumberBox(struct NumberBox * nB, char state)
 
 void printText(struct Text * txt, char state)          /*Print given Text elemnt on the screen*/
 {
-    MLV_draw_text_box_with_font(txt->x, txt->y, txt->width, txt->height, txt->content, gameObj->inputFont, 9, rgba(0, 0, 0, 0), gameObj->defaultInputColor, rgba(0, 0, 0, 0), MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+    MLV_draw_text_box_with_font(txt->x, txt->y, txt->width, txt->height, txt->content, gameObj->waitFont, 9, rgba(0, 0, 0, 0), gameObj->defaultInputColor, rgba(0, 0, 0, 0), MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 }

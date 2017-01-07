@@ -206,6 +206,8 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     int nbrToPrint;         /*Number of elements to print*/
 
     MLV_Font * inputFont;   /*Font used to render input box*/
+    MLV_Font * waitFont;   /*Font used to render input box*/
+
     MLV_Color defaultInputColor;
     MLV_Color defaultPlaceHolderColor;
 

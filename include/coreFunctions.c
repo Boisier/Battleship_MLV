@@ -144,7 +144,7 @@ void quitGame()                         /*This function properly end the game*/
     exit(0);
 }
 
-void waitForPlayer()
+void waitFor(char type)
 {
     int i, j;
     char playerName[100];
@@ -163,23 +163,45 @@ void waitForPlayer()
     }
 
     addToPrint(createPicture(0, 0, "images/waitScreen.png"), PICTURE);
+    
+    if(type == 'h')
+    {
+        addToPrint(createPicture(percentOffset(50, 'w', -282), 172, "images/waitingFor.png"), PICTURE);
+        
+        if(gameObj->currTurn == 1)
+            strcpy(playerName, gameObj->player1.name);
+        else
+            strcpy(playerName, gameObj->player2.name);
 
-    if(gameObj->currTurn == 1)
-        strcpy(playerName, gameObj->player1.name);
-    else
-        strcpy(playerName, gameObj->player2.name);
+        addToPrint(createText(0, 275, 1100, 50, playerName), TEXT);
 
-    addToPrint(createText(0, 275, 1100, 50, playerName), TEXT);
+        goBtn = createBtn(percentOffset(50, 'w', -92), 370, 183, 50, BTN_GRAPHIC);
+        goBtn->idleImage = MLV_load_image("images/buttons/goBtn_idle.png");
+        goBtn->hoverImage = MLV_load_image("images/buttons/goBtn_hover.png");
+        goBtn->activeImage = MLV_load_image("images/buttons/goBtn_active.png");
+        goBtn->callback = 1;
 
-    goBtn = createBtn(percentOffset(50, 'w', -92), 370, 183, 50, BTN_GRAPHIC);
-    goBtn->idleImage = MLV_load_image("images/buttons/goBtn_idle.png");
-    goBtn->hoverImage = MLV_load_image("images/buttons/goBtn_hover.png");
-    goBtn->activeImage = MLV_load_image("images/buttons/goBtn_active.png");
-    goBtn->callback = 1;
+        addToPrint(goBtn, BUTTON);
 
-    addToPrint(goBtn, BUTTON);
+        waitForAction();
+    }
+    else if(type == 'c')
+    {
+        addToPrint(createPicture(percentOffset(50, 'w', -349), 235, "images/computerIsPlaying.png"), PICTURE);
 
-    waitForAction();
+        printFrame();
+        MLV_wait_seconds(3);
+    }
+}
+
+void waitForPlayer()
+{
+    waitFor('h');
+}
+
+void waitForComputer()
+{
+    waitFor('c');
 }
 
 /********************************************************************************/

@@ -31,6 +31,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     
     /*Set default fonts*/
     gameObj->inputFont = MLV_load_font("fonts/LCD_Solid.ttf", 18);
+    gameObj->waitFont = MLV_load_font("fonts/LCD_Solid.ttf", 36);
     
     /*Set default values */
     gameObj->defaultInputColor = rgba(51, 38, 29, 255);
@@ -482,6 +483,8 @@ void setUpPlayer(int playerID)
                 } while(added == false);
             }
         }
+
+        waitForComputer();
     }
 }
 

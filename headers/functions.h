@@ -44,7 +44,11 @@ void decrementNumberBox(void * nB);
 
 void quitGame();
 
+void waitFor(char type);
+
 void waitForPlayer();
+
+void waitForComputer();
 
 void createBoardGame(int w, int h);	/**/
 
