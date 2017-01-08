@@ -699,16 +699,18 @@ void inGame()
         switch(turnResult)
         {
             case MISS:
-                printf("manque!\n");
+                addToPrint(createPicture(0, 0, "images/missedCaption.png"), PICTURE);
             break;
             case HIT:
-                printf("Touche!\n");
+                addToPrint(createPicture(0, 0, "images/hitCaption.png"), PICTURE);
             break;
             case SINKED:
-                printf("Touche!\n");
-                printf("Troupeau a terre!\n");
+                addToPrint(createPicture(0, 0, "images/sinkedCaption.png"), PICTURE);
             break;
         }
+
+        printFrame();
+        MLV_wait_seconds(3);
 
         /*Who's next ?*/
         if(gameObj->currTurn == 1)
@@ -718,8 +720,5 @@ void inGame()
 
     }while(keepPlaying);
 
-    printf("you win!\n");
-
-    printf("%d\n", turnResult);     /*Just so turnResult is not marked as "not used"*/
-
+    printf("End of the game\n");
 }
