@@ -44,6 +44,12 @@ void decrementNumberBox(void * nB);
 
 void quitGame();
 
+void waitFor(char type);
+
+void waitForPlayer();
+
+void waitForComputer();
+
 void createBoardGame(int w, int h);	/**/
 
 void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc);
@@ -94,6 +100,8 @@ void freeTextBox(TextBox * tB);
 
 void freeNumberBox(NumberBox * nB);
 
+void freeText(Text * txt);
+
 /*Throw a critical error and stop the application if the given pointer is null*/
 void criticalIfNull(void * pointer);
 
@@ -124,6 +132,8 @@ Button * createBtn(int x, int y, int width, int height, enum btnType type); /*Cr
 
 Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
 
+Text * createText(int x, int y, int width, int height, char * content);
+
 TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100]);
 
 NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal);
@@ -148,5 +158,7 @@ void printPicture(struct Picture * picture);			/*Print the given picture to it's
 void printTextBox(struct TextBox * tB, char state);					/*Print given textBox on the screen*/
 
 void printNumberBox(struct NumberBox * nB, char state);
+
+void printText(struct Text * txt, char state);          /*Print given Text elemnt on the screen*/
 
 void printBoatShadow(int posInToPrint);

@@ -62,6 +62,10 @@ void freeNumberBox(NumberBox * nB)
 }
 
 
+void freeText(Text * txt)
+{
+    free(txt);
+}
 
 
 void criticalIfNull(void * pointer)         /*Throw a critical error and stop the application if the given pointer is null*/
