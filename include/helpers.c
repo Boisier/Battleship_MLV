@@ -31,9 +31,12 @@ void * reAllocate(void * var, int newSize)  /*realloc encapsulation with failing
 
 void freeBtn(Button * btn)
 {
-    MLV_free_image(btn->idleImage);
-    MLV_free_image(btn->hoverImage);
-    MLV_free_image(btn->activeImage);
+    if(btn->type == BTN_GRAPHIC)
+    {
+        MLV_free_image(btn->idleImage);
+        MLV_free_image(btn->hoverImage);
+        MLV_free_image(btn->activeImage);
+    }
 
     free(btn);
 }
@@ -46,8 +49,16 @@ void freePicture(Picture * pic)
 
 void freeTextBox(TextBox * tB)
 {
-    MLV_free_image(tB->backImage);
+    if(tB->type == 'g')
+       MLV_free_image(tB->backImage);
+    
     free(tB);
+}
+
+void freeNumberBox(NumberBox * nB)
+{
+    MLV_free_image(nB->backImage);
+    free(nB);
 }
 
 

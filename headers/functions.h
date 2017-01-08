@@ -10,16 +10,17 @@ void mainMenu();            		/* Display Main menu*/
 
 void choicePlayers();				/* Screen with choice one or two players*/
 
-void initNewGame(int nbrPlayer); 	/*Init the game for one or two player*/
+void initNewGame(); 				/*Init the game for one or two player*/
 
 void startGame(int nbrPlayer);		/*Set up a new game and start it*/
 
-void createPlayer(int playerID, char * playerName, char playerType);	/*Generate the data needed for the player*/
+void createPlayer(int playerID, char * playerName, enum playerType type);	/*Generate the data needed for the player*/
 
 void setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
 bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a boat on the map for the current player and return true if the action was successfull*/
 
+void inGame();                      /* Player give a position, */
 
 
 
@@ -36,6 +37,10 @@ bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
 bool isCursorOnInput(TextBox * input, int mouseX, int mouseY);	/*check if cursor is on textBox. Return true if it is, false otherwise*/
 
 void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode);
+
+void incrementNumberBox(void * nB);
+
+void decrementNumberBox(void * nB);
 
 void quitGame();
 
@@ -60,9 +65,6 @@ void printGrid (struct Grid g, bool self);
 /* The player give the position of his ships and their orientations,*/ 
 /* call verifyPosition() to see if it's possible*/
 void placeShip();
-
-/* Player give a position, */
-void play();
 
 /* Verify the position if it's already used for the placment of the ship*/
 int verifyPosition();
@@ -90,6 +92,8 @@ void freePicture(Picture * pic);
 /*Free a text box and all linked data*/
 void freeTextBox(TextBox * tB);
 
+void freeNumberBox(NumberBox * nB);
+
 /*Throw a critical error and stop the application if the given pointer is null*/
 void criticalIfNull(void * pointer);
 
@@ -116,11 +120,15 @@ void printConsumption();	/*This function print the current consumption of RAM an
 /***** Elements creation functions **********************************************/
 /********************************************************************************/
 
-Button * createBtn(int x, int y, int width, int height, char type); /*Create a Btn and assign specified values*/
+Button * createBtn(int x, int y, int width, int height, enum btnType type); /*Create a Btn and assign specified values*/
 
 Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
 
 TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100]);
+
+NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal);
+
+
 
 
 /********************************************************************************/
@@ -129,7 +137,7 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
 
 void printFrame();                                  	/*print the currentFrame*/
 
-PrintElement * addToPrint(void * element, char type);	/*Add the given element to the list of Elements to print*/
+PrintElement * addToPrint(void * element, enum elType type);	/*Add the given element to the list of Elements to print*/
 
 void cleanToPrint();									/*Empty th elist of element to print*/
 
@@ -138,5 +146,7 @@ void printBtn(struct Button * btn, char state);    		/*print the given btn at th
 void printPicture(struct Picture * picture);			/*Print the given picture to it's set position*/
 
 void printTextBox(struct TextBox * tB, char state);					/*Print given textBox on the screen*/
+
+void printNumberBox(struct NumberBox * nB, char state);
 
 void printBoatShadow(int posInToPrint);

@@ -19,8 +19,8 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->nbrShips[4] = 1;
     gameObj->nbrShips[5] = 1;
 
-    gameObj->gridSizeX = 5;
-    gameObj->gridSizeY = 5;
+    gameObj->gridSizeX = 10;
+    gameObj->gridSizeY = 10;
 
     gameObj->wWidth = 1100;         /*Set window height*/
     gameObj->wHeight = 800;         /*Set window width*/
@@ -48,7 +48,12 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
 void mainMenu()                     /*display the main menu and wait for actions from the user*/
 {
-    char callback;
+    enum returnValues
+    {
+        PLAY = 1,
+        RULES = 2,
+        QUIT = 3
+    } callback;
     Button * playBtn, * rulesBtn, * quitBtn;
     Picture * mainTitlePicture;
 
@@ -59,155 +64,163 @@ void mainMenu()                     /*display the main menu and wait for actions
     mainTitlePicture = createPicture(percentOffset(50, 'w', -353), 70, "images/mainTitle.png");
 
     /*Play Button*/
-    playBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 50, 'g');
-    playBtn->idleImage = MLV_load_image("images/playBtn_idle.png");
-    playBtn->hoverImage = MLV_load_image("images/playBtn_hover.png");
-    playBtn->activeImage = MLV_load_image("images/playBtn_active.png");
-    playBtn->callback = 'p';
+    playBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 50, BTN_GRAPHIC);
+    playBtn->idleImage = MLV_load_image("images/buttons/playBtn_idle.png");
+    playBtn->hoverImage = MLV_load_image("images/buttons/playBtn_hover.png");
+    playBtn->activeImage = MLV_load_image("images/buttons/playBtn_active.png");
+    playBtn->callback = PLAY;
 
     /*Rules Button*/
-    rulesBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, 'g');
-    rulesBtn->idleImage = MLV_load_image("images/rulesBtn_idle.png");
-    rulesBtn->hoverImage = MLV_load_image("images/rulesBtn_hover.png");
-    rulesBtn->activeImage = MLV_load_image("images/rulesBtn_active.png");
-    rulesBtn->callback = 'r';
+    rulesBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, BTN_GRAPHIC);
+    rulesBtn->idleImage = MLV_load_image("images/buttons/rulesBtn_idle.png");
+    rulesBtn->hoverImage = MLV_load_image("images/buttons/rulesBtn_hover.png");
+    rulesBtn->activeImage = MLV_load_image("images/buttons/rulesBtn_active.png");
+    rulesBtn->callback = RULES;
 
-    quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
-    quitBtn->idleImage = MLV_load_image("images/quitBtn_small_idle.png");
-    quitBtn->hoverImage = MLV_load_image("images/quitBtn_small_hover.png");
-    quitBtn->activeImage = MLV_load_image("images/quitBtn_small_active.png");
-    quitBtn->callback = 'q';
+    quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
+    quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
+    quitBtn->hoverImage = MLV_load_image("images/buttons/quitBtn_small_hover.png");
+    quitBtn->activeImage = MLV_load_image("images/buttons/quitBtn_small_active.png");
+    quitBtn->callback = QUIT;
 
     /*Now we add them to the toPrint list*/
-    addToPrint(mainTitlePicture, 'p');
-    addToPrint(playBtn, 'b');
-    addToPrint(rulesBtn, 'b');
-    addToPrint(quitBtn, 'b');
+    addToPrint(mainTitlePicture, PICTURE);
+    addToPrint(playBtn, BUTTON);
+    addToPrint(rulesBtn, BUTTON);
+    addToPrint(quitBtn, BUTTON);
 
     callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
 
-    /*Free created elements*/
-    freeBtn(playBtn);
-    freeBtn(rulesBtn);
-    freeBtn(quitBtn);
-    freePicture(mainTitlePicture);
-
     /*And finally call next action*/
-    if(callback == 'p')
-        choicePlayers();
-    else if(callback == 'r')
+    if(callback == PLAY)
+        initNewGame(0);
+    else if(callback == RULES)
         clicked();
+    else if(callback == QUIT)
+        quitGame();
 }
 
-void choicePlayers()                /*Display the number of player screen and wait for user to select a gameMode*/
+void initNewGame()                /*Ask the player.s to enter his.their name.s*/
 {
-    char callback;
-    Button * onePlayerBtn, * twoPlayersBtn, * backBtn;
-
-    cleanToPrint();                 /*empty current list of elements to print*/
-
-    /*Let's create the elements to be displayed*/
-    /*One player Btn*/
-    onePlayerBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', -26), 185, 50, 'g');
-    onePlayerBtn->idleImage = MLV_load_image("images/onePlayerBtn_idle.png");
-    onePlayerBtn->hoverImage = MLV_load_image("images/onePlayerBtn_hover.png");
-    onePlayerBtn->activeImage = MLV_load_image("images/onePlayerBtn_active.png");
-    onePlayerBtn->callback = '1';
-
-    /*Two player Btn*/
-    twoPlayersBtn = createBtn(percentOffset(50, 'w', -92), percentOffset(60, 'h', 40), 185, 50, 'g');
-    twoPlayersBtn->idleImage = MLV_load_image("images/twoPlayersBtn_idle.png");
-    twoPlayersBtn->hoverImage = MLV_load_image("images/twoPlayersBtn_hover.png");
-    twoPlayersBtn->activeImage = MLV_load_image("images/twoPlayersBtn_active.png");
-    twoPlayersBtn->callback = '2';
-
-    backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
-    backBtn->idleImage = MLV_load_image("images/backBtn_small_idle.png");
-    backBtn->hoverImage = MLV_load_image("images/backBtn_small_hover.png");
-    backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
-    backBtn->callback = 'b';
-
-    /*Now we add them to the toPrint list*/
-    addToPrint(onePlayerBtn, 'b');
-    addToPrint(twoPlayersBtn, 'b');
-    addToPrint(backBtn, 'b');
-
-    callback = waitForAction();                /*Wait for the user to do something*/
-
-    /*Free created elements*/
-    freeBtn(onePlayerBtn);
-    freeBtn(twoPlayersBtn);
-    freeBtn(backBtn);
-
-    /*And finally call next action*/
-    if(callback == '1')
-        initNewGame(1);
-    else if(callback == '2')
-        initNewGame(2);
-    else if(callback == 'b')
-        mainMenu();
-}
-
-void initNewGame(int nbrPlayer)                /*Ask the player.s to enter his.their name.s*/
-{
-    char callback;
+    int nbrPlayer = 2;
+    enum returnValues
+    {
+        SETONEPLAYER = 1,
+        SETTWOPLAYERS = 2,
+        CONFIRM = 3,
+        BACK = 4
+    } callback;
     TextBox * player1, * player2;
-    Button * validBtn, * backBtn;
+    Button * validBtn, * backBtn, * onePlayerBtn, * twoPlayerBtn;
+    NumberBox * gridSizeX, * gridSizeY, * fiveBlocksBoats, * fourBlocksBoats, * threeBlocksBoats, * twoBlocksBoats, *oneBlockBoats;
+    PrintElement * player2Element;
 
     cleanToPrint();
 
-    if(nbrPlayer == 1)
-    {
-        player1 = createTextBox(percentOffset(50, 'w', -126), percent(60, 'h'), 252, 40, 'g', "Joueur 1");
-    }
-    else
-    {
-        player1 = createTextBox(percentOffset(50, 'w', -262), percent(60, 'h'), 252, 40, 'g', "Joueur 1");
 
-        player2 = createTextBox(percentOffset(50, 'w', 10), percent(60, 'h'), 252, 40, 'g', "Joueur 2");
-        player2->backImage = MLV_load_image("images/textField.png");
-        player2->imgOffsetX = -5;
-        player2->imgOffsetY = -2;
+    addToPrint(createPicture(percentOffset(50, 'w', -212), 70, "images/newGameTitle.png"), PICTURE);
 
-        addToPrint(player2, 'i');
-    }
+    onePlayerBtn = createBtn(percentOffset(50, 'w', -118), 150, 118, 40, BTN_GRAPHIC);
+    onePlayerBtn->idleImage = MLV_load_image("images/buttons/onePlayerTab_idle.png");
+    onePlayerBtn->hoverImage = MLV_load_image("images/buttons/onePlayerTab_hover.png");
+    onePlayerBtn->activeImage = MLV_load_image("images/buttons/onePlayerTab_active.png");
+    onePlayerBtn->canToggle = true;
+    onePlayerBtn->callback = SETONEPLAYER;
 
+    twoPlayerBtn = createBtn(percent(50, 'w'), 150, 118, 40, BTN_GRAPHIC);
+    twoPlayerBtn->idleImage = MLV_load_image("images/buttons/twoPlayerTab_idle.png");
+    twoPlayerBtn->hoverImage = MLV_load_image("images/buttons/twoPlayerTab_hover.png");
+    twoPlayerBtn->activeImage = MLV_load_image("images/buttons/twoPlayerTab_active.png");
+    twoPlayerBtn->canToggle = true;
+    twoPlayerBtn->checked = true;
+    twoPlayerBtn->callback = SETTWOPLAYERS;
+    
+    player1 = createTextBox(percentOffset(50, 'w', -264), 200, 252, 40, 'g', "Joueur 1");
     player1->backImage = MLV_load_image("images/textField.png");
     player1->imgOffsetX = -5;
     player1->imgOffsetY = -2;
 
-    validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(60, 'h', 50), 145, 36, 'g');
-    validBtn->idleImage = MLV_load_image("images/confirmBtn_small_idle.png");
-    validBtn->hoverImage = MLV_load_image("images/confirmBtn_small_hover.png");
-    validBtn->activeImage = MLV_load_image("images/confirmBtn_small_active.png");
-    validBtn->callback = 'v';
+    player2 = createTextBox(percentOffset(50, 'w', 8), 200, 252, 40, 'g', "Joueur 2");
+    player2->backImage = MLV_load_image("images/textField.png");
+    player2->imgOffsetX = -5;
+    player2->imgOffsetY = -2;
 
-    backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, 'g');
-    backBtn->idleImage = MLV_load_image("images/backBtn_small_idle.png");
-    backBtn->hoverImage = MLV_load_image("images/backBtn_small_hover.png");
-    backBtn->activeImage = MLV_load_image("images/backBtn_small_active.png");
-    backBtn->callback = 'b';
+    gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 350, 10, 5, 10);
+    gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 350, 10, 5, 10);
 
-    addToPrint(player1, 'i');
-    addToPrint(validBtn, 'b');
-    addToPrint(backBtn, 'b');
+    fiveBlocksBoats = createNumberBox(65, 500, 1, 0, 2);
+    fourBlocksBoats = createNumberBox(265, 500, 1, 0, 2);
+    threeBlocksBoats = createNumberBox(465, 500, 2, 0, 3);
+    twoBlocksBoats = createNumberBox(665, 500, 1, 0, 4);
+    oneBlockBoats = createNumberBox(865, 500, 0, 0, 4);
 
-    callback = waitForAction();
+    validBtn = createBtn(percentOffset(50, 'w', -72), percentOffset(80, 'h', 20), 145, 36, BTN_GRAPHIC);
+    validBtn->idleImage = MLV_load_image("images/buttons/confirmBtn_small_idle.png");
+    validBtn->hoverImage = MLV_load_image("images/buttons/confirmBtn_small_hover.png");
+    validBtn->activeImage = MLV_load_image("images/buttons/confirmBtn_small_active.png");
+    validBtn->callback = CONFIRM;
 
-    freeBtn(validBtn);
-    freeBtn(backBtn);
+    backBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
+    backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
+    backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
+    backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
+    backBtn->callback = BACK;
 
-    if(callback == 'b')
-        choicePlayers();
-    else if(callback == 'v')
+    addToPrint(onePlayerBtn, BUTTON);
+    addToPrint(twoPlayerBtn, BUTTON);
+    addToPrint(player1, TEXTBOX);
+    addToPrint(validBtn, BUTTON);
+    addToPrint(backBtn, BUTTON);
+    addToPrint(gridSizeX, NUMBERBOX);
+    addToPrint(gridSizeY, NUMBERBOX);
+    addToPrint(fiveBlocksBoats, NUMBERBOX);
+    addToPrint(fourBlocksBoats, NUMBERBOX);
+    addToPrint(threeBlocksBoats, NUMBERBOX);
+    addToPrint(twoBlocksBoats, NUMBERBOX);
+    addToPrint(oneBlockBoats, NUMBERBOX);
+    player2Element = addToPrint(player2, TEXTBOX);
+
+    do
     {
+        callback = waitForAction();
+
+        if(callback == SETONEPLAYER)
+        {
+            onePlayerBtn->checked = true;
+            twoPlayerBtn->checked = false;
+
+            player2Element->display = false;
+            player1->x = percentOffset(50, 'w', -126);  
+            nbrPlayer = 1;
+        }
+        else if(callback == SETTWOPLAYERS)
+        {
+            onePlayerBtn->checked = false;
+            twoPlayerBtn->checked = true;
+
+            player2Element->display = true; 
+            player1->x = percentOffset(50, 'w', -262);
+            nbrPlayer = 2;
+        }
+
+    } while(callback != CONFIRM && callback != BACK);
+
+    if(callback == BACK)
+        mainMenu();
+    else if(callback == CONFIRM)
+    {
+        /*Save users parameters*/
+
+        gameObj->gridSizeX = gridSizeX->value;
+        gameObj->gridSizeY = gridSizeY->value;
+
         /*Create users and save their user name*/
-        createPlayer(1, player1->content, 'h');
+        createPlayer(1, player1->content, PLAYER_HUMAN);
 
         if(nbrPlayer == 2)
-            createPlayer(2, player2->content, 'h');
+            createPlayer(2, player2->content, PLAYER_HUMAN);
         else
-            createPlayer(2, "Ordinateur", 'c');
+            createPlayer(2, "Ordinateur", PLAYER_AI);
 
         startGame(nbrPlayer);
     }
@@ -225,16 +238,18 @@ void startGame(int nbrPlayer)
     gameObj->currTurn = 2;
     setUpPlayer(2);
 
-    waitForAction();
+    printf("hello\n");
+
+    inGame();
 }
 
-void createPlayer(int playerID, char * playerName, char playerType) /*Init the player struct in the gameObj*/
+void createPlayer(int playerID, char * playerName, enum playerType type) /*Init the player struct in the gameObj*/
 {
     Player player;                    /*creating temporary structs*/
     Grid grid;
     int i, j;
 
-    player.type = 'h';
+    player.type = type;
     strcpy(player.name, playerName);
 
     grid.sizeX = gameObj->gridSizeX;
@@ -246,7 +261,7 @@ void createPlayer(int playerID, char * playerName, char playerType) /*Init the p
     {
         for(j = 0; j < gameObj->gridSizeY; j++)
         {
-            grid.cells[i][j].type = 'e';
+            grid.cells[i][j].type = CELL_EMPTY;
             grid.cells[i][j].hit = false;
         }
     }
@@ -261,13 +276,16 @@ void createPlayer(int playerID, char * playerName, char playerType) /*Init the p
 
 void setUpPlayer(int playerID)
 {
-    int i, j, k, marginTop, stepTop = 50, callback = 0, boatX, boatY;
+    enum returnValues
+    {
+        ROTATE = 1
+    } callback;
+    int i, j, k, marginTop, stepTop = 50, boatX, boatY;
     int gridOffsetTop = gameObj->gridOffsetTop, gridOffsetLeft = gameObj->gridOffsetLeft, leftOffset = 0;
     char direction;
     Picture * board = NULL;
     Picture * currentBoatIndicator = NULL;
     Button * tempBtn = NULL, * rotateBtn = NULL;
-    MLV_Image * targetImage = NULL;
     PrintElement * tempElement;
     bool added = false;
 
@@ -290,24 +308,24 @@ void setUpPlayer(int playerID)
             gridOffsetLeft += 560;
         }
 
-        addToPrint(board, 'p');
+        addToPrint(board, PICTURE);
         marginTop = 85;
 
         /*Add a BEAUTIFUL title*/
-        addToPrint(createPicture(leftOffset+115, marginTop, "images/placeYourBoats.png"), 'p');
+        addToPrint(createPicture(leftOffset+115, marginTop, "images/placeYourBoats.png"), PICTURE);
         marginTop += 150;
 
         /*Add a cursor to tell wich boat we are placing*/
         currentBoatIndicator = createPicture(leftOffset+150, marginTop, "images/selector_cursor.png");
-        addToPrint(currentBoatIndicator, 'p');
+        addToPrint(currentBoatIndicator, PICTURE);
 
         /*Add a button to rotate the current boat*/
-        rotateBtn = createBtn(leftOffset, marginTop, 145, 36, 'g');
-        rotateBtn->idleImage = MLV_load_image("images/rotateBtn_small_idle.png");
-        rotateBtn->hoverImage = MLV_load_image("images/rotateBtn_small_hover.png");
-        rotateBtn->activeImage = MLV_load_image("images/rotateBtn_small_active.png");
-        rotateBtn->callback = 'r';
-        addToPrint(rotateBtn, 'b');
+        rotateBtn = createBtn(leftOffset, marginTop, 145, 36, BTN_GRAPHIC);
+        rotateBtn->idleImage = MLV_load_image("images/buttons/rotateBtn_small_idle.png");
+        rotateBtn->hoverImage = MLV_load_image("images/buttons/rotateBtn_small_hover.png");
+        rotateBtn->activeImage = MLV_load_image("images/buttons/rotateBtn_small_active.png");
+        rotateBtn->callback = ROTATE;
+        addToPrint(rotateBtn, BUTTON);
 
         /*Print a list of all the boats to add*/
         for(i = 5; i > 0; i--)
@@ -316,7 +334,7 @@ void setUpPlayer(int playerID)
             {
                 for(k = 0; k < i; k++)
                 {
-                    addToPrint(createPicture(leftOffset+160+(35*(k+1)), marginTop, "images/sheep_idle.png"), 'p');
+                    addToPrint(createPicture(leftOffset+160+(35*(k+1)), marginTop, "images/sheep_idle.png"), PICTURE);
                 }
 
                 marginTop += stepTop;
@@ -324,18 +342,18 @@ void setUpPlayer(int playerID)
         }
 
         /*Add a button for every cell on the grid*/
-        targetImage = MLV_load_image("images/sheep_fade.png");
 
         for(i = 0; i < gameObj->gridSizeX; i++)
         {
             for(j = 0; j < gameObj->gridSizeY; j++)
             {
-                tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, 'g');
-                tempBtn->hoverImage = targetImage;
+                tempBtn = createBtn(gridOffsetLeft+(i*35), gridOffsetTop+(j*35), 35, 35, BTN_GRAPHIC);
+                tempBtn->hoverImage = MLV_load_image("images/sheep_fade.png");
+                tempBtn->activeImage = MLV_load_image("images/sheep_fade.png");
                 tempBtn->callback = mergeInts(i, j);
                 tempBtn->hoverCallback = printBoatShadow;
 
-                tempElement = addToPrint(tempBtn, 'b');
+                tempElement = addToPrint(tempBtn, BUTTON);
                 tempElement->canFade = true;
             }
         }
@@ -347,7 +365,7 @@ void setUpPlayer(int playerID)
             {                
                 gameObj->boatBeingPlacedSize = i;
                 gameObj->boatBeingPlacedDirection = 'h';
-
+                
                 do
                 {
                     callback = waitForAction();
@@ -370,7 +388,7 @@ void setUpPlayer(int playerID)
                         if(added)
                         {   /*The ship has been added, so we print it on the screen;*/
 
-                            addToPrint(createPicture(leftOffset+150, currentBoatIndicator->y, "images/tick.png"), 'p');
+                            addToPrint(createPicture(leftOffset+150, currentBoatIndicator->y, "images/tick.png"), PICTURE);
                             currentBoatIndicator->y += stepTop;
                             rotateBtn->y += stepTop;
 
@@ -378,14 +396,14 @@ void setUpPlayer(int playerID)
                             {
                                 for(k = boatX; k < boatX+i; k++)
                                 {
-                                    addToPrint(createPicture(gridOffsetLeft+(k*35), gridOffsetTop+(boatY*35), "images/sheep_idle.png"), 'p');
+                                    addToPrint(createPicture(gridOffsetLeft+(k*35), gridOffsetTop+(boatY*35), "images/sheep_idle.png"), PICTURE);
                                 }
                             }
                             else if(gameObj->boatBeingPlacedDirection == 'v')
                             {
                                 for(k = boatY; k < boatY+i; k++)
                                 {
-                                    addToPrint(createPicture(gridOffsetLeft+(boatX*35), gridOffsetTop+(k*35), "images/sheep_idle.png"), 'p');
+                                    addToPrint(createPicture(gridOffsetLeft+(boatX*35), gridOffsetTop+(k*35), "images/sheep_idle.png"), PICTURE);
                                 }
                             }
                         }
@@ -394,13 +412,6 @@ void setUpPlayer(int playerID)
                 } while(added == false);
             }
         }
-
-        freePicture(board);
-        freePicture(currentBoatIndicator);
-        freeBtn(rotateBtn);
-        MLV_free_image(targetImage);
-
-        cleanToPrint();    
     }
     else
     {                               /*AI*/
@@ -426,7 +437,7 @@ void setUpPlayer(int playerID)
                         boatY = rand() % (gameObj->gridSizeY - i);
                     }
                     
-                    /*printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);*/
+                    printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);
 
                     added = addBoat(boatX, boatY, i, direction);
 
@@ -457,7 +468,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     {
         for(i = boatX; i < boatX+boatSize; i++)
         {
-            if(grid.cells[i][boatY].type != 'e')
+            if(grid.cells[i][boatY].type != CELL_EMPTY)
             {
                 return false;
             }
@@ -467,7 +478,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     {
         for(i = boatY; i < boatY+boatSize; i++)
         {
-            if(grid.cells[boatX][i].type != 'e')
+            if(grid.cells[boatX][i].type != CELL_EMPTY)
             {
                 return false;
             }
@@ -483,6 +494,7 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     newShip.direction = boatDirection;
     newShip.posX = boatX;
     newShip.posY = boatY;
+    newShip.sinked = false;
     newShip.hits[0] = false;
     newShip.hits[1] = false;
     newShip.hits[2] = false;
@@ -535,7 +547,7 @@ void printBoatShadow(int posInToPrint)
     {
         for(i = 0; i < boatSize; i++)
         {
-            if(gameObj->toPrint[posInToPrint+i].canFade == false || ((Button *)gameObj->toPrint[posInToPrint+i].element)->x != ((Button *)gameObj->toPrint[posInToPrint].element)->x)
+            if(gameObj->toPrint[posInToPrint+i].canFade == false || gameObj->toPrint[posInToPrint+i].element.btn->x != gameObj->toPrint[posInToPrint].element.btn->x)
             {
                 canBePrinted = false;
             }
@@ -549,8 +561,8 @@ void printBoatShadow(int posInToPrint)
     /*Clean up every forced hover*/
     for(i = 0; i < gameObj->nbrToPrint; i++)
     {
-        if(gameObj->toPrint[i].state == 'f')
-            gameObj->toPrint[i].state = 'i';
+        if(gameObj->toPrint[i].state == FORCEHOVER)
+            gameObj->toPrint[i].state = IDLE;
     }
 
     if(canBePrinted)
@@ -559,12 +571,136 @@ void printBoatShadow(int posInToPrint)
         {
             if(gameObj->boatBeingPlacedDirection == 'h')
             {
-                gameObj->toPrint[posInToPrint+i*gameObj->gridSizeY].state = 'f';
+                gameObj->toPrint[posInToPrint+i*gameObj->gridSizeY].state = FORCEHOVER;
             }
             else if(gameObj->boatBeingPlacedDirection == 'v')
             {
-                gameObj->toPrint[posInToPrint+i].state = 'f';
+                gameObj->toPrint[posInToPrint+i].state = FORCEHOVER;
             }
         }
     }
+}
+
+void inGame()
+{
+    enum
+    {
+        MISS,
+        HIT,
+        DROWN
+    } turnResult;
+    bool keepPlaying = true;
+    Player self, opponent;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, k, l, callback, targetX, targetY, sinkedShips = 0, almostSinked = 0;
+    Button * tempBtn;
+
+    gameObj->currTurn = 1;
+
+    do
+    {
+        cleanToPrint();
+
+        turnResult = MISS;
+
+        /*Initialize data of self and opponent*/
+        if(gameObj->currTurn == 1)
+        {
+            self = gameObj->player1;
+            opponent = gameObj->player2;
+            leftOffsetSelf = gameObj->gridOffsetLeft;
+            leftOffsetOpponent = gameObj->gridOffsetLeft + 558;
+        }else 
+        {
+            self = gameObj->player2;
+            opponent = gameObj->player1;
+            leftOffsetOpponent = gameObj->gridOffsetLeft;
+            leftOffsetSelf = gameObj->gridOffsetLeft + 558;
+        }
+
+        printf("Score de l'opposant: %d", opponent.score);
+
+        /*Show the two maps*/
+        for(i = 0; i < gameObj->gridSizeX; i++)
+        {
+            for(j = 0; j < gameObj->gridSizeY; j++)
+            { 
+                if(self.grid.cells[i][j].type == 's')
+                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+
+                 if(opponent.grid.cells[i][j].hit == false)
+                 {
+                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, BTN_GRAPHIC);
+                    tempBtn->idleImage = MLV_load_image("images/fog.png");
+                    tempBtn->hoverImage = MLV_load_image("images/target_green.png");
+                    tempBtn->activeImage = MLV_load_image("images/target_green.png");
+                    tempBtn->callback = mergeInts(i, j);
+
+                    addToPrint(tempBtn, BUTTON);
+                 }else if(opponent.grid.cells[i][j].type == 's')
+                 {
+                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+                 }
+            }
+        }
+
+        /*Save the position where the player has play*/
+        callback = waitForAction();
+        splitInts(callback, &targetX, &targetY);
+        printf("%d %d\n", targetX, targetY);
+        
+        opponent.grid.cells[targetX][targetY].hit = true;
+
+        /*Test to see ifa boat has been hit*/
+        for(k = 0; k < opponent.grid.nbrOfShips; k++)
+        {
+            if(!opponent.grid.ships[k].sinked)
+            {
+                for(l = 0; l < opponent.grid.ships[k].size; l++)
+                {
+                    if(opponent.grid.ships[k].direction == 'h')
+                    {
+                        if(opponent.grid.ships[k].posX + l == targetX && opponent.grid.ships[k].posY == targetY)
+                        {
+                            opponent.grid.ships[k].hits[l] = true;
+
+                            turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
+
+                            /*see if boat has been sinked*/
+
+                            k = opponent.grid.nbrOfShips;
+                            break;          /*we found the researched boat, so we get out of the loop*/
+                        }
+                    }
+
+                    /*Counter to know when the ship will be sinked*/
+                    if(opponent.grid.ships[k].hits[l] == 1)
+                    {
+                        almostSinked += 1;
+                    }
+
+                    /*Ship has sinked*/
+                    if(almostSinked == opponent.grid.ships[k].size)
+                    {
+                        sinkedShips += 1;
+                    }
+                }
+            }
+        }
+
+        /*End of the loop*/
+        if(sinkedShips == opponent.grid.nbrOfShips)
+            keepPlaying = false; 
+
+        /*Who's next ?*/
+        if(gameObj->currTurn == 1)
+            gameObj->currTurn = 2;
+        else
+            gameObj->currTurn = 1;
+
+    }while(keepPlaying);
+
+    printf("you win!\n");
+
+    printf("%d\n", turnResult);     /*Just so turnResult is not marked as "not used"*/
+
 }

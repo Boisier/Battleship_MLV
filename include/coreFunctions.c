@@ -22,45 +22,50 @@ int waitForAction() 		/*Keep application idle until a button callBack is fired. 
         {
             for(i = 0; i < gameObj->nbrToPrint; i++)            /*iterate through all the element to print*/
             {
-                if(gameObj->toPrint[i].type == 'b')             /*is this a button ?*/
+                if(gameObj->toPrint[i].type == BUTTON && gameObj->toPrint[i].display)             /*is this a button ?*/
                 {
-                    if(isCursorOnBtn(((Button *)gameObj->toPrint[i].element), mouseX, mouseY))  /*Is the cursoron this button?*/
+                    if(isCursorOnBtn(gameObj->toPrint[i].element.btn, mouseX, mouseY))  /*Is the cursoron this button?*/
                     {
                         if(event == MLV_MOUSE_BUTTON)/*We do this if the action was a click released*/
                         {
-                            gameObj->toPrint[i].state = 'a';
+                            gameObj->toPrint[i].state = ACTIVE;
                             if(state == MLV_RELEASED)
-                                callbackValue = ((Button *)gameObj->toPrint[i].element)->callback;
+                            {
+                                if(gameObj->toPrint[i].element.btn->simpleCallback)
+                                    callbackValue = gameObj->toPrint[i].element.btn->callback;
+                                else
+                                    gameObj->toPrint[i].element.btn->activeCallback(gameObj->toPrint[i].element.btn->activeCallbackArgument);
+                            }
                         }
                         else if(event == MLV_MOUSE_MOTION)      /*We do this if the action is just a hover*/
                         {
-                            gameObj->toPrint[i].state = 'h';   
-                            if(((Button *)gameObj->toPrint[i].element)->hoverCallback != NULL)
+                            gameObj->toPrint[i].state = HOVER;   
+                            if(gameObj->toPrint[i].element.btn->hoverCallback != NULL)
                             {
-                                ((Button *)gameObj->toPrint[i].element)->hoverCallback(i);
+                                gameObj->toPrint[i].element.btn->hoverCallback(i);
                             }
                         }
                     } 
                     else
                     {
-                        if(gameObj->toPrint[i].state != 'f')
-                            gameObj->toPrint[i].state = 'i';        /*now, make sure state is idle*/
+                        if(gameObj->toPrint[i].state != FORCEHOVER)
+                            gameObj->toPrint[i].state = IDLE;        /*now, make sure state is idle*/
                     }
                 }
-                else if(gameObj->toPrint[i].type == 'i')  /*The event is an input box one*/
+                else if(gameObj->toPrint[i].type == TEXTBOX && gameObj->toPrint[i].display)  /*The event is an input box one*/
                 {
                     if(event == MLV_MOUSE_BUTTON && state == MLV_RELEASED)
                     {
-                        if(isCursorOnInput(((TextBox *)gameObj->toPrint[i].element), mouseX, mouseY))
+                        if(isCursorOnInput(gameObj->toPrint[i].element.tB, mouseX, mouseY))
                         {
-                            gameObj->toPrint[i].state = 'f';  /*The user clicked on this inputBox, we give it the focus*/
+                            gameObj->toPrint[i].state = FOCUS;  /*The user clicked on this inputBox, we give it the focus*/
                         }
                         else
                         {
-                            gameObj->toPrint[i].state = 'b';  /*The user didn't clicked on this input box, we make sure it is blured*/
+                            gameObj->toPrint[i].state = BLUR;  /*The user didn't clicked on this input box, we make sure it is blured*/
                         }
                     }
-                    else if(gameObj->toPrint[i].state == 'f' && event == MLV_KEY && state == MLV_PRESSED)
+                    else if(gameObj->toPrint[i].state == FOCUS && event == MLV_KEY && state == MLV_PRESSED)
                     {
                         updateTextBox(i, keyPressed, unicode);  /*The user typed something in the text box, we update it*/
                     }
@@ -107,18 +112,30 @@ bool isCursorOnInput(TextBox * input, int mouseX, int mouseY)	/*check if cursor 
 void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode)
 {
     int contentLength;
-    contentLength = strlen(((TextBox *)gameObj->toPrint[inputPos].element)->content);
+    contentLength = strlen(gameObj->toPrint[inputPos].element.tB->content);
     
     if(unicode == MLV_KEYBOARD_BACKSPACE)
     {
         if(contentLength > 0)
-            ((TextBox *)gameObj->toPrint[inputPos].element)->content[contentLength-1] = '\0';
+            gameObj->toPrint[inputPos].element.tB->content[contentLength-1] = '\0';
     }
     else if(unicode != MLV_KEYBOARD_RETURN)
     {
         if(contentLength < 100)
-           strcat(((TextBox *)gameObj->toPrint[inputPos].element)->content, MLV_convert_unicode_to_string(unicode));
+           strcat(gameObj->toPrint[inputPos].element.tB->content, MLV_convert_unicode_to_string(unicode));
     }
+}
+
+void incrementNumberBox(void * nB)
+{
+    if(((NumberBox*)nB)->value < ((NumberBox*)nB)->maxValue)
+        ((NumberBox*)nB)->value++;
+}
+
+void decrementNumberBox(void * nB)
+{
+    if(((NumberBox*)nB)->value > ((NumberBox*)nB)->minValue)
+        ((NumberBox*)nB)->value--;
 }
 
 void quitGame()                         /*This function properly end the game*/
@@ -132,7 +149,7 @@ void quitGame()                         /*This function properly end the game*/
 /***** Elements creation functions **********************************************/
 /********************************************************************************/
 
-Button * createBtn(int x, int y, int width, int height, char type)  /*Create a Btn and assign specified values*/
+Button * createBtn(int x, int y, int width, int height, enum btnType type)  /*Create a Btn and assign specified values*/
 {
     Button * btn = allocate(sizeof(Button));    /*Create an empty button*/
     btn->x = x;                                 /*Set X position of the button*/
@@ -140,10 +157,15 @@ Button * createBtn(int x, int y, int width, int height, char type)  /*Create a B
     btn->width = width;                         /*Set width of the button*/
     btn->height = height;                       /*Set height of the button*/
     btn->type = type;                           /*Set type of the button*/
-    btn->callback = 0;                       /*Set callback as NULL */
+    btn->simpleCallback = true;
+    btn->callback = 0;                          /*Set callback as NULL */
     btn->hoverCallback = NULL;                  /*Set hoverCallback as NULL */
+    btn->activeCallbackArgument = NULL;
+    btn->activeCallback = NULL;
+    btn->canToggle = false;
+    btn->checked = false;
 
-    if(type == 'g')                             /*If the button is a graphic one*/
+    if(type == BTN_GRAPHIC)                             /*If the button is a graphic one*/
     {
         btn->idleImage = NULL;                  /*Set images as default  */
         btn->hoverImage = NULL;
@@ -201,6 +223,42 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
     tB->imgOffsetY = 0;
 
     return tB;
+}
+
+NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal)
+{
+    NumberBox * nB = allocate(sizeof(NumberBox));
+    Button * plusBtn, * lessBtn;
+
+    nB->x = x;
+    nB->y = y;
+    nB->value = defaultVal;
+    nB->minValue = minVal;
+    nB->maxValue = maxVal;
+
+    nB->backImage = MLV_load_image("images/inputBox_small.png");
+
+    plusBtn = createBtn(x+125, y+2, 44, 36, BTN_GRAPHIC);
+    plusBtn->idleImage = MLV_load_image("images/buttons/plusBtn_small_idle.png");
+    plusBtn->hoverImage = MLV_load_image("images/buttons/plusBtn_small_hover.png");
+    plusBtn->activeImage = MLV_load_image("images/buttons/plusBtn_small_active.png");
+    plusBtn->simpleCallback = false;
+    plusBtn->activeCallbackArgument = nB;
+    plusBtn->activeCallback = incrementNumberBox;
+
+    nB->plusBtn = plusBtn;
+
+    lessBtn = createBtn(x, y+2, 44, 36, BTN_GRAPHIC);
+    lessBtn->idleImage = MLV_load_image("images/buttons/lessBtn_small_idle.png");
+    lessBtn->hoverImage = MLV_load_image("images/buttons/lessBtn_small_hover.png");
+    lessBtn->activeImage = MLV_load_image("images/buttons/lessBtn_small_active.png");
+    lessBtn->simpleCallback = false;
+    lessBtn->activeCallbackArgument = nB;
+    lessBtn->activeCallback = decrementNumberBox;
+
+    nB->lessBtn = lessBtn;
+
+    return nB;
 }
 
 
