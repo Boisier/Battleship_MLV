@@ -18,8 +18,6 @@ void createPlayer(int playerID, char * playerName, enum playerType type);	/*Gene
 
 void setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
-bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a boat on the map for the current player and return true if the action was successfull*/
-
 void inGame();                      /* Player give a position, */
 
 
@@ -54,26 +52,12 @@ void createBoardGame(int w, int h);	/**/
 
 void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc);
 
+bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a boat on the map for the current player and return true if the action was successfull*/
+
+void printBoatShadow(int posInToPrint);
 
 
 
-
-
-
-/********************************************************************************/
-/***** Game functions definitions ***********************************************/
-/********************************************************************************/
-
-
-/* Show the grid if it's mine or the ennemy's one*/
-void printGrid (struct Grid g, bool self);
-
-/* The player give the position of his ships and their orientations,*/ 
-/* call verifyPosition() to see if it's possible*/
-void placeShip();
-
-/* Verify the position if it's already used for the placment of the ship*/
-int verifyPosition();
 
 
 /********************************************************************************/
@@ -160,5 +144,3 @@ void printTextBox(struct TextBox * tB, char state);					/*Print given textBox on
 void printNumberBox(struct NumberBox * nB, char state);
 
 void printText(struct Text * txt, char state);          /*Print given Text elemnt on the screen*/
-
-void printBoatShadow(int posInToPrint);

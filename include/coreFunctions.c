@@ -411,3 +411,145 @@ void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOff
         }
     }
 }
+
+
+
+
+
+/********************************************************************************/
+/***** Functions to place the boats *********************************************/
+/********************************************************************************/
+
+bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
+{
+    int i;
+    Grid grid;
+    Ship newShip;
+
+    /*Make sure given data are between the grid boudaries*/
+    if(boatX < 0 || boatX > gameObj->gridSizeX || boatY < 0 || boatY > gameObj->gridSizeY)
+        return false;
+
+    /*get the current player grid*/
+    if(gameObj->currTurn == 1)
+        grid = gameObj->player1.grid;
+    else
+        grid = gameObj->player2.grid;
+    
+    /*check if every concerned cells are availables*/
+    if(boatDirection == 'h' && boatX+boatSize-1 < grid.sizeX)
+    {
+        for(i = boatX; i < boatX+boatSize; i++)
+        {
+            if(grid.cells[i][boatY].type != CELL_EMPTY)
+            {
+                return false;
+            }
+        }
+    }
+    else if(boatDirection == 'v' && boatY+boatSize-1 < grid.sizeY)
+    {
+        for(i = boatY; i < boatY+boatSize; i++)
+        {
+            if(grid.cells[boatX][i].type != CELL_EMPTY)
+            {
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+    /*If we are here it means the boat can be added safely*/
+    newShip.size = boatSize;
+    newShip.direction = boatDirection;
+    newShip.posX = boatX;
+    newShip.posY = boatY;
+    newShip.sinked = false;
+    newShip.hits[0] = false;
+    newShip.hits[1] = false;
+    newShip.hits[2] = false;
+    newShip.hits[3] = false;
+    newShip.hits[4] = false;
+
+    grid.ships[grid.nbrOfShips] = newShip;
+    grid.nbrOfShips++;
+    /*The ship is on the list, now we mark the cells has taken*/
+    if(boatDirection == 'h')
+    {
+        for(i = boatX; i < boatX+boatSize; i++)
+        {
+            grid.cells[i][boatY].type = 's';
+        }
+    }
+    else if(boatDirection == 'v')
+    {
+        for(i = boatY; i < boatY+boatSize; i++)
+        {
+            grid.cells[boatX][i].type = 's';
+        }
+    }
+
+    if(gameObj->currTurn == 1)
+        gameObj->player1.grid = grid;
+    else
+        gameObj->player2.grid = grid;
+
+    return true;
+}
+
+void printBoatShadow(int posInToPrint)
+{
+    bool canBePrinted = true;
+    int i, boatSize = gameObj->boatBeingPlacedSize;
+    
+    /*Are the targeted buttons in range ?*/
+    if(gameObj->boatBeingPlacedDirection == 'h' && posInToPrint+gameObj->gridSizeY*(boatSize-1) < gameObj->nbrToPrint)
+    {
+        for(i = 0; i < (boatSize-1); i++)
+        {
+            if(gameObj->toPrint[posInToPrint+i*gameObj->gridSizeY].canFade == false)
+            {
+                canBePrinted = false;
+            }
+        }
+    }
+    else if(gameObj->boatBeingPlacedDirection == 'v' && posInToPrint+(boatSize-1) < gameObj->nbrToPrint)
+    {
+        for(i = 0; i < boatSize; i++)
+        {
+            if(gameObj->toPrint[posInToPrint+i].canFade == false || gameObj->toPrint[posInToPrint+i].element.btn->x != gameObj->toPrint[posInToPrint].element.btn->x)
+            {
+                canBePrinted = false;
+            }
+        }
+    }
+    else
+    {
+        canBePrinted = false;
+    }
+
+    /*Clean up every forced hover*/
+    for(i = 0; i < gameObj->nbrToPrint; i++)
+    {
+        if(gameObj->toPrint[i].state == FORCEHOVER)
+            gameObj->toPrint[i].state = IDLE;
+    }
+
+    if(canBePrinted)
+    {   /*The boat can be safely printed*/
+        for(i = 0; i < boatSize; i++)
+        {
+            if(gameObj->boatBeingPlacedDirection == 'h')
+            {
+                gameObj->toPrint[posInToPrint+i*gameObj->gridSizeY].state = FORCEHOVER;
+            }
+            else if(gameObj->boatBeingPlacedDirection == 'v')
+            {
+                gameObj->toPrint[posInToPrint+i].state = FORCEHOVER;
+            }
+        }
+    }
+}

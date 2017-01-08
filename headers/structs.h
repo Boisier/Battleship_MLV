@@ -36,15 +36,15 @@ typedef struct Grid
     Ship * ships;           /*Ships on the grid*/
 } Grid;
 
-enum playerType
+typedef enum playerType
 {
     PLAYER_HUMAN,
     PLAYER_AI
-};
+} playerType;
 
 typedef struct Player
 {
-    enum playerType type;              /*Type of player, can be either h (human) or c (computer/ai)*/
+    playerType type;              /*Type of player, can be either h (human) or c (computer/ai)*/
     char score;  
     char name[100];
     Grid grid;              /*If multiple game are fdone, keep track of scores.*/
