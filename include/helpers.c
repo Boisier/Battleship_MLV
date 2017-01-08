@@ -114,6 +114,34 @@ void splitInts(int merged, int *first, int*second)
     *second = (merged & 0xFFFF)-1;
 }
 
+void resetPlayerGrid(int playerID)
+{
+    int i, j, boatsNbr = 0;
+    Grid * grid;
+
+    if(playerID == 1)
+        grid = &gameObj->player1.grid;
+    else
+        grid = &gameObj->player2.grid;
+    
+    for(i = 0; i < gameObj->gridSizeX; i++)
+    {
+        for(j = 0; j < gameObj->gridSizeY; j++)
+        {
+            grid->cells[i][j].type = CELL_EMPTY;
+            grid->cells[i][j].hit = false;
+        }
+    }
+
+    free(grid->ships);
+    grid->nbrOfShips = 0;
+
+    for(i = 1; i < 6; i++)
+        boatsNbr += gameObj->nbrShips[i];
+
+    grid->ships = allocate(sizeof(Ship) * boatsNbr);
+}
+
 void clicked()                              /*Print a msg in the console. Used as a callBack tester*/
 {
     printf("Button clicked\n");

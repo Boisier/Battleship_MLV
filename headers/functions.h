@@ -16,7 +16,7 @@ void startGame(int nbrPlayer);		/*Set up a new game and start it*/
 
 void createPlayer(int playerID, char * playerName, enum playerType type);	/*Generate the data needed for the player*/
 
-void setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
+int setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
 void inGame();                      /* Player give a position, */
 
@@ -106,6 +106,7 @@ void splitInts(int merged, int *first, int*second);	/*Split two int merged with 
 
 void printConsumption();	/*This function print the current consumption of RAM and CPU of the application*/
 
+void resetPlayerGrid(int playerID);
 
 
 /********************************************************************************/

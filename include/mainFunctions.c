@@ -119,6 +119,8 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
 
     cleanToPrint();
 
+    gameObj->gameState = 'm';       /*Set game state as in menu, so the cleanScreen will reset with the wooden background*/
+
     addToPrint(createPicture(percentOffset(50, 'w', -212), 40, "images/newGameTitle.png"), PICTURE);
 
     onePlayerBtn = createBtn(percentOffset(50, 'w', -118), 140, 118, 40, BTN_GRAPHIC);
@@ -166,8 +168,8 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     fiveBlocksBoats = createNumberBox(65, 520, 1, 0, 2);
     fourBlocksBoats = createNumberBox(265, 520, 1, 0, 2);
     threeBlocksBoats = createNumberBox(465, 520, 2, 0, 3);
-    twoBlocksBoats = createNumberBox(665, 520, 1, 0, 4);
-    oneBlockBoats = createNumberBox(865, 520, 0, 0, 4);
+    twoBlocksBoats = createNumberBox(665, 520, 1, 0, 3);
+    oneBlockBoats = createNumberBox(865, 520, 0, 0, 3);
 
     addToPrint(createPicture(percentOffset(50, 'w', -325), 590, "images/hDivider.png"), PICTURE);
     
@@ -309,18 +311,21 @@ void createPlayer(int playerID, char * playerName, playerType type) /*Init the p
         gameObj->player2 = player;
 }
 
-void setUpPlayer(int playerID)
+int setUpPlayer(int playerID)
 {
     enum returnValues
     {
-        ROTATE = 1
+        ROTATE = 1,
+        RESTART = 2,
+        QUIT = 3,
+        CONFIRM = 4
     } callback;
-    int i, j, k, marginTop, stepTop = 50, boatX, boatY;
+    int i, j, k, marginTop, stepTop = 40, boatX, boatY;
     int gridOffsetTop = gameObj->gridOffsetTop, gridOffsetLeft = gameObj->gridOffsetLeft, leftOffset = 0;
     char direction;
-    Picture * board = NULL;
-    Picture * currentBoatIndicator = NULL;
-    Button * tempBtn = NULL, * rotateBtn = NULL;
+    Picture * board;
+    Picture * currentBoatIndicator;
+    Button * tempBtn, * rotateBtn, * quitBtn, * restartBtn, * confirmBtn;
     PrintElement * tempElement;
     bool added = false;
     
@@ -350,7 +355,7 @@ void setUpPlayer(int playerID)
 
         /*Add a BEAUTIFUL title*/
         addToPrint(createPicture(leftOffset+115, marginTop, "images/placeYourBoats.png"), PICTURE);
-        marginTop += 150;
+        marginTop += 130;
 
         /*Add a cursor to tell wich boat we are placing*/
         currentBoatIndicator = createPicture(leftOffset+150, marginTop, "images/selector_cursor.png");
@@ -395,6 +400,24 @@ void setUpPlayer(int playerID)
             }
         }
 
+        /*Add some control buttons*/
+        restartBtn = createBtn(leftOffset + 160 + 15, 750, 145, 36, BTN_GRAPHIC);
+        restartBtn->idleImage = MLV_load_image("images/buttons/restartBtn_small_idle.png");
+        restartBtn->hoverImage = MLV_load_image("images/buttons/restartBtn_small_hover.png");
+        restartBtn->activeImage = MLV_load_image("images/buttons/restartBtn_small_active.png");
+        restartBtn->callback = RESTART;
+        addToPrint(restartBtn, BUTTON);
+
+        if(gameObj->currTurn == 1)
+        {
+            quitBtn = createBtn(leftOffset + 15 + 320, 750, 145, 36, BTN_GRAPHIC);
+            quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
+            quitBtn->hoverImage = MLV_load_image("images/buttons/quitBtn_small_hover.png");
+            quitBtn->activeImage = MLV_load_image("images/buttons/quitBtn_small_active.png");
+            quitBtn->callback = QUIT;
+            addToPrint(quitBtn, BUTTON);
+        }
+
         /*loop on every boat to add them (same loop as before)*/
         for(i = 5; i > 0; i--)
         {
@@ -415,6 +438,17 @@ void setUpPlayer(int playerID)
                             gameObj->boatBeingPlacedDirection = 'h';
 
                         added = false;
+                    }
+                    else if(callback == QUIT)
+                    {
+                        initNewGame();
+                        return 0;
+                    }
+                    else if(callback == RESTART)
+                    {
+                        resetPlayerGrid(playerID);
+                        setUpPlayer(playerID);
+                        return 0;
                     }
                     else
                     {               /*Try to add the boat*/
@@ -448,6 +482,46 @@ void setUpPlayer(int playerID)
 
                 } while(added == false);
             }
+        }
+
+        /*All boats are now placed. Let's deactive all interactions on the grid then adding the confirm Btn*/
+
+        gameObj->boatBeingPlacedDirection = 0;
+        gameObj->boatBeingPlacedSize = 0;
+
+        for(i = 0; i < gameObj->nbrToPrint; i++)
+        {
+            if(gameObj->toPrint[i].canFade == true)
+            {
+                gameObj->toPrint[i].display = false;
+            }
+        }
+
+
+        currentBoatIndicator->y = -500;
+        rotateBtn->y = -500;
+
+        confirmBtn = createBtn(leftOffset + 15, 750, 145, 36, BTN_GRAPHIC);
+        confirmBtn->idleImage = MLV_load_image("images/buttons/confirmBtn_small_idle.png");
+        confirmBtn->hoverImage = MLV_load_image("images/buttons/confirmBtn_small_hover.png");
+        confirmBtn->activeImage = MLV_load_image("images/buttons/confirmBtn_small_active.png");
+        confirmBtn->callback = CONFIRM;
+        if(gameObj->currTurn == 2)
+            confirmBtn->x = leftOffset + 15 + 320;
+        addToPrint(confirmBtn, BUTTON);
+
+        callback = waitForAction();
+
+        if(callback == QUIT)
+        {
+            initNewGame();
+            return 0;
+        }
+        else if(callback == RESTART)
+        {
+            resetPlayerGrid(playerID);
+            setUpPlayer(playerID);
+            return 0;
         }
     }
     else
@@ -486,6 +560,8 @@ void setUpPlayer(int playerID)
 
         waitForComputer();
     }
+
+    return 0;
 }
 
 void inGame()
