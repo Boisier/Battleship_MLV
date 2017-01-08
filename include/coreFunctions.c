@@ -481,14 +481,14 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection)
     {
         for(i = boatX; i < boatX+boatSize; i++)
         {
-            grid.cells[i][boatY].type = 's';
+            grid.cells[i][boatY].type = CELL_BOAT;
         }
     }
     else if(boatDirection == 'v')
     {
         for(i = boatY; i < boatY+boatSize; i++)
         {
-            grid.cells[boatX][i].type = 's';
+            grid.cells[boatX][i].type = CELL_BOAT;
         }
     }
 

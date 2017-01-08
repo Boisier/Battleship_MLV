@@ -266,14 +266,14 @@ void startGame(int nbrPlayer)
     gameObj->nbrPlayer = nbrPlayer;
 
     gameObj->currTurn = 1;
-    setUpPlayer(1);
 
-    gameObj->currTurn = 2;
-    setUpPlayer(2);
+    if(setUpPlayer(1) == 1)
+    {   /*Continue if the player hasn't exited the setup function*/
+        gameObj->currTurn = 2;
+        setUpPlayer(2);
 
-    printf("hello\n");
-
-    inGame();
+        inGame();
+    }
 }
 
 void createPlayer(int playerID, char * playerName, playerType type) /*Init the player struct in the gameObj*/
@@ -331,9 +331,11 @@ int setUpPlayer(int playerID)
     
     if(playerID == 1 || (playerID == 2 && gameObj->player2.type == PLAYER_HUMAN))
     {                               /*Human player*/
-        gameObj->currTurn = playerID;
-
-        waitForPlayer();
+        if(gameObj->currTurn != playerID)
+        {
+            gameObj->currTurn = playerID;
+            waitForPlayer();
+        }
 
         cleanToPrint();  
 
@@ -561,7 +563,7 @@ int setUpPlayer(int playerID)
         waitForComputer();
     }
 
-    return 0;
+    return 1;
 }
 
 void inGame()
@@ -570,11 +572,11 @@ void inGame()
     {
         MISS,
         HIT,
-        DROWN
+        SINKED
     } turnResult;
-    bool keepPlaying = true;
-    Player self, opponent;
-    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, k, l, callback, targetX, targetY, sinkedShips = 0, almostSinked = 0;
+    bool keepPlaying = true, beenSinked;
+    Player * self, * opponent;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, callback, targetX, targetY, boatTouched, sinkedCells = 0, sinkedBoats = 0;
     Button * tempBtn;
 
     gameObj->currTurn = 1;
@@ -589,30 +591,30 @@ void inGame()
         /*Initialize data of self and opponent*/
         if(gameObj->currTurn == 1)
         {
-            self = gameObj->player1;
-            opponent = gameObj->player2;
+            self = &gameObj->player1;
+            opponent = &gameObj->player2;
             leftOffsetSelf = gameObj->gridOffsetLeft;
             leftOffsetOpponent = gameObj->gridOffsetLeft + 560;
-        }else 
+        }
+        else 
         {
-            self = gameObj->player2;
-            opponent = gameObj->player1;
+            self = &gameObj->player2;
+            opponent = &gameObj->player1;
             leftOffsetOpponent = gameObj->gridOffsetLeft;
             leftOffsetSelf = gameObj->gridOffsetLeft + 560;
         }
-
-        printf("Score de l'opposant: %d", opponent.score);
 
         /*Show the two maps*/
         for(i = 0; i < gameObj->gridSizeX; i++)
         {
             for(j = 0; j < gameObj->gridSizeY; j++)
             { 
-                if(self.grid.cells[i][j].type == 's')
+                /*Self map*/
+                if(self->grid.cells[i][j].type == CELL_BOAT)
                     addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
 
-                 if(opponent.grid.cells[i][j].hit == false)
-                 {
+                if(opponent->grid.cells[i][j].hit == false)
+                {
                     tempBtn = createBtn(leftOffsetOpponent+(35*i), topOffset+(35*j), 35, 35, BTN_GRAPHIC);
                     tempBtn->idleImage = MLV_load_image("images/fog.png");
                     tempBtn->hoverImage = MLV_load_image("images/target_green.png");
@@ -620,60 +622,93 @@ void inGame()
                     tempBtn->callback = mergeInts(i, j);
 
                     addToPrint(tempBtn, BUTTON);
-                 }else if(opponent.grid.cells[i][j].type == 's')
-                 {
+                }
+                else if(opponent->grid.cells[i][j].type == CELL_BOAT)
+                {
                     addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
-                 }
+                }
             }
         }
 
         /*Save the position where the player has play*/
         callback = waitForAction();
         splitInts(callback, &targetX, &targetY);
-        printf("%d %d\n", targetX, targetY);
         
-        opponent.grid.cells[targetX][targetY].hit = true;
+        opponent->grid.cells[targetX][targetY].hit = true;
 
-        /*Test to see ifa boat has been hit*/
-        for(k = 0; k < opponent.grid.nbrOfShips; k++)
+        /*Test to see if a boat has been hit*/
+        for(i = 0; i < opponent->grid.nbrOfShips; i++)
         {
-            if(!opponent.grid.ships[k].sinked)
+            if(!opponent->grid.ships[i].sinked)
             {
-                for(l = 0; l < opponent.grid.ships[k].size; l++)
+                sinkedCells = 0;
+
+                for(j = 0; j < opponent->grid.ships[i].size; j++)
                 {
-                    if(opponent.grid.ships[k].direction == 'h')
+                    if(opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY)
                     {
-                        if(opponent.grid.ships[k].posX + l == targetX && opponent.grid.ships[k].posY == targetY)
-                        {
-                            opponent.grid.ships[k].hits[l] = true;
+                        /*The clicked cell match this part of this boat*/
 
-                            turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
+                        /*Set the ship's part as hit*/
+                        opponent->grid.ships[i].hits[j] = true;
 
-                            /*see if boat has been sinked*/
+                        turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
+                        boatTouched = i;
 
-                            k = opponent.grid.nbrOfShips;
-                            break;          /*we found the researched boat, so we get out of the loop*/
-                        }
+                        /*We found what we searched for but we stay in the loop to keep counting sinked boats*/
                     }
 
-                    /*Counter to know when the ship will be sinked*/
-                    if(opponent.grid.ships[k].hits[l] == 1)
+                    /*Counter to know how many of the boat cells have been hits*/
+                    if(opponent->grid.ships[i].hits[j] == true)
                     {
-                        almostSinked += 1;
+                        sinkedCells++;
                     }
 
                     /*Ship has sinked*/
-                    if(almostSinked == opponent.grid.ships[k].size)
+                    if(sinkedCells == opponent->grid.ships[i].size)
                     {
-                        sinkedShips += 1;
+                        sinkedBoats += 1;
                     }
                 }
             }
+            else
+                sinkedBoats++;
         }
 
-        /*End of the loop*/
-        if(sinkedShips == opponent.grid.nbrOfShips)
-            keepPlaying = false; 
+        if(sinkedBoats == opponent->grid.nbrOfShips)
+            keepPlaying = false;                    /*All the boats have been sinked, let's stop playing*/
+    
+        if(turnResult == HIT)
+        {
+            /*Is the boat touched sinked?*/
+            beenSinked = true;
+            for(i = 0; i < opponent->grid.ships[boatTouched].size; i++)
+            {
+                if(!opponent->grid.ships[boatTouched].hits[i])
+                {
+                    beenSinked = false;
+                    break;
+                }
+            }
+
+            if(beenSinked)
+                turnResult = SINKED;
+        }
+
+        /*Take action based on turn result*/
+        switch(turnResult)
+        {
+            case MISS:
+                printf("manque!\n");
+            break;
+            case HIT:
+                printf("Touche!\n");
+            break;
+            case SINKED:
+                printf("Touche!\n");
+                printf("Troupeau a terre!\n");
+            break;
+        }
 
         /*Who's next ?*/
         if(gameObj->currTurn == 1)
