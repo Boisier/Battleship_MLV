@@ -157,8 +157,8 @@ void waitFor(char type)
     {
         for(j = 0; j < gameObj->gridSizeY; j++)
         { 
-            addToPrint(createPicture(gameObj->gridOffsetLeft+(35*i)+1, gameObj->gridOffsetTop+(35*j), "images/fog.png"), PICTURE);
-            addToPrint(createPicture(gameObj->gridOffsetLeft+(35*i)+559, gameObj->gridOffsetTop+(35*j), "images/fog.png"), PICTURE);
+            addToPrint(createPicture(gameObj->gridOffsetLeft+(35*i), gameObj->gridOffsetTop+(35*j), "images/fog.png"), PICTURE);
+            addToPrint(createPicture(gameObj->gridOffsetLeft+(35*i)+560, gameObj->gridOffsetTop+(35*j), "images/fog.png"), PICTURE);
         }
     }
 

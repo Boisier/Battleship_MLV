@@ -407,7 +407,7 @@ void setUpPlayer(int playerID)
                 {
                     callback = waitForAction();
 
-                    if(callback == 'r') 
+                    if(callback == ROTATE) 
                     {               /*Rotate the boat*/
                         if(gameObj->boatBeingPlacedDirection == 'h')
                             gameObj->boatBeingPlacedDirection = 'v';
@@ -650,13 +650,13 @@ void inGame()
             self = gameObj->player1;
             opponent = gameObj->player2;
             leftOffsetSelf = gameObj->gridOffsetLeft;
-            leftOffsetOpponent = gameObj->gridOffsetLeft + 558;
+            leftOffsetOpponent = gameObj->gridOffsetLeft + 560;
         }else 
         {
             self = gameObj->player2;
             opponent = gameObj->player1;
             leftOffsetOpponent = gameObj->gridOffsetLeft;
-            leftOffsetSelf = gameObj->gridOffsetLeft + 558;
+            leftOffsetSelf = gameObj->gridOffsetLeft + 560;
         }
 
         printf("Score de l'opposant: %d", opponent.score);
@@ -671,7 +671,7 @@ void inGame()
 
                  if(opponent.grid.cells[i][j].hit == false)
                  {
-                    tempBtn = createBtn(leftOffsetOpponent+(35*i)+1, topOffset+(35*j), 35, 35, BTN_GRAPHIC);
+                    tempBtn = createBtn(leftOffsetOpponent+(35*i), topOffset+(35*j), 35, 35, BTN_GRAPHIC);
                     tempBtn->idleImage = MLV_load_image("images/fog.png");
                     tempBtn->hoverImage = MLV_load_image("images/target_green.png");
                     tempBtn->activeImage = MLV_load_image("images/target_green.png");
