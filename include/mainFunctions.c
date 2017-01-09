@@ -530,7 +530,6 @@ int setUpPlayer(int playerID)
     {                               /*AI*/
         cleanToPrint();  
         
-        srand(time(NULL));
         for(i = 5; i > 0; i--)
         {
             for(j = 0; j < gameObj->nbrShips[i]; j++)
@@ -566,28 +565,26 @@ int setUpPlayer(int playerID)
     return 1;
 }
 
+typedef enum TurnResult
+{
+    MISS,
+    HIT,
+    SINKED,
+    WIN
+} TurnResult;
+
 void inGame()
 {
-    enum
-    {
-        MISS,
-        HIT,
-        SINKED
-    } turnResult;
-    bool keepPlaying = true, beenSinked;
+    TurnResult turnResult;
+    bool hasHit;
     Player * self, * opponent;
-    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, callback, targetX, targetY, boatTouched, sinkedCells = 0, sinkedBoats = 0;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, callback, targetX, targetY;
     Button * tempBtn;
 
     gameObj->currTurn = 1;
 
     do
     {
-        waitForPlayer();
-        cleanToPrint();
-
-        turnResult = MISS;
-
         /*Initialize data of self and opponent*/
         if(gameObj->currTurn == 1)
         {
@@ -604,113 +601,112 @@ void inGame()
             leftOffsetSelf = gameObj->gridOffsetLeft + 560;
         }
 
-        /*Show the two maps*/
-        for(i = 0; i < gameObj->gridSizeX; i++)
+        turnResult = MISS;
+
+        if(self->type == PLAYER_HUMAN)
         {
-            for(j = 0; j < gameObj->gridSizeY; j++)
-            { 
-                /*Self map*/
-                if(self->grid.cells[i][j].type == CELL_BOAT)
-                    addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
-
-                if(opponent->grid.cells[i][j].hit == false)
-                {
-                    tempBtn = createBtn(leftOffsetOpponent+(35*i), topOffset+(35*j), 35, 35, BTN_GRAPHIC);
-                    tempBtn->idleImage = MLV_load_image("images/fog.png");
-                    tempBtn->hoverImage = MLV_load_image("images/target_green.png");
-                    tempBtn->activeImage = MLV_load_image("images/target_green.png");
-                    tempBtn->callback = mergeInts(i, j);
-
-                    addToPrint(tempBtn, BUTTON);
-                }
-                else if(opponent->grid.cells[i][j].type == CELL_BOAT)
-                {
-                    addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
-                }
-            }
-        }
-
-        /*Save the position where the player has play*/
-        callback = waitForAction();
-        splitInts(callback, &targetX, &targetY);
-        
-        opponent->grid.cells[targetX][targetY].hit = true;
-
-        /*Test to see if a boat has been hit*/
-        for(i = 0; i < opponent->grid.nbrOfShips; i++)
-        {
-            if(!opponent->grid.ships[i].sinked)
+            waitForPlayer();
+            cleanToPrint();
+            /*Show the two maps*/
+            for(i = 0; i < gameObj->gridSizeX; i++)
             {
-                sinkedCells = 0;
-
-                for(j = 0; j < opponent->grid.ships[i].size; j++)
-                {
-                    if(opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY)
+                for(j = 0; j < gameObj->gridSizeY; j++)
+                { 
+                    /*Self map*/
+                    if(self->grid.cells[i][j].type == CELL_BOAT && !self->grid.cells[i][j].hit)
                     {
-                        /*The clicked cell match this part of this boat*/
-
-                        /*Set the ship's part as hit*/
-                        opponent->grid.ships[i].hits[j] = true;
-
-                        turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
-                        boatTouched = i;
-
-                        /*We found what we searched for but we stay in the loop to keep counting sinked boats*/
+                        addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+                    }
+                    else if(self->grid.cells[i][j].type == CELL_BOAT && self->grid.cells[i][j].hit)
+                    {
+                        if(gameObj->currTurn == 1)
+                            addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j)-11, "images/sheep_dead_left.png"), PICTURE);
+                        else
+                            addToPrint(createPicture(leftOffsetSelf+(35*i)-11, topOffset+(35*j)-11, "images/sheep_dead.png"), PICTURE);
+                    }
+                    else if(self->grid.cells[i][j].type == CELL_EMPTY && self->grid.cells[i][j].hit)
+                    {
+                        if(gameObj->currTurn == 1)
+                            addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/hitLeft.png"), PICTURE);
+                        else
+                            addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/hit.png"), PICTURE);
                     }
 
-                    /*Counter to know how many of the boat cells have been hits*/
-                    if(opponent->grid.ships[i].hits[j] == true)
+                    if(opponent->grid.cells[i][j].hit && opponent->grid.cells[i][j].type == CELL_BOAT)
                     {
-                        sinkedCells++;
+                        if(gameObj->currTurn == 1)
+                            addToPrint(createPicture(leftOffsetOpponent+(35*i)-11, topOffset+(35*j)-11, "images/sheep_dead.png"), PICTURE);
+                        else
+                            addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j)-11, "images/sheep_dead_left.png"), PICTURE);
                     }
-
-                    /*Ship has sinked*/
-                    if(sinkedCells == opponent->grid.ships[i].size)
+                    else if(opponent->grid.cells[i][j].hit && opponent->grid.cells[i][j].type == CELL_EMPTY)
                     {
-                        sinkedBoats += 1;
+                        if(gameObj->currTurn == 1)
+                            addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/hit.png"), PICTURE);
+                        else
+                            addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/hitLeft.png"), PICTURE);
+                    }
+                    else
+                    {
+                        tempBtn = createBtn(leftOffsetOpponent+(35*i), topOffset+(35*j), 35, 35, BTN_GRAPHIC);
+                        tempBtn->idleImage = MLV_load_image("images/fog.png");
+                        tempBtn->hoverImage = MLV_load_image("images/target_green.png");
+                        tempBtn->activeImage = MLV_load_image("images/target_green.png");
+                        tempBtn->callback = mergeInts(i, j);
+
+                        addToPrint(tempBtn, BUTTON);
                     }
                 }
             }
-            else
-                sinkedBoats++;
-        }
 
-        if(sinkedBoats == opponent->grid.nbrOfShips)
-            keepPlaying = false;                    /*All the boats have been sinked, let's stop playing*/
-    
-        if(turnResult == HIT)
-        {
-            /*Is the boat touched sinked?*/
-            beenSinked = true;
-            for(i = 0; i < opponent->grid.ships[boatTouched].size; i++)
+            /*Save the position where the player has play*/
+            callback = waitForAction();
+            splitInts(callback, &targetX, &targetY);
+            
+            opponent->grid.cells[targetX][targetY].hit = true;
+
+            turnResult = hitResult(targetX, targetY, self, opponent);
+
+            /*Take action based on turn result*/
+            switch(turnResult)
             {
-                if(!opponent->grid.ships[boatTouched].hits[i])
-                {
-                    beenSinked = false;
-                    break;
-                }
+                case MISS:
+                    addToPrint(createPicture(0, 0, "images/missedCaption.png"), PICTURE);
+                break;
+                case HIT:
+                    addToPrint(createPicture(0, 0, "images/hitCaption.png"), PICTURE);
+                break;
+                case SINKED:
+                case WIN:
+                    addToPrint(createPicture(0, 0, "images/sinkedCaption.png"), PICTURE);
+                break;
             }
 
-            if(beenSinked)
-                turnResult = SINKED;
+            printFrame();
+            MLV_wait_seconds(2);
         }
-
-        /*Take action based on turn result*/
-        switch(turnResult)
+        else
         {
-            case MISS:
-                addToPrint(createPicture(0, 0, "images/missedCaption.png"), PICTURE);
-            break;
-            case HIT:
-                addToPrint(createPicture(0, 0, "images/hitCaption.png"), PICTURE);
-            break;
-            case SINKED:
-                addToPrint(createPicture(0, 0, "images/sinkedCaption.png"), PICTURE);
-            break;
-        }
+            /*Show "computer is playing" message*/
+            waitForComputer();
+            
+            hasHit = false;
+            srand(time(NULL));
+            
+            /*Select random hit point and check if it hasn't been hit before*/
+            do
+            {
+                targetX = rand() % gameObj->gridSizeX;
+                targetY = rand() % gameObj->gridSizeY;
 
-        printFrame();
-        MLV_wait_seconds(3);
+                if(opponent->grid.cells[targetX][targetY].hit == false)
+                {
+                    hasHit = true;
+                }
+            }while (!hasHit);
+
+            turnResult = hitResult(targetX, targetY, self, opponent);
+        }
 
         /*Who's next ?*/
         if(gameObj->currTurn == 1)
@@ -718,7 +714,72 @@ void inGame()
         else
             gameObj->currTurn = 1;
 
-    }while(keepPlaying);
+    }while(turnResult != WIN);
+}
 
-    printf("End of the game\n");
+int hitResult(int targetX, int targetY, Player * self, Player * opponent)
+{
+    int i, j, boatTouched = 0, sinkedCells, sinkedBoats = 0;
+    TurnResult turnResult = MISS;
+    bool beenSinked;
+
+    /*Test to see if a boat has been hit*/
+    for(i = 0; i < opponent->grid.nbrOfShips; i++)
+    {
+        if(!opponent->grid.ships[i].sinked)
+        {
+            sinkedCells = 0;
+
+            for(j = 0; j < opponent->grid.ships[i].size; j++)
+            {
+                if(opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY)
+                {
+                    /*The clicked cell match this part of this boat*/
+
+                    /*Set the ship's part as hit*/
+                    opponent->grid.ships[i].hits[j] = true;
+
+                    turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
+                    boatTouched = i;
+
+                    /*We found what we searched for but we stay in the loop to keep counting sinked boats*/
+                }
+
+                /*Counter to know how many of the boat cells have been hits*/
+                if(opponent->grid.ships[i].hits[j] == true)
+                {
+                    sinkedCells++;
+                }
+
+                /*Ship has sinked*/
+                if(sinkedCells == opponent->grid.ships[i].size)
+                {
+                    sinkedBoats += 1;
+                }
+            }
+        }
+        else
+            sinkedBoats++;
+    }
+
+    if(sinkedBoats == opponent->grid.nbrOfShips)
+        turnResult = WIN;                    /*All the boats have been sinked, let's stop playing*/
+    else if(turnResult == HIT)
+    {
+        /*Is the boat touched sinked?*/
+        beenSinked = true;
+        for(i = 0; i < opponent->grid.ships[boatTouched].size; i++)
+        {
+            if(!opponent->grid.ships[boatTouched].hits[i])
+            {
+                beenSinked = false;
+                break;
+            }
+        }
+
+        if(beenSinked)
+            turnResult = SINKED;
+    }
+
+    return turnResult;
 }

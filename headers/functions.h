@@ -56,6 +56,8 @@ bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a 
 
 void printBoatShadow(int posInToPrint);
 
+int hitResult(int targetX, int targetY, Player * self, Player * opponent);
+
 
 
 
