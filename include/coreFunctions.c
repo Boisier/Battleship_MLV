@@ -559,63 +559,48 @@ int hitResult(int targetX, int targetY, Player * self, Player * opponent)
 {
     int i, j, boatTouched = 0, sinkedCells, sinkedBoats = 0;
     TurnResult turnResult = MISS;
-    bool beenSinked;
 
-    /*Test to see if a boat has been hit*/
-    for(i = 0; i < opponent->grid.nbrOfShips; i++)
+    /*Did we hit a boat*/
+    if(opponent->grid.cells[targetX][targetY].type == CELL_BOAT)
     {
-        if(!opponent->grid.ships[i].sinked)
+        /*set current turn result has HIT*/
+        turnResult = HIT;
+
+        /*Now we test to see if a boat has been hit*/
+        for(i = 0; i < opponent->grid.nbrOfShips; i++)
         {
-            sinkedCells = 0;
-
-            for(j = 0; j < opponent->grid.ships[i].size; j++)
+            if(!opponent->grid.ships[i].sinked)
             {
-                if(opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY)
+                sinkedCells = 0;
+
+                for(j = 0; j < opponent->grid.ships[i].size; j++)
                 {
-                    /*The clicked cell match this part of this boat*/
-
-                    /*Set the ship's part as hit*/
-                    opponent->grid.ships[i].hits[j] = true;
-
-                    turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
-                    boatTouched = i;
-
-                    /*We found what we searched for but we stay in the loop to keep counting sinked boats*/
+                    if(opponent->grid.ships[i].hits[j])
+                        sinkedCells++;  /*Cell has been hit, add it to the count */
+                    else if((opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY) 
+                    || (opponent->grid.ships[i].direction == 'v' && opponent->grid.ships[i].posX == targetX && opponent->grid.ships[i].posY + j == targetY))
+                    {                   /*The clicked cell match this part of this boat*/
+                        opponent->grid.ships[i].hits[j] = true;
+                        boatTouched = i;
+                        sinkedCells++;
+                    }
                 }
 
-                /*Counter to know how many of the boat cells have been hits*/
-                if(opponent->grid.ships[i].hits[j] == true)
-                {
-                    sinkedCells++;
-                }
-
-                /*Ship has sinked*/
                 if(sinkedCells == opponent->grid.ships[i].size)
                 {
-                    sinkedBoats += 1;
+                    /*Same number of hit as the size of the ship*/
+                    opponent->grid.ships[i].sinked = true;
+                    sinkedBoats++;
                 }
             }
+            else
+                sinkedBoats++;
         }
-        else
-            sinkedBoats++;
-    }
-
-    if(sinkedBoats == opponent->grid.nbrOfShips)
-        turnResult = WIN;                    /*All the boats have been sinked, let's stop playing*/
-    else if(turnResult == HIT)
-    {
-        /*Is the boat touched sinked?*/
-        beenSinked = true;
-        for(i = 0; i < opponent->grid.ships[boatTouched].size; i++)
-        {
-            if(!opponent->grid.ships[boatTouched].hits[i])
-            {
-                beenSinked = false;
-                break;
-            }
-        }
-
-        if(beenSinked)
+        
+        /*Did we win the game, or sank a ship?*/
+        if(sinkedBoats == opponent->grid.nbrOfShips)
+            turnResult = WIN;
+        else if(opponent->grid.ships[boatTouched].sinked)
             turnResult = SINKED;
     }
 

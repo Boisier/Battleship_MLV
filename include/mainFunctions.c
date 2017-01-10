@@ -563,8 +563,6 @@ int setUpPlayer(int playerID)
                         boatX = rand() % gameObj->gridSizeX;
                         boatY = rand() % (gameObj->gridSizeY - i);
                     }
-                    
-                    printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);
 
                     added = addBoat(boatX, boatY, i, direction);
 
@@ -710,8 +708,6 @@ void inGame()
             {
                 targetX = rand() % gameObj->gridSizeX;
                 targetY = rand() % gameObj->gridSizeY;
-
-                printf("%d %d\n", targetX, targetY);
 
                 if(opponent->grid.cells[targetX][targetY].hit == false)
                     hasHit = true;
