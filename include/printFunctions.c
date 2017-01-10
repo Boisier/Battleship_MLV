@@ -222,11 +222,19 @@ void printNumberBox(struct NumberBox * nB, char state)
 
     MLV_draw_image(nB->backImage, nB->x+45, nB->y);
     MLV_draw_text_box_with_font(nB->x+44, nB->y+1, 79, 39, str, gameObj->inputFont, 9, rgba(0, 0, 0, 0), MLV_COLOR_WHITE, rgba(0, 0, 0, 0), MLV_TEXT_LEFT, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER); /*Finaly, let's write the content*/
-
 }
 
 
 void printText(struct Text * txt, char state)          /*Print given Text elemnt on the screen*/
 {
-    MLV_draw_text_box_with_font(txt->x, txt->y, txt->width, txt->height, txt->content, gameObj->waitFont, 9, rgba(0, 0, 0, 0), gameObj->defaultInputColor, rgba(0, 0, 0, 0), MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
+    MLV_Font * font;
+
+    if(txt->size == 's')
+        font = gameObj->inputFont;
+    else if(txt->size == 'm')
+        font = gameObj->waitFont;
+    else 
+        font = gameObj->bigFont;
+
+    MLV_draw_text_box_with_font(txt->x, txt->y, txt->width, txt->height, txt->content, font, 9, rgba(0, 0, 0, 0), gameObj->defaultInputColor, rgba(0, 0, 0, 0), MLV_TEXT_CENTER, MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
 }

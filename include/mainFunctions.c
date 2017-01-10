@@ -32,12 +32,14 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     /*Set default fonts*/
     gameObj->inputFont = MLV_load_font("fonts/LCD_Solid.ttf", 18);
     gameObj->waitFont = MLV_load_font("fonts/LCD_Solid.ttf", 36);
+    gameObj->bigFont = MLV_load_font("fonts/LCD_Solid.ttf", 48);
     
     /*Set default values */
     gameObj->defaultInputColor = rgba(51, 38, 29, 255);
     gameObj->defaultPlaceHolderColor = rgba(70, 60, 60, 255);
 
     gameObj->woodBckg =  MLV_load_image("images/woodenBackground.png"); /*Let's preload the main background for later*/
+    gameObj->gameBoard = NULL;
 
     gameObj->gameState = 'm';
 
@@ -118,6 +120,10 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     PrintElement * player2Element;
 
     cleanToPrint();
+
+    /*clean up any letfover game board*/
+    if(gameObj->gameBoard != NULL)
+        MLV_free_image(gameObj->gameBoard);
 
     gameObj->gameState = 'm';       /*Set game state as in menu, so the cleanScreen will reset with the wooden background*/
 
@@ -304,6 +310,7 @@ void createPlayer(int playerID, char * playerName, playerType type) /*Init the p
     }
 
     player.grid = grid;
+    player.score = 0;
 
     if(playerID == 1)                   /*Inserting newly created data inside the gameObj*/
         gameObj->player1 = player;
@@ -328,6 +335,9 @@ int setUpPlayer(int playerID)
     Button * tempBtn, * rotateBtn, * quitBtn, * restartBtn, * confirmBtn;
     PrintElement * tempElement;
     bool added = false;
+
+    /*first, make sure the grid is empty before doing anything*/
+    resetPlayerGrid(playerID);
     
     if(playerID == 1 || (playerID == 2 && gameObj->player2.type == PLAYER_HUMAN))
     {                               /*Human player*/
@@ -410,7 +420,7 @@ int setUpPlayer(int playerID)
         restartBtn->callback = RESTART;
         addToPrint(restartBtn, BUTTON);
 
-        if(gameObj->currTurn == 1)
+        if(gameObj->currTurn == 1 && gameObj->player1.score == 0 && gameObj->player2.score == 0)
         {
             quitBtn = createBtn(leftOffset + 15 + 320, 750, 145, 36, BTN_GRAPHIC);
             quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
@@ -448,7 +458,6 @@ int setUpPlayer(int playerID)
                     }
                     else if(callback == RESTART)
                     {
-                        resetPlayerGrid(playerID);
                         setUpPlayer(playerID);
                         return 0;
                     }
@@ -521,7 +530,6 @@ int setUpPlayer(int playerID)
         }
         else if(callback == RESTART)
         {
-            resetPlayerGrid(playerID);
             setUpPlayer(playerID);
             return 0;
         }
@@ -565,21 +573,19 @@ int setUpPlayer(int playerID)
     return 1;
 }
 
-typedef enum TurnResult
-{
-    MISS,
-    HIT,
-    SINKED,
-    WIN
-} TurnResult;
-
 void inGame()
 {
+    enum returnValues
+    {
+        REPLAY = 1,
+        QUIT = 3
+    } callback;
     TurnResult turnResult;
     bool hasHit;
     Player * self, * opponent;
-    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, callback, targetX, targetY;
-    Button * tempBtn;
+    int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, targetX, targetY;
+    Button * tempBtn, * quitBtn, * replayBtn;
+    char buffer[3];
 
     gameObj->currTurn = 1;
 
@@ -715,71 +721,115 @@ void inGame()
             gameObj->currTurn = 1;
 
     }while(turnResult != WIN);
+
+    /*Game has ended*/
+    cleanToPrint();
+
+    /*Update winner score*/
+    self->score++;
+
+    addToPrint(createPicture(0, 0, "images/endGameBoard.png"), PICTURE);
+
+    /*We print again the map, but this time clearly so player can take a look at each others map*/
+    for(i = 0; i < gameObj->gridSizeX; i++)
+    {
+        for(j = 0; j < gameObj->gridSizeY; j++)
+        { 
+            /*Player 1 map*/
+            if(gameObj->player1.grid.cells[i][j].type == CELL_BOAT && !(gameObj->player1.grid.cells[i][j].hit))
+            {
+                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+            }
+            else if(gameObj->player1.grid.cells[i][j].type == CELL_BOAT && gameObj->player1.grid.cells[i][j].hit)
+            {
+                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j)-11, "images/sheep_dead_left.png"), PICTURE);
+            }
+            else if(gameObj->player1.grid.cells[i][j].type == CELL_EMPTY && gameObj->player1.grid.cells[i][j].hit)
+            {
+                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/hitLeft.png"), PICTURE);
+            }
+
+            if(gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_BOAT)
+            {
+                addToPrint(createPicture(leftOffsetOpponent+(35*i)-11, topOffset+(35*j)-11, "images/sheep_dead.png"), PICTURE);
+            }
+            else if(gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_EMPTY)
+            {
+                addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/hit.png"), PICTURE);
+            }
+            else if(!gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_BOAT)
+            {
+                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+            }
+        }
+    }
+
+    replayBtn = createBtn(percentOffset(50, 'w', -198), 735, 183, 50, BTN_GRAPHIC);
+    replayBtn->idleImage = MLV_load_image("images/buttons/replayBtn_idle.png");
+    replayBtn->hoverImage = MLV_load_image("images/buttons/replayBtn_hover.png");
+    replayBtn->activeImage = MLV_load_image("images/buttons/replayBtn_active.png");
+    replayBtn->callback = REPLAY;
+    addToPrint(replayBtn, BUTTON);
+
+    quitBtn = createBtn(percentOffset(50, 'w', 15), 735, 183, 50, BTN_GRAPHIC);
+    quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_idle.png");
+    quitBtn->hoverImage = MLV_load_image("images/buttons/quitBtn_hover.png");
+    quitBtn->activeImage = MLV_load_image("images/buttons/quitBtn_active.png");
+    quitBtn->callback = QUIT;
+    addToPrint(quitBtn, BUTTON);
+
+    addToPrint(createText(percentOffset(50, 'w', -415), 10, 400, 25, 's', gameObj->player1.name), TEXT);
+    addToPrint(createText(percentOffset(50, 'w', 15), 10, 400, 25, 's', gameObj->player2.name), TEXT);
+
+    sprintf(buffer, "%d", gameObj->player1.score);
+    addToPrint(createText(percentOffset(50, 'w', -415), 45, 400, 50, 'b', buffer), TEXT);
+
+    sprintf(buffer, "%d", gameObj->player2.score);
+    addToPrint(createText(percentOffset(50, 'w', 15), 45, 400, 50, 'b', buffer), TEXT);
+
+    addToPrint(createText(percentOffset(50, 'w', -15), 45, 30, 50, 'b', "-"), TEXT);
+
+    callback = waitForAction();
+
+    if(callback == QUIT)
+        endGame();
+    else
+        replay();
 }
 
-int hitResult(int targetX, int targetY, Player * self, Player * opponent)
+void replay()
 {
-    int i, j, boatTouched = 0, sinkedCells, sinkedBoats = 0;
-    TurnResult turnResult = MISS;
-    bool beenSinked;
+    /*Player wants to start again, so we go again*/
+    gameObj->currTurn = 1;
+    setUpPlayer(1);
+    
+    gameObj->currTurn = 2;
+    setUpPlayer(2);
 
-    /*Test to see if a boat has been hit*/
-    for(i = 0; i < opponent->grid.nbrOfShips; i++)
-    {
-        if(!opponent->grid.ships[i].sinked)
-        {
-            sinkedCells = 0;
+    inGame();
+}
 
-            for(j = 0; j < opponent->grid.ships[i].size; j++)
-            {
-                if(opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY)
-                {
-                    /*The clicked cell match this part of this boat*/
+void endGame()
+{
+    /*Player wants to stop, so we clean up everything*/
+    /*First, we creat an empty player*/
+    Player player;
 
-                    /*Set the ship's part as hit*/
-                    opponent->grid.ships[i].hits[j] = true;
+    /*We empty the allocatd memory of the players*/
+    free(gameObj->player1.grid.ships);
+    free(gameObj->player2.grid.ships);
 
-                    turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
-                    boatTouched = i;
+    /*and assing empty player*/
+    gameObj->player1 = player;
+    gameObj->player2 = player;
+    
+    /*Now we clean up the game board*/
+    MLV_free_image(gameObj->gameBoard);
+    gameObj->gameBoard = NULL;
 
-                    /*We found what we searched for but we stay in the loop to keep counting sinked boats*/
-                }
+    /*Finally, set game as in menu*/
+    gameObj->gameState = 'm';
 
-                /*Counter to know how many of the boat cells have been hits*/
-                if(opponent->grid.ships[i].hits[j] == true)
-                {
-                    sinkedCells++;
-                }
-
-                /*Ship has sinked*/
-                if(sinkedCells == opponent->grid.ships[i].size)
-                {
-                    sinkedBoats += 1;
-                }
-            }
-        }
-        else
-            sinkedBoats++;
-    }
-
-    if(sinkedBoats == opponent->grid.nbrOfShips)
-        turnResult = WIN;                    /*All the boats have been sinked, let's stop playing*/
-    else if(turnResult == HIT)
-    {
-        /*Is the boat touched sinked?*/
-        beenSinked = true;
-        for(i = 0; i < opponent->grid.ships[boatTouched].size; i++)
-        {
-            if(!opponent->grid.ships[boatTouched].hits[i])
-            {
-                beenSinked = false;
-                break;
-            }
-        }
-
-        if(beenSinked)
-            turnResult = SINKED;
-    }
-
-    return turnResult;
+    /*and we go back to the main menu*/
+    mainMenu();
 }

@@ -4,6 +4,16 @@
 #define true 1
 #define false 0
 
+
+
+typedef enum TurnResult
+{
+    MISS,
+    HIT,
+    SINKED,
+    WIN
+} TurnResult;
+
 typedef struct Ship
 {
     int size;               /*Size of the ship (1, 2, 3, 4 or 5)*/
@@ -163,6 +173,7 @@ typedef struct Text
     int y;                      /*Y position of the text box*/
     int width;
     int height;
+    char size;
 
     char content[256];
 } Text;
@@ -208,6 +219,7 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
 
     MLV_Font * inputFont;   /*Font used to render input box*/
     MLV_Font * waitFont;   /*Font used to render input box*/
+    MLV_Font * bigFont;
 
     MLV_Color defaultInputColor;
     MLV_Color defaultPlaceHolderColor;

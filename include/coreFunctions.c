@@ -173,7 +173,7 @@ void waitFor(char type)
         else
             strcpy(playerName, gameObj->player2.name);
 
-        addToPrint(createText(0, 275, 1100, 50, playerName), TEXT);
+        addToPrint(createText(0, 275, 1100, 50, 'm', playerName), TEXT);
 
         goBtn = createBtn(percentOffset(50, 'w', -92), 370, 183, 50, BTN_GRAPHIC);
         goBtn->idleImage = MLV_load_image("images/buttons/goBtn_idle.png");
@@ -255,13 +255,14 @@ Picture * createPicture(int x, int y, char * fileURL)    /*Create an Image eleme
     return img;                                                 /*Return the newly created element*/
 }
 
-Text * createText(int x, int y, int width, int height, char * content)    /*Create an Image element and return it*/
+Text * createText(int x, int y, int width, int height, char size, char * content)    /*Create an Image element and return it*/
 {
     Text * txt = allocate(sizeof(Text));                  /*create the element*/
     txt->x = x;                                                 /*Set X position*/
     txt->y = y;                                                 /*Set Y position*/
     txt->width = width;
     txt->height = height;
+    txt->size = size;
     strcpy(txt->content, content);
 
     return txt;                                                 /*Return the newly created element*/
@@ -552,4 +553,71 @@ void printBoatShadow(int posInToPrint)
             }
         }
     }
+}
+
+int hitResult(int targetX, int targetY, Player * self, Player * opponent)
+{
+    int i, j, boatTouched = 0, sinkedCells, sinkedBoats = 0;
+    TurnResult turnResult = MISS;
+    bool beenSinked;
+
+    /*Test to see if a boat has been hit*/
+    for(i = 0; i < opponent->grid.nbrOfShips; i++)
+    {
+        if(!opponent->grid.ships[i].sinked)
+        {
+            sinkedCells = 0;
+
+            for(j = 0; j < opponent->grid.ships[i].size; j++)
+            {
+                if(opponent->grid.ships[i].direction == 'h' && opponent->grid.ships[i].posX + j == targetX && opponent->grid.ships[i].posY == targetY)
+                {
+                    /*The clicked cell match this part of this boat*/
+
+                    /*Set the ship's part as hit*/
+                    opponent->grid.ships[i].hits[j] = true;
+
+                    turnResult = HIT;           /*a boat got hit, it is now the current result of the turn*/
+                    boatTouched = i;
+
+                    /*We found what we searched for but we stay in the loop to keep counting sinked boats*/
+                }
+
+                /*Counter to know how many of the boat cells have been hits*/
+                if(opponent->grid.ships[i].hits[j] == true)
+                {
+                    sinkedCells++;
+                }
+
+                /*Ship has sinked*/
+                if(sinkedCells == opponent->grid.ships[i].size)
+                {
+                    sinkedBoats += 1;
+                }
+            }
+        }
+        else
+            sinkedBoats++;
+    }
+
+    if(sinkedBoats == opponent->grid.nbrOfShips)
+        turnResult = WIN;                    /*All the boats have been sinked, let's stop playing*/
+    else if(turnResult == HIT)
+    {
+        /*Is the boat touched sinked?*/
+        beenSinked = true;
+        for(i = 0; i < opponent->grid.ships[boatTouched].size; i++)
+        {
+            if(!opponent->grid.ships[boatTouched].hits[i])
+            {
+                beenSinked = false;
+                break;
+            }
+        }
+
+        if(beenSinked)
+            turnResult = SINKED;
+    }
+
+    return turnResult;
 }

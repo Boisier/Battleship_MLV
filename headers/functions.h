@@ -20,6 +20,12 @@ int setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
 void inGame();                      /* Player give a position, */
 
+void endGame();
+ 
+void replay();
+
+void endGame();
+
 
 
 
@@ -110,6 +116,8 @@ void printConsumption();	/*This function print the current consumption of RAM an
 
 void resetPlayerGrid(int playerID);
 
+void resetPlayer(Player * player);
+
 
 /********************************************************************************/
 /***** Elements creation functions **********************************************/
@@ -119,7 +127,7 @@ Button * createBtn(int x, int y, int width, int height, enum btnType type); /*Cr
 
 Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
 
-Text * createText(int x, int y, int width, int height, char * content);
+Text * createText(int x, int y, int width, int height, char size, char * content);
 
 TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100]);
 
