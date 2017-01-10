@@ -2,6 +2,7 @@
 #include <stdlib.h> 
 #include <string.h> 
 #include <time.h>
+#include <math.h>
 #include <MLV/MLV_all.h>
 #include "../headers/structs.h"
 #include "../headers/functions.h"
@@ -9,6 +10,7 @@
 
 GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
 {
+
     GameObj * gameObj = allocate(sizeof(GameObj));   /*Define gameObj variable*/
 
     gameObj->currTurn = 0;          /*Set current turn as 0*/
@@ -45,6 +47,9 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
     gameObj->printLogs = false;     /*Should we display the logs?*/
     /*Printing the logs when ASAN is active is not relevant because ASAN use a lot of memory*/
+
+    /*init rand seed*/
+    srand(time(NULL));
 
     return gameObj;                 /*Return the gameObj*/
 }
@@ -699,7 +704,6 @@ void inGame()
             waitForComputer();
             
             hasHit = false;
-            srand(time(NULL));
             
             /*Select random hit point and check if it hasn't been hit before*/
             do
@@ -707,12 +711,13 @@ void inGame()
                 targetX = rand() % gameObj->gridSizeX;
                 targetY = rand() % gameObj->gridSizeY;
 
+                printf("%d %d\n", targetX, targetY);
+
                 if(opponent->grid.cells[targetX][targetY].hit == false)
-                {
                     hasHit = true;
-                }
             }while (!hasHit);
 
+            opponent->grid.cells[targetX][targetY].hit = true;
             turnResult = hitResult(targetX, targetY, self, opponent);
         }
 
