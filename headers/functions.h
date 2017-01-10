@@ -12,7 +12,7 @@ void choicePlayers();				/* Screen with choice one or two players*/
 
 void initNewGame(); 				/*Init the game for one or two player*/
 
-void startGame(int nbrPlayer);		/*Set up a new game and start it*/
+void startGame();					/*Set up a new game and start it*/
 
 void createPlayer(int playerID, char * playerName, enum playerType type);	/*Generate the data needed for the player*/
 

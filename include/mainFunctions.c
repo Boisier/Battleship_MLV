@@ -266,15 +266,14 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         else
             createPlayer(2, "Ordinateur", PLAYER_AI);
 
-        startGame(nbrPlayer);
+        startGame();
     }
 }
 
-void startGame(int nbrPlayer)
+void startGame()
 {
     createBoardGame(gameObj->gridSizeX, gameObj->gridSizeY);        /*Generate a map with the given dimensions*/
     gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
-    gameObj->nbrPlayer = nbrPlayer;
 
     gameObj->currTurn = 1;
 
@@ -698,10 +697,11 @@ void inGame()
         }
         else
         {
-            /*Show "computer is playing" message*/
-            waitForComputer();
             
             hasHit = false;
+            
+            /*Show "computer is playing" message*/
+            waitForComputer();
             
             /*Select random hit point and check if it hasn't been hit before*/
             do
@@ -715,6 +715,13 @@ void inGame()
 
             opponent->grid.cells[targetX][targetY].hit = true;
             turnResult = hitResult(targetX, targetY, self, opponent);
+
+            if(turnResult == WIN)
+            {
+                addToPrint(createPicture(0, 0, "images/defeatCaption.png"), PICTURE);
+                printFrame();
+                MLV_wait_seconds(2);
+            }
         }
 
         /*Who's next ?*/
