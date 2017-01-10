@@ -10,8 +10,7 @@
 
 GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
 {
-
-    GameObj * gameObj = allocate(sizeof(GameObj));   /*Define gameObj variable*/
+    GameObj * gameObj = allocate(sizeof(GameObj));
 
     gameObj->currTurn = 0;          /*Set current turn as 0*/
 
@@ -31,6 +30,10 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
     MLV_create_window("Battleship", "Battleship", gameObj->wWidth, gameObj->wHeight);   /*Create the game window*/  
     
+    /*Se ship pointer as null*/
+    gameObj->player1.grid.ships = NULL;
+    gameObj->player2.grid.ships = NULL;
+
     /*Set default fonts*/
     gameObj->inputFont = MLV_load_font("fonts/LCD_Solid.ttf", 18);
     gameObj->waitFont = MLV_load_font("fonts/LCD_Solid.ttf", 36);
@@ -83,7 +86,7 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtn->idleImage = MLV_load_image("images/buttons/rulesBtn_idle.png");
     rulesBtn->hoverImage = MLV_load_image("images/buttons/rulesBtn_hover.png");
     rulesBtn->activeImage = MLV_load_image("images/buttons/rulesBtn_active.png");
-    rulesBtn->callback = RULES;
+    rulesBtn->callback = 0;
 
     quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
     quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
@@ -103,7 +106,7 @@ void mainMenu()                     /*display the main menu and wait for actions
     if(callback == PLAY)
         initNewGame(0);
     else if(callback == RULES)
-        clicked();
+        {}
     else if(callback == QUIT)
         quitGame();
 }

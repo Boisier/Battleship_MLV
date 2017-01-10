@@ -141,7 +141,30 @@ void decrementNumberBox(void * nB)
 void quitGame()                         /*This function properly end the game*/
 {
     cleanToPrint();
+
+    /*Goodbye message*/
+    addToPrint(createPicture(0, 0, "images/thxForPlayingCaption.png"), PICTURE);
+    printFrame();
+    MLV_wait_seconds(3);
+
+    cleanToPrint();
+
+    /*Properly free the gameObj*/
+    if(gameObj->player1.grid.ships != NULL)
+        free(gameObj->player1.grid.ships);
+    if(gameObj->player2.grid.ships != NULL)
+        free(gameObj->player2.grid.ships);
+
+    MLV_free_font(gameObj->inputFont);
+    MLV_free_font(gameObj->waitFont);
+    MLV_free_font(gameObj->bigFont);
+
+    MLV_free_image(gameObj->woodBckg);
+    if(gameObj->gameBoard != NULL)
+        MLV_free_image(gameObj->gameBoard);
+
     MLV_free_window();                  /*Close the window*/
+    
     exit(0);
 }
 

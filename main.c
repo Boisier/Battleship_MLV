@@ -8,11 +8,11 @@
 
 int main(int argc, char *argv[])
 {
+	/*Start Game*/
 	gameObj = initGame();
 	mainMenu();
 	
-	MLV_wait_seconds(3);
-
+	/*End Game*/
 	quitGame();
 	
 	return 0;
