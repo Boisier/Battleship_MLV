@@ -141,8 +141,3 @@ void resetPlayerGrid(int playerID)
 
     grid->ships = allocate(sizeof(Ship) * boatsNbr);
 }
-
-void clicked()                              /*Print a msg in the console. Used as a callBack tester*/
-{
-    printf("Button clicked\n");
-}

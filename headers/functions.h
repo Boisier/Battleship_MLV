@@ -106,8 +106,6 @@ MLV_Color rgba(int r, int g, int b, int a);
 int percent(float percent, char direction);/*return a percentage based on the window size*/
 int percentOffset(float percent, char direction, int offset); /*return a percentage based on the window size and add the offset value to the result*/
 
-void clicked();				/*Print a msg in the console. Used as a callBack tester*/
-
 int mergeInts(int first, int second);	/*Merge two int into one int. Ints passed as parameters cannot exceed 65535*/
 
 void splitInts(int merged, int *first, int*second);	/*Split two int merged with the mergedInts function*/

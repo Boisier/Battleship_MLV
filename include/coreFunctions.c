@@ -140,6 +140,7 @@ void decrementNumberBox(void * nB)
 
 void quitGame()                         /*This function properly end the game*/
 {
+    cleanToPrint();
     MLV_free_window();                  /*Close the window*/
     exit(0);
 }

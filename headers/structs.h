@@ -197,22 +197,22 @@ typedef struct PrintElement
 
 typedef struct GameObj      /*The gameObj carry all the variables used by the game*/
 {
+    int wWidth;             /*Width of the window*/
+    int wHeight;            /*Height of the window*/
+
     Player player1;         /*First player obj*/
     Player player2;         /*Second player obj*/
     int currTurn;           /*Current player. Can be either 1, 2 or 0 if not in game;  */
-    int nbrPlayer;          /*Number of human player in the game*/
     int nbrShips[6];        /*Nbr of ships per size (1 to 5); */
-
-    int boatBeingPlacedSize;
-    int boatBeingPlacedDirection;
+    char gameState;         /*Current state of the game. Can be either 'm' (menu), 'a' (active/inGame) or 'p' (pause);*/
 
     int gridSizeX;          /*Nbr of cell on the width of the grid*/
     int gridSizeY;          /*Nbr of cell on the height of the grid*/
     int gridOffsetTop;      /*Top margin of the grid*/
     int gridOffsetLeft;     /*Left margin of the grid*/
 
-    int wWidth;             /*Width of the window*/
-    int wHeight;            /*Height of the window*/
+    int boatBeingPlacedSize;
+    int boatBeingPlacedDirection;
 
     PrintElement * toPrint; /*Elements to print on the next frame;*/
     int nbrToPrint;         /*Number of elements to print*/
@@ -227,8 +227,7 @@ typedef struct GameObj      /*The gameObj carry all the variables used by the ga
     MLV_Image * woodBckg;   /*Background used for menu interface*/
     MLV_Image * gameBoard;  /*The background used in the current Game*/
 
-    char gameState;         /*Current state of the game. Can be either 'm' (menu), 'a' (active/inGame) or 'p' (pause);*/
-
+   
     bool printLogs;         /*Shall we print the logs or not ?*/
 
 } GameObj;
