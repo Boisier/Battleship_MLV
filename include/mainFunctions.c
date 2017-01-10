@@ -683,8 +683,10 @@ void inGame()
                     addToPrint(createPicture(0, 0, "images/hitCaption.png"), PICTURE);
                 break;
                 case SINKED:
-                case WIN:
                     addToPrint(createPicture(0, 0, "images/sinkedCaption.png"), PICTURE);
+                break;
+                case WIN:
+                    addToPrint(createPicture(0, 0, "images/victoryCaption.png"), PICTURE);
                 break;
             }
 
@@ -721,6 +723,9 @@ void inGame()
             gameObj->currTurn = 1;
 
     }while(turnResult != WIN);
+
+    printFrame();
+    MLV_wait_seconds(3);
 
     /*Game has ended*/
     cleanToPrint();
@@ -778,16 +783,16 @@ void inGame()
     quitBtn->callback = QUIT;
     addToPrint(quitBtn, BUTTON);
 
-    addToPrint(createText(percentOffset(50, 'w', -415), 10, 400, 25, 's', gameObj->player1.name), TEXT);
-    addToPrint(createText(percentOffset(50, 'w', 15), 10, 400, 25, 's', gameObj->player2.name), TEXT);
+    addToPrint(createText(percentOffset(50, 'w', -415), 40, 400, 25, 's', gameObj->player1.name), TEXT);
+    addToPrint(createText(percentOffset(50, 'w', 15), 40, 400, 25, 's', gameObj->player2.name), TEXT);
 
     sprintf(buffer, "%d", gameObj->player1.score);
-    addToPrint(createText(percentOffset(50, 'w', -415), 45, 400, 50, 'b', buffer), TEXT);
+    addToPrint(createText(percentOffset(50, 'w', -415), 75, 400, 50, 'b', buffer), TEXT);
 
     sprintf(buffer, "%d", gameObj->player2.score);
-    addToPrint(createText(percentOffset(50, 'w', 15), 45, 400, 50, 'b', buffer), TEXT);
+    addToPrint(createText(percentOffset(50, 'w', 15), 75, 400, 50, 'b', buffer), TEXT);
 
-    addToPrint(createText(percentOffset(50, 'w', -15), 45, 30, 50, 'b', "-"), TEXT);
+    addToPrint(createText(percentOffset(50, 'w', -15), 75, 30, 50, 'b', "-"), TEXT);
 
     callback = waitForAction();
 
