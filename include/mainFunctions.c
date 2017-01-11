@@ -166,8 +166,8 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     addToPrint(createPicture(percentOffset(50, 'w', -142), 280, "images/gridSize.png"), PICTURE);
     addToPrint(createPicture(percentOffset(50, 'w', -16), 337, "images/times.png"), PICTURE);
 
-    gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 330, 10, 5, 10);
-    gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 330, 10, 5, 10);
+    gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 330, gameObj->gridSizeX, 5, 10);
+    gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 330, gameObj->gridSizeY, 5, 10);
 
     addToPrint(createPicture(percentOffset(50, 'w', -325), 400, "images/hDivider.png"), PICTURE);
     addToPrint(createPicture(percentOffset(50, 'w', -174), 430, "images/sheepNbr.png"), PICTURE);
@@ -179,11 +179,11 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     addToPrint(createPicture(886, 490, "images/sheepGroup1.png"), PICTURE);
 
 
-    fiveBlocksBoats = createNumberBox(65, 520, 1, 0, 2);
-    fourBlocksBoats = createNumberBox(265, 520, 1, 0, 2);
-    threeBlocksBoats = createNumberBox(465, 520, 2, 0, 3);
-    twoBlocksBoats = createNumberBox(665, 520, 1, 0, 3);
-    oneBlockBoats = createNumberBox(865, 520, 0, 0, 3);
+    fiveBlocksBoats = createNumberBox(65, 520, gameObj->nbrShips[5], 0, 2);
+    fourBlocksBoats = createNumberBox(265, 520, gameObj->nbrShips[4], 0, 2);
+    threeBlocksBoats = createNumberBox(465, 520, gameObj->nbrShips[3], 0, 3);
+    twoBlocksBoats = createNumberBox(665, 520, gameObj->nbrShips[2], 0, 3);
+    oneBlockBoats = createNumberBox(865, 520, gameObj->nbrShips[1], 0, 3);
 
     addToPrint(createPicture(percentOffset(50, 'w', -325), 590, "images/hDivider.png"), PICTURE);
     
