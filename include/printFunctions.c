@@ -41,9 +41,6 @@ PrintElement * addToPrint(void * element, enum elType type)
     PrintElement newEl;
 
     criticalIfNull(element);                    /*We make sure no NULL pointer get's in the loop*/
-
-
-    /*newEl = allocate(sizeof(PrintElement));    */     /*new printElement to add*/
     
     newEl.type = type;                             /*assign given element type*/
     

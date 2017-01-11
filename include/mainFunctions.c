@@ -86,7 +86,7 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtn->idleImage = MLV_load_image("images/buttons/rulesBtn_idle.png");
     rulesBtn->hoverImage = MLV_load_image("images/buttons/rulesBtn_hover.png");
     rulesBtn->activeImage = MLV_load_image("images/buttons/rulesBtn_active.png");
-    rulesBtn->callback = 0;
+    rulesBtn->callback = RULES;
 
     quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
     quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
@@ -106,9 +106,35 @@ void mainMenu()                     /*display the main menu and wait for actions
     if(callback == PLAY)
         initNewGame(0);
     else if(callback == RULES)
-        {}
+        displayRules();
     else if(callback == QUIT)
         quitGame();
+}
+
+void displayRules() 
+{
+    Button * backBtn, * sheepBtn;
+    
+    cleanToPrint();
+    addToPrint(createPicture(0, 0, "images/rules.png"), PICTURE);
+
+    backBtn = createBtn(percentOffset(50, 'w', -72), 720, 145, 36, BTN_GRAPHIC);
+    backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
+    backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
+    backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
+    backBtn->callback = 1;
+    addToPrint(backBtn, BUTTON);
+
+    sheepBtn = createBtn(percentOffset(50, 'w', -30), 523, 60, 60, BTN_GRAPHIC);
+    sheepBtn->idleImage = MLV_load_image("images/buttons/rulesSheep_idle.png");
+    sheepBtn->hoverImage = MLV_load_image("images/buttons/rulesSheep_hover.png");
+    sheepBtn->activeImage = MLV_load_image("images/buttons/rulesSheep_hover.png");
+    sheepBtn->callback = 0;
+    addToPrint(sheepBtn, BUTTON);
+
+    waitForAction();
+    
+    mainMenu();
 }
 
 void initNewGame()                /*Ask the player.s to enter his.their name.s*/

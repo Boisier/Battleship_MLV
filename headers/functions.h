@@ -8,6 +8,8 @@ GameObj * initGame();       		/* Init the game and return the gameObject with de
 
 void mainMenu();            		/* Display Main menu*/
 
+void displayRules();                 /* DIsplay the rules */
+
 void choicePlayers();				/* Screen with choice one or two players*/
 
 void initNewGame(); 				/*Init the game for one or two player*/
