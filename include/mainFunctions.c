@@ -801,7 +801,7 @@ void inGame()
             }
             else if(!gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_BOAT)
             {
-                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+                addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
             }
         }
     }
