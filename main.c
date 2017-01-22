@@ -8,8 +8,12 @@
 
 int main(int argc, char *argv[])
 {
+	/*The main is only used to call the initialization of the game and launch the mainMenu().
+	 *The rest of the actions ar mainly performed in the file mainFunctions.c 
+	*/
+
 	/*Start Game*/
-	gameObj = initGame();
+	initGame();
 	mainMenu();
 	
 	/*End Game*/

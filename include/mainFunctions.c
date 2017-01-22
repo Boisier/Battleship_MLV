@@ -8,9 +8,15 @@
 #include "../headers/functions.h"
 
 
-GameObj * initGame()                /*Generate the gameObj, create the window, ...*/
+/* initGame()
+ * This function initialize the game.
+ * It create the gameObj, Gave it it's default values,
+ * then it create the window using the MLV library.
+ */
+
+void initGame()                
 {
-    GameObj * gameObj = allocate(sizeof(GameObj));
+    gameObj = allocate(sizeof(GameObj));
 
     gameObj->currTurn = 0;          /*Set current turn as 0*/
 
@@ -39,7 +45,7 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
     gameObj->waitFont = MLV_load_font("fonts/LCD_Solid.ttf", 36);
     gameObj->bigFont = MLV_load_font("fonts/LCD_Solid.ttf", 48);
     
-    /*Set default values */
+    /*Set default colors */
     gameObj->defaultInputColor = rgba(51, 38, 29, 255);
     gameObj->defaultPlaceHolderColor = rgba(70, 60, 60, 255);
 
@@ -53,8 +59,6 @@ GameObj * initGame()                /*Generate the gameObj, create the window, .
 
     /*init rand seed*/
     srand(time(NULL));
-
-    return gameObj;                 /*Return the gameObj*/
 }
 
 void mainMenu()                     /*display the main menu and wait for actions from the user*/
@@ -582,16 +586,17 @@ int setUpPlayer(int playerID)
                     if(rand() % 2 == 0)
                     {
                         direction = 'h';
-                        boatX = rand() % (gameObj->gridSizeX - i);
+                        boatX = (rand() % (gameObj->gridSizeX + (i+1))) - 1;
                         boatY = rand() % gameObj->gridSizeY;
                     }
                     else
                     {
                         direction = 'v';
                         boatX = rand() % gameObj->gridSizeX;
-                        boatY = rand() % (gameObj->gridSizeY - i);
+                        boatY = (rand() % (gameObj->gridSizeY - (i+1))) - 1;
                     }
 
+                    printf("addBoat(%d, %d, %d, %c)\n", boatX, boatY, i, direction);
                     added = addBoat(boatX, boatY, i, direction);
 
                 } while(added == false);

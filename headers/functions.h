@@ -4,7 +4,7 @@
 /***** Main functions definitions ***********************************************/
 /********************************************************************************/
 
-GameObj * initGame();       		/* Init the game and return the gameObject with default values*/
+void initGame();       		/* Init the game and return the gameObject with default values*/
 
 void mainMenu();            		/* Display Main menu*/
 
@@ -22,11 +22,9 @@ int setUpPlayer(int playerID);		/*Ask player to place its boats on the map*/
 
 void inGame();                      /* Player give a position, */
 
-void endGame();
- 
-void replay();
+void replay();						/*Restart a new game with the exact same parameters*/
 
-void endGame();
+void endGame();						/*clean up last game data and redirect to main menu*/
 
 
 
@@ -38,33 +36,33 @@ void endGame();
 
 int waitForAction(); 		/*Keep application idle until a button is pressed and a callback value returned. It handle mouse hovering */
 
-bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);
+bool isCursorOnBtn(Button * Btn, int mouseX, int mouseY);		/*Check if the cursor is on the given Button. Return true if it is, false otherwise*/
 
 bool isCursorOnInput(TextBox * input, int mouseX, int mouseY);	/*check if cursor is on textBox. Return true if it is, false otherwise*/
 
-void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode);
+void updateTextBox(int inputPos, MLV_Keyboard_button keyPressed, int unicode); /*Update the content of the given textBox*/
 
-void incrementNumberBox(void * nB);
+void incrementNumberBox(void * nB);								/*if Possible, increment by 1 the value of the given numberBox*/
 
-void decrementNumberBox(void * nB);
+void decrementNumberBox(void * nB);								/*if possible, decrement by 1 the value of the given numberBox*/
 
-void quitGame();
+void quitGame();												/*Clean up the used memory, then close the application*/
 
-void waitFor(char type);
+void waitFor(char type);										/*Display a wait screen for the player or the computer*/
 
-void waitForPlayer();
+void waitForPlayer();											/*call waitFor() to display a wait screen for the player*/
 
-void waitForComputer();
+void waitForComputer();											/*call waitFor() to display a wait screen for the computer*/
 
-void createBoardGame(int w, int h);	/**/
+void createBoardGame(int w, int h);								/*Generate the background image for the game with the given grid size*/
 
-void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc);
+void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc); /*Print a grid on the given image*/
 
 bool addBoat(int boatX, int boatY, int boatSize, char boatDirection);	/*Place a boat on the map for the current player and return true if the action was successfull*/
 
-void printBoatShadow(int posInToPrint);
+void printBoatShadow(int posInToPrint);							/*Display the fade position on the grid. Used when placing the boats*/
 
-int hitResult(int targetX, int targetY, Player * self, Player * opponent);
+int hitResult(int targetX, int targetY, Player * self, Player * opponent);	/*Return the result of the player/computer action*/
 
 
 
@@ -77,32 +75,26 @@ int hitResult(int targetX, int targetY, Player * self, Player * opponent);
 /*Called when a function encountered a criticalError. Terminate the program.*/
 void throwCriticalError();
 
+/*Throw a critical error and stop the application if the given pointer is null*/
+void criticalIfNull(void * pointer);
+
 /*Allocate encapsulate malloc to better handle failing behavior.*/
 void * allocate(int size);
 
 /*reAllocate encapsulate malloc to better handle failing behavior.*/
 void * reAllocate(void * var, int newSize);
 
-/*Free a button and all linked data*/
+/*Properly free the given element*/
 void freeBtn(Button * btn);
-
-/*Free a picture and all linked data*/
 void freePicture(Picture * pic);
-
-/*Free a text box and all linked data*/
 void freeTextBox(TextBox * tB);
-
 void freeNumberBox(NumberBox * nB);
-
 void freeText(Text * txt);
-
-/*Throw a critical error and stop the application if the given pointer is null*/
-void criticalIfNull(void * pointer);
 
 /*erase everything on the screen but don't refresh the window*/
 void cleanScreen();
 
-/*MLV_rgba encapsulation for simpler syntax */
+/*MLV_rgba encapsulation for simplier syntax */
 MLV_Color rgba(int r, int g, int b, int a);
 
 int percent(float percent, char direction);/*return a percentage based on the window size*/
@@ -114,24 +106,29 @@ void splitInts(int merged, int *first, int*second);	/*Split two int merged with 
 
 void printConsumption();	/*This function print the current consumption of RAM and CPU of the application*/
 
-void resetPlayerGrid(int playerID);
+void resetPlayerGrid(int playerID);		/*Reset the grid of the given Player */
 
-void resetPlayer(Player * player);
+void resetPlayer(Player * player);		/*Reset all informations about the given Player*/
+
+
+
 
 
 /********************************************************************************/
 /***** Elements creation functions **********************************************/
 /********************************************************************************/
 
-Button * createBtn(int x, int y, int width, int height, enum btnType type); /*Create a Btn and assign specified values*/
+/*Create the desired element with the given parameters*/
+Button * createBtn(int x, int y, int width, int height, enum btnType type);
 
-Picture * createPicture(int x, int y, char fileURL[]);				/*Create a picture and assign specified values*/
+Picture * createPicture(int x, int y, char fileURL[]);
 
 Text * createText(int x, int y, int width, int height, char size, char * content);
 
 TextBox * createTextBox(int x, int y, int width, int height, char type, char placeHolder[100]);
 
 NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal);
+
 
 
 
