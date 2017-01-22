@@ -13,6 +13,12 @@ void throwCriticalError()                   /*Clean the program then terminate i
      exit(0);                               /*End the program*/
 }
 
+void criticalIfNull(void * pointer)         /*Throw a critical error and stop the application if the given pointer is null*/
+{
+    if(pointer == NULL)                     /*Is the given pointer NULL?*/
+        throwCriticalError();               /*Yes, then stop all*/
+}
+
 void * allocate(int size)                   /*malloc encapsulation with failing behavior handling*/
 {
     void * var = malloc(size);              /*Allocate asked memory*/
@@ -27,51 +33,6 @@ void * reAllocate(void * var, int newSize)  /*realloc encapsulation with failing
     criticalIfNull(var);                    /*Did the allocation worked ?*/
 
     return var;                             /*Yes, return the pointer*/
-}
-
-void freeBtn(Button * btn)
-{
-    if(btn->type == BTN_GRAPHIC)
-    {
-        MLV_free_image(btn->idleImage);
-        MLV_free_image(btn->hoverImage);
-        MLV_free_image(btn->activeImage);
-    }
-
-    free(btn);
-}
-
-void freePicture(Picture * pic)
-{
-    MLV_free_image(pic->image);
-    free(pic);
-}
-
-void freeTextBox(TextBox * tB)
-{
-    if(tB->type == 'g')
-       MLV_free_image(tB->backImage);
-    
-    free(tB);
-}
-
-void freeNumberBox(NumberBox * nB)
-{
-    MLV_free_image(nB->backImage);
-    free(nB);
-}
-
-
-void freeText(Text * txt)
-{
-    free(txt);
-}
-
-
-void criticalIfNull(void * pointer)         /*Throw a critical error and stop the application if the given pointer is null*/
-{
-    if(pointer == NULL)                     /*Is the given pointer NULL?*/
-        throwCriticalError();               /*Yes, then stop all*/
 }
 
 void cleanScreen()                          /*Roll back the screen to it's default state*/
