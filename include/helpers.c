@@ -64,17 +64,20 @@ int percentOffset(float p, char direction, int offset) /*return a percentage bas
     return percent(p, direction) + offset;
 }
 
+/*Merge two int into one int*/
 int mergeInts(int first, int second)
 {
     return ((first+1) << 16) | (second+1);
 }
 
+/*Split one int two int*/
 void splitInts(int merged, int *first, int*second)
 {
     *first = ((merged >> 16) & 0xFFFF)-1;
     *second = (merged & 0xFFFF)-1;
 }
 
+/*Reset the grid of the player*/
 void resetPlayerGrid(int playerID)
 {
     int i, j, boatsNbr = 0;

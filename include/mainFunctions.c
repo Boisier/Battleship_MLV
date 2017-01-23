@@ -54,14 +54,17 @@ void initGame()
 
     gameObj->gameState = 'm';
 
-    gameObj->printLogs = false;     /*Should we display the logs?*/
+    gameObj->printLogs = false;
     /*Printing the logs when ASAN is active is not relevant because ASAN use a lot of memory*/
 
     /*init rand seed*/
     srand(time(NULL));
 }
 
-void mainMenu()                     /*display the main menu and wait for actions from the user*/
+/*mainMenu()
+ *This function display the main menu
+ */
+void mainMenu()
 {
     enum returnValues
     {
@@ -71,8 +74,9 @@ void mainMenu()                     /*display the main menu and wait for actions
     } callback;
     Button * playBtn, * rulesBtn, * quitBtn;
     Picture * mainTitlePicture;
-
-    cleanToPrint();                 /*Empty the list of element to print before doing anything*/
+    
+    /*Empty the toPrint array before doing anything*/
+    cleanToPrint();                 
 
     /*Let's create the elements to be displayed*/
     /*Main Title*/
@@ -91,7 +95,8 @@ void mainMenu()                     /*display the main menu and wait for actions
     rulesBtn->hoverImage = MLV_load_image("images/buttons/rulesBtn_hover.png");
     rulesBtn->activeImage = MLV_load_image("images/buttons/rulesBtn_active.png");
     rulesBtn->callback = RULES;
-
+    
+    /*quitGame Button*/
     quitBtn = createBtn(percentOffset(50, 'w', -72), percent(90, 'h'), 145, 36, BTN_GRAPHIC);
     quitBtn->idleImage = MLV_load_image("images/buttons/quitBtn_small_idle.png");
     quitBtn->hoverImage = MLV_load_image("images/buttons/quitBtn_small_hover.png");
@@ -103,8 +108,9 @@ void mainMenu()                     /*display the main menu and wait for actions
     addToPrint(playBtn, BUTTON);
     addToPrint(rulesBtn, BUTTON);
     addToPrint(quitBtn, BUTTON);
-
-    callback = waitForAction(); 		            /*Keep application idle until a button callBack is fired. It handle mouse hovering*/ 
+    
+    /*Wait for an action from the user*/
+    callback = waitForAction(); 		            
 
     /*And finally call next action*/
     if(callback == PLAY)
@@ -115,29 +121,39 @@ void mainMenu()                     /*display the main menu and wait for actions
         quitGame();
 }
 
+/*displayRules()
+ *This function display the rule panel, stating how to play the game
+ */
 void displayRules() 
 {
     Button * backBtn, * sheepBtn;
     
+    /*Empty the toPrint array before doing anything*/
     cleanToPrint();
+    
+    /*Rules Title*/
     addToPrint(createPicture(0, 0, "images/rules.png"), PICTURE);
-
+    
+    /*Back Button*/
     backBtn = createBtn(percentOffset(50, 'w', -72), 720, 145, 36, BTN_GRAPHIC);
     backBtn->idleImage = MLV_load_image("images/buttons/backBtn_small_idle.png");
     backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
     backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
     backBtn->callback = 1;
     addToPrint(backBtn, BUTTON);
-
+    
+    /*little effect on the sheep*/
     sheepBtn = createBtn(percentOffset(50, 'w', -30), 523, 60, 60, BTN_GRAPHIC);
     sheepBtn->idleImage = MLV_load_image("images/buttons/rulesSheep_idle.png");
     sheepBtn->hoverImage = MLV_load_image("images/buttons/rulesSheep_hover.png");
     sheepBtn->activeImage = MLV_load_image("images/buttons/rulesSheep_hover.png");
     sheepBtn->callback = 0;
     addToPrint(sheepBtn, BUTTON);
-
+    
+    /*Wait for an action from the user*/
     waitForAction();
     
+    /*Go back to the main menu*/
     mainMenu();
 }
 
@@ -157,16 +173,20 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     NumberBox * gridSizeX, * gridSizeY, * fiveBlocksBoats, * fourBlocksBoats, * threeBlocksBoats, * twoBlocksBoats, *oneBlockBoats;
     PrintElement * player2Element;
 
+    /*Empty the toPrint array before doing anything*/
     cleanToPrint();
 
     /*clean up any letfover game board*/
     if(gameObj->gameBoard != NULL)
         MLV_free_image(gameObj->gameBoard);
-
-    gameObj->gameState = 'm';       /*Set game state as in menu, so the cleanScreen will reset with the wooden background*/
-
+    
+    /*Make sure the game state is MENU, so the cleanScreen will reset with the wooden background*/
+    gameObj->gameState = 'm';       
+    
+    /*New game Title*/
     addToPrint(createPicture(percentOffset(50, 'w', -212), 40, "images/newGameTitle.png"), PICTURE);
-
+    
+    /*Number of players Buttons*/
     onePlayerBtn = createBtn(percentOffset(50, 'w', -118), 140, 118, 40, BTN_GRAPHIC);
     onePlayerBtn->idleImage = MLV_load_image("images/buttons/onePlayerTab_idle.png");
     onePlayerBtn->hoverImage = MLV_load_image("images/buttons/onePlayerTab_hover.png");
@@ -182,6 +202,7 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     twoPlayerBtn->checked = true;
     twoPlayerBtn->callback = SETTWOPLAYERS;
     
+    /*Player.s name.s fields*/
     player1 = createTextBox(percentOffset(50, 'w', -264), 190, 252, 40, 'g', "Joueur 1");
     player1->backImage = MLV_load_image("images/textField.png");
     player1->imgOffsetX = -5;
@@ -191,7 +212,8 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     player2->backImage = MLV_load_image("images/textField.png");
     player2->imgOffsetX = -5;
     player2->imgOffsetY = -2;
-
+    
+    /*Size of the grid*/
     addToPrint(createPicture(percentOffset(50, 'w', -325), 250, "images/hDivider.png"), PICTURE);
     addToPrint(createPicture(percentOffset(50, 'w', -142), 280, "images/gridSize.png"), PICTURE);
     addToPrint(createPicture(percentOffset(50, 'w', -16), 337, "images/times.png"), PICTURE);
@@ -199,6 +221,7 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     gridSizeX = createNumberBox(percentOffset(50, 'w', -192), 330, gameObj->gridSizeX, 5, 10);
     gridSizeY = createNumberBox(percentOffset(50, 'w', 18), 330, gameObj->gridSizeY, 5, 10);
 
+    /*Number of group of sheeps*/
     addToPrint(createPicture(percentOffset(50, 'w', -325), 400, "images/hDivider.png"), PICTURE);
     addToPrint(createPicture(percentOffset(50, 'w', -174), 430, "images/sheepNbr.png"), PICTURE);
 
@@ -208,13 +231,14 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     addToPrint(createPicture(686, 490, "images/sheepGroup2.png"), PICTURE);
     addToPrint(createPicture(886, 490, "images/sheepGroup1.png"), PICTURE);
 
-
     fiveBlocksBoats = createNumberBox(65, 520, gameObj->nbrShips[5], 0, 2);
     fourBlocksBoats = createNumberBox(265, 520, gameObj->nbrShips[4], 0, 2);
     threeBlocksBoats = createNumberBox(465, 520, gameObj->nbrShips[3], 0, 3);
     twoBlocksBoats = createNumberBox(665, 520, gameObj->nbrShips[2], 0, 3);
     oneBlockBoats = createNumberBox(865, 520, gameObj->nbrShips[1], 0, 3);
-
+    
+    
+    /*Actions buttons*/
     addToPrint(createPicture(percentOffset(50, 'w', -325), 590, "images/hDivider.png"), PICTURE);
     
     validBtn = createBtn(percentOffset(50, 'w', -92), 620, 183, 50, BTN_GRAPHIC);
@@ -228,7 +252,8 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     backBtn->hoverImage = MLV_load_image("images/buttons/backBtn_small_hover.png");
     backBtn->activeImage = MLV_load_image("images/buttons/backBtn_small_active.png");
     backBtn->callback = BACK;
-
+    
+    /*Add all the elements to the toPrint Array*/
     addToPrint(onePlayerBtn, BUTTON);
     addToPrint(twoPlayerBtn, BUTTON);
     addToPrint(player1, TEXTBOX);
@@ -242,7 +267,8 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
     addToPrint(twoBlocksBoats, NUMBERBOX);
     addToPrint(oneBlockBoats, NUMBERBOX);
     player2Element = addToPrint(player2, TEXTBOX);
-
+    
+    /*Wait for an action of the user, and do something in consequense*/
     do
     {
         callback = waitForAction();
@@ -267,13 +293,12 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         }
 
     } while(callback != CONFIRM && callback != BACK);
-
+    
     if(callback == BACK)
         mainMenu();
     else if(callback == CONFIRM)
     {
         /*Save users parameters*/
-
         gameObj->gridSizeX = gridSizeX->value;
         gameObj->gridSizeY = gridSizeY->value;
 
@@ -287,31 +312,42 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         strcpy(player1Name, player1->content);
         if(strlen(player1Name) == 0)
             strcpy(player1Name, player1->placeHolder);
+        
         createPlayer(1, player1Name, PLAYER_HUMAN);
 
         if(nbrPlayer == 2)
         {
             strcpy(player2Name, player2->content);
+            
             if(strlen(player2Name) == 0)
                 strcpy(player2Name, player2->placeHolder);
+            
             createPlayer(2, player2Name, PLAYER_HUMAN);
         }
         else
             createPlayer(2, "Ordinateur", PLAYER_AI);
-
+        
+        /*Start the game*/
         startGame();
     }
 }
 
+/*startGame()
+ * This function ask the player.s to place his.their boats on the grid
+ */
 void startGame()
 {
-    createBoardGame(gameObj->gridSizeX, gameObj->gridSizeY);        /*Generate a map with the given dimensions*/
-    gameObj->gameState = 'a';       /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
+    /*Generate a boardgalme with the given grid dimensions*/
+    createBoardGame(gameObj->gridSizeX, gameObj->gridSizeY);        
+    
+    /*Set game state as active, so the cleanScreen will reset with the gameBoard*/
+    gameObj->gameState = 'a';       
 
     gameObj->currTurn = 1;
 
     if(setUpPlayer(1) == 1)
-    {   /*Continue if the player hasn't exited the setup function*/
+    {   
+        /*Continue if the player hasn't exited the setup function*/
         gameObj->currTurn = 2;
         setUpPlayer(2);
 
@@ -321,7 +357,7 @@ void startGame()
 
 void createPlayer(int playerID, char * playerName, playerType type) /*Init the player struct in the gameObj*/
 {
-    Player player;                    /*creating temporary structs*/
+    Player player;
     Grid grid;
     int i, j, boatsNbr = 0;
 

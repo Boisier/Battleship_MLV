@@ -168,6 +168,9 @@ void quitGame()                         /*This function properly end the game*/
     exit(0);
 }
 
+/*waitfor()
+ *This function display a waiting screen
+ */
 void waitFor(char type)
 {
     int i, j;
@@ -259,6 +262,9 @@ void createBoardGame(int w, int h)
     gameObj->gameBoard = mainBckg;
 }
 
+/*createGrid()
+ * This function print the grid <ith the right size on the given gameBoard 
+ */
 void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOffset, int leftStep, MLV_Image * mainBckg, MLV_Image * dirtBloc)
 {
     int x, y;
@@ -270,7 +276,8 @@ void createGrid(char side, int w, int h, int topOffset, int topStep, int leftOff
         signX = 0;
     else
         signX = w;
-
+    
+    /* pour chaque ligne et chaque colonne */
     for(y = 0; y <= h; y++)
     {
         for(x = 0; x <= w; x++)
