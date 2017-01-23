@@ -50,6 +50,9 @@ void initGame()
     gameObj->defaultPlaceHolderColor = rgba(70, 60, 60, 255);
 
     gameObj->woodBckg =  MLV_load_image("images/woodenBackground.png"); /*Let's preload the main background for later*/
+    
+    gameObj->btn_pressed = MLV_load_music("sounds/btn_pressed.wav");
+    
     gameObj->gameBoard = NULL;
 
     gameObj->gameState = 'm';
