@@ -822,28 +822,28 @@ void inGame()
             /*Player 1 map*/
             if(gameObj->player1.grid.cells[i][j].type == CELL_BOAT && !(gameObj->player1.grid.cells[i][j].hit))
             {
-                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+                addToPrint(createPicture(gameObj->gridOffsetLeft + (35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
             }
             else if(gameObj->player1.grid.cells[i][j].type == CELL_BOAT && gameObj->player1.grid.cells[i][j].hit)
             {
-                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j)-11, "images/sheep_dead_left.png"), PICTURE);
+                addToPrint(createPicture(gameObj->gridOffsetLeft + (35*i), topOffset+(35*j)-11, "images/sheep_dead_left.png"), PICTURE);
             }
             else if(gameObj->player1.grid.cells[i][j].type == CELL_EMPTY && gameObj->player1.grid.cells[i][j].hit)
             {
-                addToPrint(createPicture(leftOffsetSelf+(35*i), topOffset+(35*j), "images/hitLeft.png"), PICTURE);
+                addToPrint(createPicture(gameObj->gridOffsetLeft + (35*i), topOffset+(35*j), "images/hitLeft.png"), PICTURE);
             }
 
             if(gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_BOAT)
             {
-                addToPrint(createPicture(leftOffsetOpponent+(35*i)-11, topOffset+(35*j)-11, "images/sheep_dead.png"), PICTURE);
+                addToPrint(createPicture((gameObj->gridOffsetLeft + 560)+(35*i)-11, topOffset+(35*j)-11, "images/sheep_dead.png"), PICTURE);
             }
             else if(gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_EMPTY)
             {
-                addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/hit.png"), PICTURE);
+                addToPrint(createPicture((gameObj->gridOffsetLeft + 560)+(35*i), topOffset+(35*j), "images/hit.png"), PICTURE);
             }
             else if(!gameObj->player2.grid.cells[i][j].hit && gameObj->player2.grid.cells[i][j].type == CELL_BOAT)
             {
-                addToPrint(createPicture(leftOffsetOpponent+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
+                addToPrint(createPicture((gameObj->gridOffsetLeft + 560)+(35*i), topOffset+(35*j), "images/sheep_idle.png"), PICTURE);
             }
         }
     }
