@@ -319,11 +319,6 @@ void printBtn(struct Button * btn, char state)  /*Print a given button at the cu
             MLV_TEXT_CENTER,
             MLV_HORIZONTAL_CENTER, MLV_VERTICAL_CENTER);
     }
-    
-    if(state == ACTIVE)
-    {
-        MLV_play_music(gameObj->btn_pressed, 1.0, 1);
-    }
 }
 
 
