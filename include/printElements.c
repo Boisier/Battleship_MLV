@@ -220,7 +220,7 @@ TextBox * createTextBox(int x, int y, int width, int height, char type, char pla
 NumberBox * createNumberBox(int x, int y, int defaultVal, int minVal, int maxVal)
 {
     NumberBox * nB = allocate(sizeof(NumberBox));
-    Button * plusBtn, * lessBtn;
+    Button * plusBtn = NULL, * lessBtn = NULL;
 
     nB->x = x;
     nB->y = y;
@@ -265,7 +265,7 @@ void printBtn(struct Button * btn, char state)  /*Print a given button at the cu
 {
     MLV_Color backColor;                        /*Variables who change depdning of the state of the button*/
     MLV_Color textColor;
-    MLV_Image * image;
+    MLV_Image * image = NULL;
 
     if(btn->type == BTN_GRAPHIC)                /*Is the button a graphical one?*/
     {                                           /*Yes, let's select the image to show based on the state*/
@@ -378,7 +378,7 @@ void printNumberBox(struct NumberBox * nB, char state)
 
 void printText(struct Text * txt, char state)          /*Print given Text elemnt on the screen*/
 {
-    MLV_Font * font;
+    MLV_Font * font = NULL;
 
     if(txt->size == 's')
         font = gameObj->inputFont;
