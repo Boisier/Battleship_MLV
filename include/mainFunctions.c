@@ -33,10 +33,8 @@ void initGame()
 
     gameObj->nbrToPrint = 0;        /*Set number of element to print as 0;*/
 
-    printf("Hi mom!\n");
     MLV_create_window("Battleship", "Battleship", 1100, 800);   /*Create the game window*/
 
-    printf("Hi mom2!\n");
     /*Se ship pointer as null*/
     gameObj->player1.grid.ships = NULL;
     gameObj->player2.grid.ships = NULL;
