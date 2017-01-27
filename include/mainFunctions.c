@@ -13,7 +13,6 @@
  * It create the gameObj, Gave it it's default values,
  * then it create the window using the MLV library.
  */
-
 void initGame()                
 {
     gameObj = allocate(sizeof(GameObj));
@@ -34,8 +33,10 @@ void initGame()
 
     gameObj->nbrToPrint = 0;        /*Set number of element to print as 0;*/
 
-    MLV_create_window("Battleship", "Battleship", gameObj->wWidth, gameObj->wHeight);   /*Create the game window*/  
-    
+    printf("Hi mom!\n");
+    MLV_create_window("Battleship", "Battleship", 1100, 800);   /*Create the game window*/
+
+    printf("Hi mom2!\n");
     /*Se ship pointer as null*/
     gameObj->player1.grid.ships = NULL;
     gameObj->player2.grid.ships = NULL;
@@ -73,8 +74,8 @@ void mainMenu()
         RULES = 2,
         QUIT = 3
     } callback;
-    Button * playBtn, * rulesBtn, * quitBtn;
-    Picture * mainTitlePicture;
+    Button * playBtn = NULL, * rulesBtn = NULL, * quitBtn = NULL;
+    Picture * mainTitlePicture = NULL;
     
     /*Empty the toPrint array before doing anything*/
     cleanToPrint();                 
@@ -127,7 +128,7 @@ void mainMenu()
  */
 void displayRules() 
 {
-    Button * backBtn, * sheepBtn;
+    Button * backBtn = NULL, * sheepBtn = NULL;
     
     /*Empty the toPrint array before doing anything*/
     cleanToPrint();
@@ -169,10 +170,10 @@ void initNewGame()                /*Ask the player.s to enter his.their name.s*/
         CONFIRM = 3,
         BACK = 4
     } callback;
-    TextBox * player1, * player2;
-    Button * validBtn, * backBtn, * onePlayerBtn, * twoPlayerBtn;
-    NumberBox * gridSizeX, * gridSizeY, * fiveBlocksBoats, * fourBlocksBoats, * threeBlocksBoats, * twoBlocksBoats, *oneBlockBoats;
-    PrintElement * player2Element;
+    TextBox * player1 = NULL, * player2 = NULL;
+    Button * validBtn = NULL, * backBtn = NULL, * onePlayerBtn = NULL, * twoPlayerBtn = NULL;
+    NumberBox * gridSizeX = NULL, * gridSizeY = NULL, * fiveBlocksBoats = NULL, * fourBlocksBoats = NULL, * threeBlocksBoats = NULL, * twoBlocksBoats = NULL, *oneBlockBoats = NULL;
+    PrintElement * player2Element = NULL;
 
     /*Empty the toPrint array before doing anything*/
     cleanToPrint();
@@ -404,10 +405,10 @@ int setUpPlayer(int playerID)
     int i, j, k, marginTop, stepTop = 40, boatX, boatY;
     int gridOffsetTop = gameObj->gridOffsetTop, gridOffsetLeft = gameObj->gridOffsetLeft, leftOffset = 0;
     char direction;
-    Picture * board;
-    Picture * currentBoatIndicator;
-    Button * tempBtn, * rotateBtn, * quitBtn, * restartBtn, * confirmBtn;
-    PrintElement * tempElement;
+    Picture * board = NULL;
+    Picture * currentBoatIndicator = NULL;
+    Button * tempBtn = NULL, * rotateBtn = NULL, * quitBtn = NULL, * restartBtn = NULL, * confirmBtn = NULL;
+    PrintElement * tempElement = NULL;
     bool added = false;
 
     /*first, make sure the grid is empty before doing anything*/
@@ -655,9 +656,9 @@ void inGame()
     } callback;
     TurnResult turnResult;
     bool hasHit;
-    Player * self, * opponent;
+    Player * self = NULL, * opponent = NULL;
     int topOffset = gameObj->gridOffsetTop, leftOffsetOpponent, leftOffsetSelf, i, j, targetX, targetY;
-    Button * tempBtn, * quitBtn, * replayBtn;
+    Button * tempBtn = NULL, * quitBtn = NULL, * replayBtn = NULL;
     char buffer[3];
 
     gameObj->currTurn = 1;
@@ -898,6 +899,7 @@ void endGame()
     /*Player wants to stop, so we clean up everything*/
     /*First, we creat an empty player*/
     Player player;
+    player.score = 0;
 
     /*We empty the allocatd memory of the players*/
     free(gameObj->player1.grid.ships);
