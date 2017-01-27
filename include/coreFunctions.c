@@ -75,9 +75,6 @@ int waitForAction() 		/*Keep application idle until a button callBack is fired. 
 
         printFrame();					/*Update window*/
 
-        if(gameObj->printLogs)
-            printConsumption();
-
     } while(callbackValue == 0);
 
     return callbackValue;
@@ -175,7 +172,7 @@ void waitFor(char type)
 {
     int i, j;
     char playerName[100];
-    Button * goBtn;
+    Button * goBtn = NULL;
 
     cleanToPrint();
 

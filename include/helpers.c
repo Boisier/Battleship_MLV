@@ -81,7 +81,7 @@ void splitInts(int merged, int *first, int*second)
 void resetPlayerGrid(int playerID)
 {
     int i, j, boatsNbr = 0;
-    Grid * grid;
+    Grid * grid = NULL;
 
     if(playerID == 1)
         grid = &gameObj->player1.grid;
